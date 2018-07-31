@@ -63,6 +63,14 @@ public class VideoServiceImpl implements VideoService {
         return new VideoUser(video,mulUser);
     }
 
+    //取得我的视频
+    @Override
+    public List<Video> getMineVideo() {
+        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+        MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
+        return videoRepository.findByUserid(mulUser.getId());
+    }
+
     /*
     * 增加视频
     * */

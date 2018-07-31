@@ -37,6 +37,12 @@ public class VideoController {
         return videoService.getOneVideo(id);
     }
 
+    //返回我的视频
+    @GetMapping("/mine")
+    public List<Video> getMineVideo(){
+        return videoService.getMineVideo();
+    }
+
     /*
     * 增加视频
     * */
