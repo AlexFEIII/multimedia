@@ -1,0 +1,31 @@
+spring:
+  data:
+    elasticsearch:
+      cluster-name: myCluster
+      cluster-nodes: 127.0.0.1:9300
+  #非严格HTML5
+  thymeleaf:
+    mode: LEGACYHTML5
+  #热部署
+  devtools:
+    restart:
+      enabled: true
+      additional-paths: src/main/java,src/main/resources/static,src/main/resources/templates
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/multimedia
+    username: root
+    password: ENC(hbvUIxTZtPcxhFumEG1FopeJWjDPYxIqRBbBSAA2piQ=)
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  http:
+    multipart:
+      max-file-size: 2MB
+      max-request-size: 20MB
+server:
+  port: 80
+jasypt:
+  encryptor:
+    password: 123456
