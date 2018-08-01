@@ -53,7 +53,7 @@ $('#login_a').on('click', function () {
         title: 'SIGN',
         maxmin: false,
         shadeClose: true, //点击遮罩关闭层
-        area: ['40%', '80%'],
+        area: ['100%', '100%'],
         content: '../html/signIn.html',
     });
 });
@@ -65,7 +65,7 @@ $('#register_a').on('click', function () {
         title: 'SIGN',
         maxmin: false,
         shadeClose: true, //点击遮罩关闭层
-        area: ['40%', '85%'],
+        area: ['100%', '100%'],
         content: '../html/signUp.html',
     });
 });
@@ -164,10 +164,33 @@ $(function () {
     document.documentElement.scrollTop = 0;
 });
 
-// $('.search_special').on('click', function () {
-
-// });
+$('.search_special').on('click', function () {
+    SearchFun($(this));
+});
 //用于搜索
+
+$(window).keydown(function (event) {
+    event = event || window.event;
+    var isFocus = $(".InputTextBtn").is(":focus");
+    if (event.keyCode == 13 && isFocus) {
+        var value = $('.InputTextBtn').val();
+        if (value != '') {
+            window.open("search.html");
+        }
+        $('.search_special').click();
+        event.preventDefault();
+    }
+});
+
+function SearchFun(n) {
+    var value = $('.InputTextBtn').val();
+    if (value != '') {
+        n.attr({
+            'href': 'search.html',
+            'target': '_blank',
+        });
+    }
+}
 
 $('.InputTextBtn').on('click', function () {
     $('.HotAPast').remove();

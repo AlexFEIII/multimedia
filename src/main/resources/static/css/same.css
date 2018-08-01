@@ -399,7 +399,7 @@ h6 {
     width: 100%;
     height: 100%;
     position: absolute;
-    left: 0px;
+    top: 0px;
     left: 0px;
     content: '';
     background: rgba(0, 0, 0, .2);
@@ -694,4 +694,8 @@ h6 {
 .chrome_box a:nth-of-type(2) {
     right: 30px;
     color: #34352C;
+}
+
+.layui-layer-title {
+    cursor: default !important;
 }
