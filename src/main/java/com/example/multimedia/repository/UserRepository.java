@@ -14,5 +14,6 @@ package com.example.multimedia.repository;
 
 public interface UserRepository extends JpaRepository<MulUser,Long> {
         MulUser findByUsername(String username);
+        MulUser findByEmail(String email);
         Page<MulUser> findAll(Pageable pageable);
 }

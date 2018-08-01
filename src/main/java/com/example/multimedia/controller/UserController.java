@@ -22,8 +22,8 @@ public class UserController {
     * N:图片不合法 BIG：图片太大 WRONG_TYPE：图片格式错误
     * */
     @PostMapping("/register")
-    public String register(@RequestParam String username, @RequestParam String password, @RequestParam MultipartFile imagefile){
-        return userService.register(username,password,imagefile);
+    public String register(@RequestParam String username, @RequestParam String password){
+        return userService.register(username,password);
     }
 
     /*

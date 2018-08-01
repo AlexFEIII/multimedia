@@ -92,17 +92,13 @@ public class UserServiceImpl implements UserService {
     * 注册
     * */
     @Override
-    public String register(String username,String password,MultipartFile headimage) {
+    public String register(String username,String password) {
         if(username.length() < 6 || password.length() < 6)
             return "LENGTH";
         if (userRepository.findByUsername(username) != null){
             return "REUSER";
         }else{
-            String flag = uploadImage(headimage);
-            if (flag.equals("N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
-                return flag;
-            }
-            userRepository.save(new MulUser(username,new Pinyin().getStringPinYin(username),passwordEncoder.encode(password),flag,"ROLE_USER"));
+            userRepository.save(new MulUser(username,new Pinyin().getStringPinYin(username),passwordEncoder.encode(password),"ROLE_USER"));
         }
         return "YES";
     }
@@ -112,20 +108,25 @@ public class UserServiceImpl implements UserService {
     * */
     @Override
     public String changeUser(String password,MultipartFile headimage){
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        MulUser user = userRepository.findByUsername(userDetails.getUsername());
-        if (password != null){
-            user.setPassword(passwordEncoder.encode(password));
-        }
-        if (headimage != null){
-            String flag = uploadImage(headimage);
-            if (flag.equals("N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
-                return flag;
+        try{
+            UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            MulUser user = userRepository.findByUsername(userDetails.getUsername());
+            if (password != null){
+                user.setPassword(passwordEncoder.encode(password));
             }
-            user.setHeadimage(flag);
+            if (headimage != null){
+                String flag = uploadImage(headimage);
+                if (flag.equals("N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
+                    return flag;
+                }
+                user.setHeadimage(flag);
+            }
+            userRepository.save(user);
+        }catch (Exception e){
+            return "UnSignIn";
         }
-        userRepository.save(user);
-        return "YES";
+
+        return "Y";
     }
 
     /*

@@ -16,7 +16,7 @@ public interface UserService {
     /*
     * 注册
     * */
-    String register(String username,String password,MultipartFile headimage);
+    String register(String username,String password);
 
     /*
     * 修改用户信息

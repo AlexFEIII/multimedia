@@ -49,4 +49,14 @@ public class WebController {
     public String ui(){
         return "html/UI";
     }
+
+    @GetMapping("/html/signIn.html")
+    public String signIn(){
+        return "html/signIn";
+    }
+
+    @GetMapping("/html/signUp.html")
+    public String signUp(){
+        return "html/signUp";
+    }
 }

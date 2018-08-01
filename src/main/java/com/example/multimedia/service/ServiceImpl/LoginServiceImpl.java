@@ -18,13 +18,22 @@ public class LoginServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        try{
-            MulUser mulUser = userRepository.findByUsername(username);
-            return new User(mulUser.getUsername(),mulUser.getPassword(),AuthorityUtils.commaSeparatedStringToAuthorityList(mulUser.getRole()));
-        }catch (UsernameNotFoundException e){
-            throw new BadCredentialsException("NoUser");
-        }catch (Exception e){
-            throw new BadCredentialsException("UnKnown");
+        if(username.contains("@")){
+            try{
+                MulUser mulUser = userRepository.findByEmail(username);
+                System.out.println(mulUser);
+                return new User(mulUser.getEmail(),mulUser.getPassword(),AuthorityUtils.commaSeparatedStringToAuthorityList(mulUser.getRole()));
+            }catch (Exception e){
+                throw new BadCredentialsException("NoEMail");
+            }
+        }else{
+            try{
+                MulUser mulUser = userRepository.findByUsername(username);
+                System.out.println(mulUser);
+                return new User(mulUser.getUsername(),mulUser.getPassword(),AuthorityUtils.commaSeparatedStringToAuthorityList(mulUser.getRole()));
+            }catch (Exception e){
+                throw new BadCredentialsException("NoUser");
+            }
         }
     }
 }

@@ -48,11 +48,10 @@ public class MulUser{
     private String power;
 
     public MulUser(){}
-    public MulUser(String username,String upinyin,String password,String headimage,String role){
+    public MulUser(String username,String upinyin,String password,String role){
         this.username = username;
         this.upinyin = upinyin;
         this.password = password;
-        this.headimage = headimage;
         this.role = role;
     }
 

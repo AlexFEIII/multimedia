@@ -19,6 +19,9 @@ public class LoginFailureConfig extends SimpleUrlAuthenticationFailureHandler {
         if (exception.getMessage().equals("NoUser")){
             loginMessage.setMsg("NoUser");
             loginMessage.setStatus("404");
+        }else if(exception.getMessage().equals("NoEmail")) {
+            loginMessage.setMsg("NoEmail");
+            loginMessage.setStatus("404");
         }else{
             loginMessage.setMsg("UnKnown");
             loginMessage.setStatus("404");
