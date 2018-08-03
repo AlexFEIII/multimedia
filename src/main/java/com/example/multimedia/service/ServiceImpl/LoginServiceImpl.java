@@ -21,7 +21,6 @@ public class LoginServiceImpl implements UserDetailsService {
         if(username.contains("@")){
             try{
                 MulUser mulUser = userRepository.findByEmail(username);
-                System.out.println(mulUser);
                 return new User(mulUser.getEmail(),mulUser.getPassword(),AuthorityUtils.commaSeparatedStringToAuthorityList(mulUser.getRole()));
             }catch (Exception e){
                 throw new BadCredentialsException("NoEMail");
@@ -29,7 +28,6 @@ public class LoginServiceImpl implements UserDetailsService {
         }else{
             try{
                 MulUser mulUser = userRepository.findByUsername(username);
-                System.out.println(mulUser);
                 return new User(mulUser.getUsername(),mulUser.getPassword(),AuthorityUtils.commaSeparatedStringToAuthorityList(mulUser.getRole()));
             }catch (Exception e){
                 throw new BadCredentialsException("NoUser");

@@ -59,6 +59,15 @@ public class ForumController {
         return forumService.addForum(title,summary,content,image,type);
     }
 
+    /**
+     * 取得我的论坛文章
+     * @return
+     */
+    @GetMapping("/mine")
+    public List<ForumUser> getMineForum(){
+        return forumService.getMineForum();
+    }
+
     /*
      * 修改文章，可修改标题，概要，内容，图片，类别
      * */

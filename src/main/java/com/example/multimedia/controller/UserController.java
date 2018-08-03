@@ -68,4 +68,13 @@ public class UserController {
                                @RequestParam(value = "power",required = false) String power){
         return userService.setRolePower(userid,role,power); //power 默认文章，视频管理
     }
+
+    /**
+     * 判断是否已经登陆
+     * @return
+     */
+    @GetMapping("isLogin")
+    public MulUser isLogin(){
+        return userService.isLogin();
+    }
 }

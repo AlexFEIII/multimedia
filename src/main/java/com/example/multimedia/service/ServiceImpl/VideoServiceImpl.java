@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,10 +66,15 @@ public class VideoServiceImpl implements VideoService {
 
     //取得我的视频
     @Override
-    public List<Video> getMineVideo() {
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+    public List<VideoUser> getMineVideo(){
+        List<VideoUser> videoUsers = new ArrayList<>();
+        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
-        return videoRepository.findByUserid(mulUser.getId());
+        List<Video> videos = videoRepository.findByUserid(mulUser.getId());
+        for (Video video : videos){
+            videoUsers.add(new VideoUser(video,userRepository.findOne(video.getUserid())));
+        }
+        return videoUsers;
     }
 
     /*
@@ -76,19 +82,25 @@ public class VideoServiceImpl implements VideoService {
     * */
     @Override
     public String addVideo(String title, String summary, String url, MultipartFile image, String type) {
-        if (!title.equals(sensitivewordFilter.turnWord(title))){
-            return "T_SENSITIVE";
+        try{
+            if (!title.equals(sensitivewordFilter.turnWord(title))){
+                return "T_SENSITIVE";
+            }
+            if (!summary.equals(sensitivewordFilter.turnWord(summary))) return "S_SENSITIVE";
+            User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            System.out.println(userDetails);
+            MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
+            Pinyin pinyin = new Pinyin();
+            String flag = userService.uploadImage(image);
+            if (flag.equals("IMAGE_N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
+                return flag;
+            }
+            Video video = new Video(commentService.deleteHTML(title),pinyin.getStringPinYin(title),flag,commentService.deleteHTML(summary),url,mulUser.getId(),type);
+            videoRepository.save(video);
+
+        }catch (ClassCastException e){
+            return "ERROR";
         }
-        if (!summary.equals(sensitivewordFilter.turnWord(summary))) return "S_SENSITIVE";
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
-        Pinyin pinyin = new Pinyin();
-        String flag = userService.uploadImage(image);
-        if (flag.equals("IMAGE_N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
-            return flag;
-        }
-        Video video = new Video(commentService.deleteHTML(title),pinyin.getStringPinYin(title),flag,commentService.deleteHTML(summary),url,mulUser.getId(),type);
-        videoRepository.save(video);
         return "Y";
     }
 
@@ -134,7 +146,7 @@ public class VideoServiceImpl implements VideoService {
     }
 
     private boolean power(long videoid,Video video){
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
         MulUser mulUser = userRepository.findByUsername(username);
         if (userRepository.findOne(video.getUserid()).getUsername().equals(username) ||

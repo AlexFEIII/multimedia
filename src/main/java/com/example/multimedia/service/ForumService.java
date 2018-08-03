@@ -17,6 +17,9 @@ public interface ForumService {
     //获得一篇文章
     ForumUser getOneForum(long id);
 
+    //获得我的文章
+    List<ForumUser> getMineForum();
+
     /*
      * 增加文章
      * */

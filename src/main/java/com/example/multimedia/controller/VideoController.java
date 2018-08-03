@@ -39,7 +39,7 @@ public class VideoController {
 
     //返回我的视频
     @GetMapping("/mine")
-    public List<Video> getMineVideo(){
+    public List<VideoUser> getMineVideo(){
         return videoService.getMineVideo();
     }
 

@@ -32,4 +32,9 @@ public interface UserService {
     * 设置用户角色和权限
     * */
     String setRolePower(long userid,String role,String power);
+
+    /*
+    * 判断是否已经登陆
+    * */
+    MulUser isLogin();
 }

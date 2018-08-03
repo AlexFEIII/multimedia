@@ -6,12 +6,16 @@ import com.example.multimedia.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.Action;
+import java.io.IOException;
+import java.security.Principal;
 
 public class LoginSuccessConfig extends SimpleUrlAuthenticationSuccessHandler {
     @Autowired
@@ -20,14 +24,12 @@ public class LoginSuccessConfig extends SimpleUrlAuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
                                       HttpServletResponse response,
-                                      Authentication authentication){
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-        String user = JSON.toJSONString(userRepository.findByUsername(userDetails.getUsername()));
-        try{
-            response.getWriter().print(user);
-            response.getWriter().flush();
-        }catch (Exception e){
-            //ignore;
-        }
+                                      Authentication authentication)throws IOException, ServletException {
+        User user = (User) authentication.getPrincipal();
+        MulUser mulUser = userRepository.findByUsername(user.getUsername());
+        String msg  = JSON.toJSONString(mulUser);
+        response.setContentType("application/json;charset=utf-8");
+        response.getWriter().print(msg);
+        response.getWriter().flush();
     }
 }

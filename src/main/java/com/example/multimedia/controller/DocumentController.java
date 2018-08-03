@@ -57,6 +57,9 @@ public class DocumentController {
         return docService.getOneDoc(id);
     }
 
+    @GetMapping("/mine")
+    public List<DocUserView> getMineDoc(){return docService.getMineDoc();}
+
     /*
     * 增加文章
     * 需要参数：文章标题，文章概要（可空），文章内容，文章图片（可空），类别

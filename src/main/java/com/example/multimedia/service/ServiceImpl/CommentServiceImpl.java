@@ -6,6 +6,7 @@ import com.example.multimedia.repository.*;
 import com.example.multimedia.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -86,7 +87,7 @@ public class CommentServiceImpl implements CommentService {
     * */
     @Override
     public String deleteComment(String type,long docid,long commentid,long relayid) {
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
         if (type.equals("doc")){
             //如果文章是自己的可以删除||如果评论是自己的，可以删除||如果被回复的用户是自己，可以删除
@@ -123,7 +124,7 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public String deleteComment(String type,long docid, long commentid) {
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
         //如果文档是自己的可以删||如果评论是自己的可以删
         if (type.equals("doc")){

@@ -17,6 +17,9 @@ public interface DocService {
     //得到一篇文章
     DocUserView getOneDoc(long id);
 
+    //得到我的文章
+    List<DocUserView> getMineDoc();
+
     /*
     * 增加文章
     * */

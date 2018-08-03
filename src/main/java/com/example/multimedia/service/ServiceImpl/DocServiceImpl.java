@@ -73,6 +73,18 @@ public class DocServiceImpl implements DocService {
         return new DocUserView(document,mulUser);
     }
 
+    @Override
+    public List<DocUserView> getMineDoc() {
+        List<DocUserView> docUserViews = new ArrayList<>();
+        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
+        List<Document> documents = documentRepository.findByUserid(mulUser.getId());
+        for (Document document : documents){
+            docUserViews.add(new DocUserView(document,userRepository.findOne(document.getUserid())));
+        }
+        return docUserViews;
+    }
+
     /*
     * 增加文章
     * */
@@ -81,7 +93,7 @@ public class DocServiceImpl implements DocService {
         if (!title.equals(sensitivewordFilter.turnWord(title))){
             return "T_SENSITIVE";
         }
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
         try{
             if (summary == null)
@@ -193,7 +205,7 @@ public class DocServiceImpl implements DocService {
     }
 
     public boolean power(long id,Document document){
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
         MulUser mulUser = userRepository.findByUsername(username);
         if (userRepository.findOne(documentRepository.findOne(id).getUserid()).getUsername().equals(username) ||

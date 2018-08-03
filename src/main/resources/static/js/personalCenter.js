@@ -15,10 +15,6 @@ $(document).on("click", '.same_a,.user_list a,.second_list a', function () {
 //通过class绑定click事件，可以只点击一次就触发事件，否则需要点击两次
 
 var Select_One_Div = $('.Select_One_Div');
-for (var i = 0; i < 15; i++) {
-    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="../img/2.jpg"></a><span>梨视频</span></div>');
-    Select_One_Div.append(select_one);
-};
 
 var oLd_div = $('.all_content .Select').eq(0);
 
@@ -75,15 +71,6 @@ $('.user_list a').on('click', function () {
 //左边书籍的列表
 
 var SelectDiv = $('.Select_Much');
-for (var i = 0; i < 3; i++) {
-    var AddDiv = $('<div class="other_module"><div class="left_part"><a href="javascript:;" class="under_line"></a><p class="draw_text"></p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a"></a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img"><img src=""/></aa></div>')
-    SelectDiv.eq(0).append(AddDiv);
-};
-
-for (var i = 0; i < 4; i++) {
-    var AddDiv = $('<div class="other_module"><div class="left_part"><a href="javascript:;" class="under_line"></a><p class="draw_text"></p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a"></a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img"><img src=""/></aa></div>')
-    SelectDiv.eq(1).append(AddDiv);
-};
 
 for (var i = 0; i < 5; i++) {
     var AddDiv = $('<div class="other_module"><div class="left_part"><a href="javascript:;" class="under_line"></a><p class="draw_text"></p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a"></a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img"><img src=""/></aa></div>')
@@ -118,14 +105,6 @@ ImgArray[3] = "https://upload-images.jianshu.io/upload_images/3054428-209aa6c6ff
 ImgArray[4] = "https://upload-images.jianshu.io/upload_images/4969338-17d4b5c6ac3d9bca.png?imageMogr2/auto-orient/strip|imageView2/1/w/300/h/240";
 ImgArray[5] = "https://upload-images.jianshu.io/upload_images/6753085-b4dbea0286a4cbe7.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/300/h/240";
 ImgArray[6] = "https://upload-images.jianshu.io/upload_images/2001577-b04bbf786966ea09.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/300/h/240";
-
-SelectDiv.eq(0).find("img").attr("src", ImgArray[0]);
-SelectDiv.eq(0).find(".under_line").html("五一，差点只剩半条命！");
-SelectDiv.eq(0).find(".bottom_first_a").html("5312Ana");
-SelectDiv.eq(0).find(".bottom_two_a").append("<b>20</b>");
-SelectDiv.eq(0).find(".bottom_first_span").append("<b>19</b>");
-SelectDiv.eq(0).find(".bottom_two_span").append("<b>1</b>");
-SelectDiv.eq(0).find("p").html("原本打算五一跟朋友跑完半程马拉松后就去北海拍海景，然而不幸的是，她准备跑到终点时突然晕倒了，虽然我没体验过这种晕倒的感觉，但可以想象出这种从鬼门关出来人的有多不易。");
 
 SelectDiv.eq(1).find("img").attr("src", ImgArray[1]);
 SelectDiv.eq(1).find(".under_line").html("减重6.6斤，我只用了28天");
@@ -333,4 +312,57 @@ $('.second_list a').on('click', function () {
     $('.collect').eq(index).css({
         'display': 'flex',
     });
+});
+
+var firstul = $(".first_ul");
+//五个标志位，标记是否已经请求
+var vf = false;
+var df = false;
+var ff = false;
+var hf = false;
+var cf = false;
+//页面加载的时候执行点击事件
+$(document).ready(function () {
+    if (vf == false){
+        firstul.children("li:eq(0)").click();
+    }
+});
+firstul.children("li:eq(0)").click(function () {
+    if (vf == false){
+        $.ajax({
+            url:"../video/mine",
+            type:"get",
+            success:function (data) {
+                vf = true;
+                for (var i = 0;i < data.length;i ++){
+                    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].video.image+'"></a><span>'+data[i].video.title+'<span class="videoidspan" style="display: none">'+data[i].video.id+'</span></span></div>');
+                    Select_One_Div.append(select_one);
+                }
+            },error:function (data) {
+                //ignore
+            }
+        });
+    }
+});
+firstul.children("li:eq(1)").click(function () {
+    if (df == false){
+        $.ajax({
+            url:"../doc/mine",
+            type:"get",
+            success:function (data) {
+                console.log(data);
+                df = true;
+                var username;
+                for (var i = 0;i < data.length;i ++){
+                    username = data[i].mulUser.nickname;
+                    if (username == null) username = data[i].mulUser.username;
+                    var AddDiv = $('<div class="other_module"><div class="left_part"><a href="javascript:;" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img"><img src="'+data[i].document.image+'"/></aa></div>')
+                    SelectDiv.eq(0).append(AddDiv);
+                }
+            },error:function (data) {
+                //ignore
+            }
+        });
+    }
+
 });

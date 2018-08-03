@@ -15,11 +15,13 @@ import com.qiniu.util.Auth;
 import org.elasticsearch.client.transport.TransportClient;
 import org.hibernate.validator.constraints.EAN;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -109,7 +111,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String changeUser(String password,MultipartFile headimage){
         try{
-            UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             MulUser user = userRepository.findByUsername(userDetails.getUsername());
             if (password != null){
                 user.setPassword(passwordEncoder.encode(password));
@@ -144,7 +146,7 @@ public class UserServiceImpl implements UserService {
     * */
     @Override
     public Page<MulUser> getAllUser(int pageNum, int size, Sort.Direction direction, String key){
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!(key.equals("id") || key.equals("username") || key.equals("role")))
             key = "id";
         if (userRepository.findByUsername(userDetails.getUsername()).getRole().equals("ROLE_MANAGE")){
@@ -160,5 +162,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public String setRolePower(long userid, String role, String power) {
         return null;
+    }
+
+    //判断是否已经登陆
+    @Override
+    public MulUser isLogin(){
+        try{
+            User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return userRepository.findByUsername(userDetails.getUsername());
+        }catch (ClassCastException e){
+            //ignore
+            return null;
+        }
     }
 }

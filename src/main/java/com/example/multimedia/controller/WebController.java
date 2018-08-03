@@ -1,6 +1,7 @@
 package com.example.multimedia.controller;
 
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,13 +27,11 @@ public class WebController {
     @GetMapping("/html/personalCenter.html")
     public String personalCenter(){
         try{
-            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-            String username = userDetails.getUsername();
+            User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return "html/personalCenter";
         }catch (Exception e){
             return "html/index";
         }
-
     }
 
     @GetMapping("/html/RichEditor.html")
@@ -47,7 +46,12 @@ public class WebController {
 
     @GetMapping("/html/UI.html")
     public String ui(){
-        return "html/UI";
+        try{
+            User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            return "html/UI";
+        }catch (Exception e){
+            return "html/index";
+        }
     }
 
     @GetMapping("/html/signIn.html")

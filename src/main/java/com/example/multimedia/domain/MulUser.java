@@ -16,7 +16,7 @@ public class MulUser{
     @Id
     @GeneratedValue
     private Long id;
-    //用户名
+    //用户名/手机号
     private String username;
     //用户名拼音
     private String upinyin;
@@ -34,8 +34,8 @@ public class MulUser{
     private String address;
     //QQ
     private int qq;
-    //电话
-    private long phone;
+    //昵称
+    private String nickname;
     //职业
     private String job;
     //个人网站
@@ -68,7 +68,7 @@ public class MulUser{
                 ", personality='" + personality + '\'' +
                 ", address='" + address + '\'' +
                 ", qq=" + qq +
-                ", phone=" + phone +
+                ", nickname=" + nickname +
                 ", job='" + job + '\'' +
                 ", weburl='" + weburl + '\'' +
                 ", role='" + role + '\'' +
@@ -156,12 +156,12 @@ public class MulUser{
         this.qq = qq;
     }
 
-    public long getPhone() {
-        return phone;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setPhone(long phone) {
-        this.phone = phone;
+    public void setNickname(String phone) {
+        this.nickname = nickname;
     }
 
     public String getJob() {

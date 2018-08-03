@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,6 +66,18 @@ public class ForumServiceImpl implements ForumService {
         return new ForumUser(forum,mulUser);
     }
 
+    @Override
+    public List<ForumUser> getMineForum() {
+        List<ForumUser> forumUsers = new ArrayList<>();
+        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
+        List<Forum> forums = forumRepository.findByUserid(mulUser.getId());
+        for (Forum forum:forums){
+            forumUsers.add(new ForumUser(forum,userRepository.findOne(forum.getUserid())));
+        }
+        return forumUsers;
+    }
+
     /*
     * 增加文章
     * */
@@ -73,7 +86,7 @@ public class ForumServiceImpl implements ForumService {
         if (!title.equals(sensitivewordFilter.turnWord(title))){
             return "T_SENSITIVE";
         }
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
         try{
             if (summary == null)
@@ -161,7 +174,7 @@ public class ForumServiceImpl implements ForumService {
     * */
     @Override
     public String best(long forumid, long commentid) {
-        UserDetails userDetails = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Forum forum = forumRepository.findOne(forumid);
         if (userRepository.findOne(forum.getUserid()).equals(userDetails.getUsername())){
             forum.setResultid(commentid);
@@ -197,7 +210,7 @@ public class ForumServiceImpl implements ForumService {
     }
 
     public boolean power(long id,Forum forum){
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
         MulUser mulUser = userRepository.findByUsername(username);
         if (userRepository.findOne(forumRepository.findOne(id).getUserid()).getUsername().equals(username) ||
