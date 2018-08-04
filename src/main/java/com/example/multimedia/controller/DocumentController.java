@@ -57,8 +57,8 @@ public class DocumentController {
         return docService.getOneDoc(id);
     }
 
-    @GetMapping("/mine")
-    public List<DocUserView> getMineDoc(){return docService.getMineDoc();}
+    @GetMapping("/mine/{type}")
+    public List<DocUserView> getMineDoc(@PathVariable String type){return docService.getMineDoc(type);}
 
     /*
     * 增加文章
@@ -69,7 +69,7 @@ public class DocumentController {
                          @RequestParam(value = "summary",required = false) String summary,
                          @RequestParam String content,
                          @RequestParam(value = "image",required = false) MultipartFile image,
-                         @RequestParam List<String> type){
+                         @RequestParam String type){
         return docService.addDoc(title,summary,content,image,type);
     }
 
@@ -82,7 +82,7 @@ public class DocumentController {
                             @RequestParam(value = "summary",required = false) String summary,
                             @RequestParam(value = "content",required = false) String content,
                             @RequestParam(value = "image",required = false) MultipartFile image,
-                            @RequestParam(value = "type",required = false) List<String> type){
+                            @RequestParam(value = "type",required = false) String type){
         return docService.changeDoc(documentid,title,summary,content,image,type);
     }
 

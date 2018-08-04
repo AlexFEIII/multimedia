@@ -23,13 +23,13 @@ $('.leftParts .topA').on('click', function () {
 });
 
 var firstPart = $('.firstPart');
-for (var i = 0; i < 15; i++) {
+for (var i = 0; i < 17; i++) {
     var select_one = $('<div class="same_module"><a href="javascript:;"><img src="../img/2.jpg"></a><span>梨视频</span></div>');
     firstPart.append(select_one);
 };
 
 var secondPart = $('.secondPart');
-for (var i = 0; i < 15; i++) {
+for (var i = 0; i < 17; i++) {
     var select_one = $('<div class="same_module"><a href="javascript:;"><img src="../img/dou.gif"></a><span>抖音短视频</span></div>');
     secondPart.append(select_one);
 };
@@ -175,39 +175,17 @@ SelectDiv.eq(6).find(".bottom_first_span").append("<b>47</b>");
 SelectDiv.eq(6).find(".bottom_two_span").append("<b>0</b>");
 SelectDiv.eq(6).find("p").html("从2015年我第一次踏上跑步机至今，我已经跑步满三年了，最初的动机是产后减肥，时至今日跑步已成为我的一种生活习惯。很多人认识我源于我2016年那篇关于自律的文字，不可否认跑步是我一切自律行动的开始，是跑步让我拥有了自律和坚韧的品质。总是有人不断问我如何跑步怎么坚持，所以今天我就来说说跑步这件神奇的事。");
 
-var carousel_contain = $('<section></section>');
-for (var i = 0; i < 8; i++) {
+for (var i = 0; i < 10; i++) {
     var five_block = $('<div><a href="javascript:;"><img src=""><span></span></a><span class="issue"></span></div>');
-    carousel_contain.append(five_block);
+    $('.recommed_topic').append(five_block);
 }
-$('.recommed_topic li').append(carousel_contain);
 
-var Issue = new Array(6);
+var Issue = new Array(1);
 Issue[0] = "../img/4.jpg";
-Issue[1] = "../img/5.jpg";
-Issue[2] = "../img/6.jpg";
-Issue[3] = "../img/7.jpg";
-Issue[4] = "../img/8.jpg";
-Issue[5] = "../img/9.jpg";
 
-$('.recommed_topic li').eq(0).find("img").attr("src", Issue[0]);
-$('.recommed_topic li').eq(0).find("span").html("知识产权保卫战");
-$('.recommed_topic li').eq(0).find(".issue").html("该议题被浏览 2223661 次");
-$('.recommed_topic li').eq(1).find("img").attr("src", Issue[1]);
-$('.recommed_topic li').eq(1).find("span").html("知识产权保卫战");
-$('.recommed_topic li').eq(1).find(".issue").html("该议题被浏览 2223661 次");
-$('.recommed_topic li').eq(2).find("img").attr("src", Issue[2]);
-$('.recommed_topic li').eq(2).find("span").html("知识产权保卫战");
-$('.recommed_topic li').eq(2).find(".issue").html("该议题被浏览 2223661 次");
-$('.recommed_topic li').eq(3).find("img").attr("src", Issue[3]);
-$('.recommed_topic li').eq(3).find("span").html("知识产权保卫战");
-$('.recommed_topic li').eq(3).find(".issue").html("该议题被浏览 2223661 次");
-$('.recommed_topic li').eq(4).find("img").attr("src", Issue[4]);
-$('.recommed_topic li').eq(4).find("span").html("知识产权保卫战");
-$('.recommed_topic li').eq(4).find(".issue").html("该议题被浏览 2223661 次");
-$('.recommed_topic li').eq(5).find("img").attr("src", Issue[5]);
-$('.recommed_topic li').eq(5).find("span").html("知识产权保卫战");
-$('.recommed_topic li').eq(5).find(".issue").html("该议题被浏览 2223661 次");
+$('.recommed_topic').find("img").attr("src", Issue[0]);
+$('.recommed_topic').find("span").html("知识产权保卫战");
+$('.recommed_topic').find(".issue").html("该议题被浏览 2223661 次");
 
 var HistoryPast = $('<div class="historySearch"><div class="lastContent"><p>最近搜索</p><a href="javascript:;" class="ClearAll">' +
     '清空</a><ul class="lastTime"><li><a href="javascript:;" class="bottomA"><i class="iconfont">&#xe6c0;</i>' +
@@ -216,13 +194,21 @@ var HistoryPast = $('<div class="historySearch"><div class="lastContent"><p>最�
 $('.leftParts').append(HistoryPast);
 
 //控制文字的多少
-$('.IBottom').each(function () {
-    var maxwidth = 12;
-    if ($(this).text().length > maxwidth) {
-        $(this).text($(this).text().substring(0, maxwidth));
-        $(this).html($(this).html() + "...");
-    };
-});
+
+CutWordSearch('.IBottom', 12);
+
+CutWordSearch('.draw_text', 72);
+
+function CutWordSearch(n, num) {
+    $(n).each(function () {
+        var maxwidth = num;
+        if ($(this).text().length > maxwidth) {
+            $(this).text($(this).text().substring(0, maxwidth));
+            $(this).html($(this).html() + "...");
+        };
+    });
+}
+
 
 //清空按钮
 $('.ClearAll').on('click', function () {

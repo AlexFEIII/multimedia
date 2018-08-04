@@ -82,7 +82,7 @@ public class ForumServiceImpl implements ForumService {
     * 增加文章
     * */
     @Override
-    public String addForum(String title, String summary, String content, MultipartFile image, List<String> type) {
+    public String addForum(String title, String summary, String content, MultipartFile image, String type) {
         if (!title.equals(sensitivewordFilter.turnWord(title))){
             return "T_SENSITIVE";
         }
@@ -97,22 +97,13 @@ public class ForumServiceImpl implements ForumService {
         if (!summary.equals(sensitivewordFilter.turnWord(summary))) return "S_SENSITIVE";
         Pinyin pinyin = new Pinyin();
         title = commentService.deleteHTML(title);
-        Forum forum = new Forum(title,commentService.deleteHTML(summary),commentService.deleteHTML(content),pinyin.getStringPinYin(title),mulUser.getId());
+        Forum forum = new Forum(title,commentService.deleteHTML(summary),commentService.deleteHTML(content),pinyin.getStringPinYin(title),mulUser.getId(),type);
         if (image != null){
             String flag = userService.uploadImage(image);
             if (flag.equals("N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
                 return flag;
             }
             forum.setImage(flag);
-        }
-        for(String t : type){
-            if (t.equals("internet")) forum.setInternet(true);
-            else if (t.equals("law")) forum.setLaw(true);
-            else if (t.equals("medicine")) forum.setMedicine(true);
-            else if (t.equals("economy")) forum.setEconomy(true);
-            else if (t.equals("history")) forum.setHistory(true);
-            else if (t.equals("science")) forum.setScience(true);
-            else forum.setArt(true);
         }
         forumRepository.save(forum);
         return "Y";
@@ -122,7 +113,7 @@ public class ForumServiceImpl implements ForumService {
     * 修改文章
     * */
     @Override
-    public String changeForum(long forumid, String title, String summary, String content, MultipartFile image, List<String> type) {
+    public String changeForum(long forumid, String title, String summary, String content, MultipartFile image, String type) {
         Forum forum = forumRepository.findOne(forumid);
         if (power(forumid,forum)) {
             if (!title.equals(sensitivewordFilter.turnWord(title))) {
@@ -145,24 +136,7 @@ public class ForumServiceImpl implements ForumService {
                 }
                 forum.setImage(flag);
             }
-            if (type.size() > 0) {
-                forum.setInternet(false);
-                forum.setLaw(false);
-                forum.setMedicine(false);
-                forum.setEconomy(false);
-                forum.setHistory(false);
-                forum.setScience(false);
-                forum.setArt(false);
-                for (String t : type) {
-                    if (t.equals("internet")) forum.setInternet(true);
-                    else if (t.equals("law")) forum.setLaw(true);
-                    else if (t.equals("medicine")) forum.setMedicine(true);
-                    else if (t.equals("economy")) forum.setEconomy(true);
-                    else if (t.equals("history")) forum.setHistory(true);
-                    else if (t.equals("science")) forum.setScience(true);
-                    else forum.setArt(true);
-                }
-            }
+            if (type != null) forum.setType(type);
             forumRepository.save(forum);
             return "Y";
         }
@@ -191,18 +165,11 @@ public class ForumServiceImpl implements ForumService {
         if (power(id,forum)) {
             forumRepository.delete(id);
             recyclerRepository.save(new Recycler("doc",id));
-            ForumRecycler forumRecycler = new ForumRecycler(forum.getTitle(),forum.getSummary(),forum.getContent(),forum.getTpinyin(),forum.getUserid(),forum.getUpvotenum(),forum.getCommentnum(),forum.getSawnum(),forum.getDate());
+            ForumRecycler forumRecycler = new ForumRecycler(forum.getTitle(),forum.getSummary(),forum.getContent(),forum.getTpinyin(),forum.getUserid(),forum.getUpvotenum(),forum.getCommentnum(),forum.getSawnum(),forum.getType(),forum.getDate());
 
             if (forum.getImage()!=null) forumRecycler.setImage(forum.getImage());
             if (forum.getResultid()!=-1) forumRecycler.setResultid(forum.getResultid());
 
-            if (forum.isInternet()) forumRecycler.setInternet(true);
-            else if (forum.isLaw()) forumRecycler.setLaw(true);
-            else if (forum.isMedicine()) forumRecycler.setMedicine(true);
-            else if (forum.isEconomy()) forumRecycler.setEconomy(true);
-            else if (forum.isHistory()) forumRecycler.setHistory(true);
-            else if (forum.isScience()) forumRecycler.setScience(true);
-            else if (forum.isArt()) forumRecycler.setArt(true);
             forumRecyclerRepository.save(forumRecycler);
             return "Y";
         }

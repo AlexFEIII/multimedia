@@ -26,6 +26,7 @@ $(document).ready(function () {
     })
 });
 
+
 $(function () {
     $("html").niceScroll();
 
@@ -74,6 +75,7 @@ $(function () {
     //设置定时器
 });
 
+var autoHeight = $('#main_content').outerHeight();
 // 登录
 $('#login_a').on('click', function () {
     layer.open({
@@ -81,8 +83,8 @@ $('#login_a').on('click', function () {
         title: 'SIGN',
         maxmin: false,
         shadeClose: true, //点击遮罩关闭层
-        area: ['400px', '595px'],
-        content: '../html/signIn.html'
+        content: ['../html/signIn.html'],
+        area: ['400px', '595px']
     });
 });
 
@@ -90,11 +92,11 @@ $('#login_a').on('click', function () {
 $('#register_a').on('click', function () {
     layer.open({
         type: 2,
-        title: 'SIGN',
-        maxmin: false,
+        title: false,
         shadeClose: true, //点击遮罩关闭层
-        area: ['100%', '100%'],
-        content: '../html/signUp.html',
+        content: ['../html/signUp.html', 'no'],
+        closeBtn: 0,
+        area: ['400px', '552px'],
     });
 });
 

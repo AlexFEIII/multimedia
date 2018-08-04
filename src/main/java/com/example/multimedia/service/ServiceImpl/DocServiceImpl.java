@@ -73,12 +73,13 @@ public class DocServiceImpl implements DocService {
         return new DocUserView(document,mulUser);
     }
 
+    //得到我的文章
     @Override
-    public List<DocUserView> getMineDoc() {
+    public List<DocUserView> getMineDoc(String type) {
         List<DocUserView> docUserViews = new ArrayList<>();
         User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
-        List<Document> documents = documentRepository.findByUserid(mulUser.getId());
+        List<Document> documents = documentRepository.findByUseridAndTypeOrderByDateAsc(mulUser.getId(),type);
         for (Document document : documents){
             docUserViews.add(new DocUserView(document,userRepository.findOne(document.getUserid())));
         }
@@ -89,7 +90,7 @@ public class DocServiceImpl implements DocService {
     * 增加文章
     * */
     @Override
-    public String addDoc(String title, String summary, String content, MultipartFile image, List<String> type) {
+    public String addDoc(String title, String summary, String content, MultipartFile image, String type) {
         if (!title.equals(sensitivewordFilter.turnWord(title))){
             return "T_SENSITIVE";
         }
@@ -104,22 +105,13 @@ public class DocServiceImpl implements DocService {
         if (!summary.equals(sensitivewordFilter.turnWord(summary))) return "S_SENSITIVE";
         Pinyin pinyin = new Pinyin();
         title = commentService.deleteHTML(title);
-        Document document = new Document(title,commentService.deleteHTML(summary),commentService.deleteHTML(content),pinyin.getStringPinYin(title),mulUser.getId());
+        Document document = new Document(title,commentService.deleteHTML(summary),commentService.deleteHTML(content),pinyin.getStringPinYin(title),mulUser.getId(),type);
         if (image != null){
             String flag = userService.uploadImage(image);
             if (flag.equals("IMAGE_N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
                 return flag;
             }
             document.setImage(flag);
-        }
-        for(String t : type){
-            if (t.equals("internet")) document.setInternet(true);
-            else if (t.equals("law")) document.setLaw(true);
-            else if (t.equals("medicine")) document.setMedicine(true);
-            else if (t.equals("economy")) document.setEconomy(true);
-            else if (t.equals("history")) document.setHistory(true);
-            else if (t.equals("science")) document.setScience(true);
-            else document.setArt(true);
         }
         documentRepository.save(document);
         return "Y";
@@ -129,7 +121,7 @@ public class DocServiceImpl implements DocService {
     * 修改文章
     * */
     @Override
-    public String changeDoc(long documentid,String title, String summary, String content, MultipartFile image, List<String> type) {
+    public String changeDoc(long documentid,String title, String summary, String content, MultipartFile image, String type) {
         //权限，如果是管理员或者文章是自己的
         Document document = documentRepository.findOne(documentid);
         if (power(documentid,document)) {
@@ -152,24 +144,7 @@ public class DocServiceImpl implements DocService {
                 }
                 document.setImage(flag);
             }
-            if (type.size() > 0) {
-                document.setInternet(false);
-                document.setLaw(false);
-                document.setMedicine(false);
-                document.setEconomy(false);
-                document.setHistory(false);
-                document.setScience(false);
-                document.setArt(false);
-                for (String t : type) {
-                    if (t.equals("internet")) document.setInternet(true);
-                    else if (t.equals("law")) document.setLaw(true);
-                    else if (t.equals("medicine")) document.setMedicine(true);
-                    else if (t.equals("economy")) document.setEconomy(true);
-                    else if (t.equals("history")) document.setHistory(true);
-                    else if (t.equals("science")) document.setScience(true);
-                    else document.setArt(true);
-                }
-            }
+            if (type!=null) document.setType(type);
             documentRepository.save(document);
             return "Y";
         }
@@ -187,17 +162,8 @@ public class DocServiceImpl implements DocService {
         if (power(id,document)){
             documentRepository.delete(id);
             recyclerRepository.save(new Recycler("doc",id));
-            DocRecycler docRecycler = new DocRecycler(document.getTitle(),document.getSummary(),document.getContent(),document.getTpinyin(),document.getUserid(),document.getUpvotenum(),document.getCommentnum(),document.getSawnum(),document.getDate());
-
+            DocRecycler docRecycler = new DocRecycler(document.getTitle(),document.getSummary(),document.getContent(),document.getTpinyin(),document.getUserid(),document.getUpvotenum(),document.getCommentnum(),document.getSawnum(),document.getType(),document.getDate());
             if (document.getImage()!=null) docRecycler.setImage(document.getImage());
-
-            if (document.isInternet()) docRecycler.setInternet(true);
-            else if (document.isLaw()) docRecycler.setLaw(true);
-            else if (document.isMedicine()) docRecycler.setMedicine(true);
-            else if (document.isEconomy()) docRecycler.setEconomy(true);
-            else if (document.isHistory()) docRecycler.setHistory(true);
-            else if (document.isScience()) docRecycler.setScience(true);
-            else if (document.isArt()) docRecycler.setArt(true);
             docRecyclerRepository.save(docRecycler);
             return "Y";
         }

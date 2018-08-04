@@ -33,20 +33,22 @@ public class Document {
     private long commentnum = 0;
     //阅读个数
     private long sawnum = 0;
-    //是否是互联网类别
-    private boolean internet = false;
-    //是否是法律
-    private boolean law = false;
-    //是否是医药
-    private boolean medicine = false;
-    //是否是经济
-    private boolean economy = false;
-    //是否是历史
-    private boolean history = false;
-    //是否是理工
-    private boolean science = false;
-    //是否是艺术
-    private boolean art = false;
+    //类别
+    private String type;
+//    //是否是互联网类别
+//    private boolean internet = false;
+//    //是否是法律
+//    private boolean law = false;
+//    //是否是医药
+//    private boolean medicine = false;
+//    //是否是经济
+//    private boolean economy = false;
+//    //是否是历史
+//    private boolean history = false;
+//    //是否是理工
+//    private boolean science = false;
+//    //是否是艺术
+//    private boolean art = false;
     //发表时间
     private Date date;
 
@@ -54,12 +56,13 @@ public class Document {
         date = new Date();
     }
 
-    public Document(String title,String summary,String content,String tpinyin,long userid){
+    public Document(String title,String summary,String content,String tpinyin,long userid,String type){
         this.title = title;
         this.summary = summary;
         this.content = content;
         this.tpinyin = tpinyin;;
         this.userid = userid;
+        this.type = type;
         this.date = new Date();
     }
 
@@ -76,13 +79,7 @@ public class Document {
                 ", upvotenum=" + upvotenum +
                 ", commentnum=" + commentnum +
                 ", sawnum=" + sawnum +
-                ", internet=" + internet +
-                ", law=" + law +
-                ", medicine=" + medicine +
-                ", economy=" + economy +
-                ", history=" + history +
-                ", science=" + science +
-                ", art=" + art +
+                ", type='" + type + '\'' +
                 ", date=" + date +
                 '}';
     }
@@ -167,60 +164,12 @@ public class Document {
         this.sawnum = sawnum;
     }
 
-    public boolean isInternet() {
-        return internet;
+    public String getType() {
+        return type;
     }
 
-    public void setInternet(boolean internet) {
-        this.internet = internet;
-    }
-
-    public boolean isLaw() {
-        return law;
-    }
-
-    public void setLaw(boolean law) {
-        this.law = law;
-    }
-
-    public boolean isMedicine() {
-        return medicine;
-    }
-
-    public void setMedicine(boolean medicine) {
-        this.medicine = medicine;
-    }
-
-    public boolean isEconomy() {
-        return economy;
-    }
-
-    public void setEconomy(boolean economy) {
-        this.economy = economy;
-    }
-
-    public boolean isHistory() {
-        return history;
-    }
-
-    public void setHistory(boolean history) {
-        this.history = history;
-    }
-
-    public boolean isScience() {
-        return science;
-    }
-
-    public void setScience(boolean science) {
-        this.science = science;
-    }
-
-    public boolean isArt() {
-        return art;
-    }
-
-    public void setArt(boolean art) {
-        this.art = art;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Date getDate() {

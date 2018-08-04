@@ -7,5 +7,5 @@ import javax.print.Doc;
 import java.util.List;
 
 public interface DocumentRepository extends JpaRepository<Document,Long> {
-    List<Document> findByUserid(long id);
+    List<Document> findByUseridAndTypeOrderByDateAsc(long id,String type);
 }

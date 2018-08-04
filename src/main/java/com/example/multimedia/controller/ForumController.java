@@ -55,7 +55,7 @@ public class ForumController {
                          @RequestParam(value = "summary",required = false) String summary,
                          @RequestParam String content,
                          @RequestParam(value = "image",required = false) MultipartFile image,
-                         @RequestParam List<String> type){
+                         @RequestParam String type){
         return forumService.addForum(title,summary,content,image,type);
     }
 
@@ -77,7 +77,7 @@ public class ForumController {
                             @RequestParam(value = "summary",required = false) String summary,
                             @RequestParam(value = "content",required = false) String content,
                             @RequestParam(value = "image",required = false) MultipartFile image,
-                            @RequestParam(value = "type",required = false) List<String> type){
+                            @RequestParam(value = "type",required = false) String type){
         return forumService.changeForum(documentid,title,summary,content,image,type);
     }
 

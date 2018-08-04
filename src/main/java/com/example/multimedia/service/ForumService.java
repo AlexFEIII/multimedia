@@ -23,12 +23,12 @@ public interface ForumService {
     /*
      * 增加文章
      * */
-    String addForum(String title, String summary, String content, MultipartFile image, List<String> type);
+    String addForum(String title, String summary, String content, MultipartFile image, String type);
 
     /*
      * 修改文章
      * */
-    String changeForum(long forumid,String title, String summary, String content, MultipartFile image, List<String> type);
+    String changeForum(long forumid,String title, String summary, String content, MultipartFile image, String type);
 
     /*
     * 设置最佳评论

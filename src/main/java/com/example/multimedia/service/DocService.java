@@ -18,17 +18,17 @@ public interface DocService {
     DocUserView getOneDoc(long id);
 
     //得到我的文章
-    List<DocUserView> getMineDoc();
+    List<DocUserView> getMineDoc(String type);
 
     /*
     * 增加文章
     * */
-    String addDoc(String title, String summary, String content, MultipartFile image, List<String> type);
+    String addDoc(String title, String summary, String content, MultipartFile image, String type);
 
     /*
     * 修改文章
     * */
-    String changeDoc(long documentid,String title, String summary, String content, MultipartFile image, List<String> type);
+    String changeDoc(long documentid,String title, String summary, String content, MultipartFile image, String type);
 
     /*
     * 删除文章
