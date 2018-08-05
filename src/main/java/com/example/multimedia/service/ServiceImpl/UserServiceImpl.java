@@ -106,13 +106,12 @@ public class UserServiceImpl implements UserService {
     }
 
     /*
-    * 修改用户信息
+    * 修改密码、头像
     * */
     @Override
     public String changeUser(String password,MultipartFile headimage){
         try{
-            User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            MulUser user = userRepository.findByUsername(userDetails.getUsername());
+            MulUser user = userRepository.findByUsername(getUsername());
             if (password != null){
                 user.setPassword(passwordEncoder.encode(password));
             }
@@ -131,6 +130,19 @@ public class UserServiceImpl implements UserService {
         return "Y";
     }
 
+    //修改用户基础信息
+    @Override
+    public String changeUserInfor(int sex, String personality, String address, String qq, String job, String weburl) {
+        MulUser mulUser = userRepository.findByUsername(getUsername());
+        mulUser.setSex(sex);
+        mulUser.setPersonality(personality);
+        mulUser.setAddress(address);
+        mulUser.setQq(qq);
+        mulUser.setJob(job);
+        mulUser.setWeburl(weburl);
+        return null;
+    }
+
     /*
     * 生成随机文件名
     * */
@@ -146,10 +158,9 @@ public class UserServiceImpl implements UserService {
     * */
     @Override
     public Page<MulUser> getAllUser(int pageNum, int size, Sort.Direction direction, String key){
-        User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (!(key.equals("id") || key.equals("username") || key.equals("role")))
             key = "id";
-        if (userRepository.findByUsername(userDetails.getUsername()).getRole().equals("ROLE_MANAGE")){
+        if (userRepository.findByUsername(getUsername()).getRole().equals("ROLE_MANAGE")){
             Pageable pageable = new PageRequest(pageNum,size,direction,key);
             Page<MulUser> page = userRepository.findAll(pageable);
             return page;
@@ -168,11 +179,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public MulUser isLogin(){
         try{
-            User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return userRepository.findByUsername(userDetails.getUsername());
+            return userRepository.findByUsername(getUsername());
         }catch (ClassCastException e){
             //ignore
             return null;
         }
+    }
+
+    @Override
+    public String getUsername(){
+        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getUsername();
     }
 }

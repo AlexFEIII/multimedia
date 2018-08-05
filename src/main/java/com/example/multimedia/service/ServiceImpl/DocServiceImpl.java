@@ -77,8 +77,7 @@ public class DocServiceImpl implements DocService {
     @Override
     public List<DocUserView> getMineDoc(String type) {
         List<DocUserView> docUserViews = new ArrayList<>();
-        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
+        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
         List<Document> documents = documentRepository.findByUseridAndTypeOrderByDateAsc(mulUser.getId(),type);
         for (Document document : documents){
             docUserViews.add(new DocUserView(document,userRepository.findOne(document.getUserid())));
@@ -94,8 +93,7 @@ public class DocServiceImpl implements DocService {
         if (!title.equals(sensitivewordFilter.turnWord(title))){
             return "T_SENSITIVE";
         }
-        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
+        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
         try{
             if (summary == null)
                 summary = content.substring(0,30);

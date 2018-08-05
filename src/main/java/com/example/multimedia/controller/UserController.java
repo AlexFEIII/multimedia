@@ -39,7 +39,28 @@ public class UserController {
     * */
     @PostMapping("/changeImage")
     public String change(@RequestParam MultipartFile headimage){
+        System.out.println(headimage.getName());
         return userService.changeUser(null,headimage);
+    }
+
+    /**
+     * 修改用户基础信息
+     * @param sex 性别,1男，2女，0保密
+     * @param personality 个人简介
+     * @param address 地址
+     * @param qq
+     * @param job 工作
+     * @param weburl 个人网站
+     * @return
+     */
+    @PostMapping("/changeUser")
+    public String changeUser(@RequestParam int sex,
+                             @RequestParam String personality,
+                             @RequestParam String address,
+                             @RequestParam String qq,
+                             @RequestParam String job,
+                             @RequestParam String weburl){
+        return userService.changeUserInfor(sex,personality,address,qq,job,weburl);
     }
 
     /*

@@ -6,30 +6,30 @@ import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
-public class VideoHistory {
+public class SearchHistory {
     @Id
     @GeneratedValue
     private Long id;
-    //用户id;
+    //搜索的用户
     private long userid;
-    //浏览的视频id
-    private long videoid;
-    //浏览的时间
+    //搜索内容
+    private String key;
+    //时间
     private Date date;
 
-    public VideoHistory(){}
-    public VideoHistory(long userid,long videoid){
+    public SearchHistory(){}
+    public SearchHistory(long userid,String key){
         this.userid = userid;
-        this.videoid = videoid;
+        this.key = key;
         this.date = new Date();
     }
 
     @Override
     public String toString() {
-        return "VideoHistory{" +
+        return "SearchHistory{" +
                 "id=" + id +
                 ", userid=" + userid +
-                ", videoid=" + videoid +
+                ", key='" + key + '\'' +
                 ", date=" + date +
                 '}';
     }
@@ -50,12 +50,12 @@ public class VideoHistory {
         this.userid = userid;
     }
 
-    public long getVideoid() {
-        return videoid;
+    public String getKey() {
+        return key;
     }
 
-    public void setVideoid(long videoid) {
-        this.videoid = videoid;
+    public void setKey(String key) {
+        this.key = key;
     }
 
     public Date getDate() {

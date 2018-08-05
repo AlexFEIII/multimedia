@@ -290,6 +290,25 @@ function getMineDoc(type,num) {
     });
 }
 firstul.children("li:eq(2)").click(function () {
+    if (ff == false){
+        $.ajax({
+            url:"../forum/mine",
+            type:"get",
+            success:function (data) {
+                ff = true;
+                for (var i = 0;i < data.length;i ++){
+                    var image = "../img/14.png";
+                    if (data[i].forum.image != null) image = data[i].forum.image;
+                    var five_block = $('<div><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span></div>');
+                    $('.recommed_topic').append(five_block);
+                }
+            },error:function (data) {
+                //ignore
+            }
+        });
+    }
+});
+firstul.children("li:eq(3)").click(function () {
     if (hf == false){
         $.ajax({
             url:"../video/history",
@@ -323,26 +342,7 @@ firstul.children("li:eq(2)").click(function () {
             },error:function () {
 
             }
-        })
-        hf = true;
-    }
-});
-firstul.children("li:eq(3)").click(function () {
-    if (ff == false){
-        $.ajax({
-            url:"../forum/mine",
-            type:"get",
-            success:function (data) {
-                ff = true;
-                for (var i = 0;i < data.length;i ++){
-                    var image = "../img/14.png";
-                    if (data[i].forum.image != null) image = data[i].forum.image;
-                    var five_block = $('<div><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span></div>');
-                    $('.recommed_topic').append(five_block);
-                }
-            },error:function (data) {
-                //ignore
-            }
         });
+        hf = true;
     }
 });

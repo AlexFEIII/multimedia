@@ -9,13 +9,20 @@ import java.util.Date;
 public class ForumHistory {
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
     //用户id
     private long userid;
     //问答id
     private long forumid;
     //时间
     private Date date;
+
+    public ForumHistory(){}
+    public ForumHistory(long userid,long forumid){
+        this.userid = userid;
+        this.forumid = forumid;
+        this.date = new Date();
+    }
 
     @Override
     public String toString() {

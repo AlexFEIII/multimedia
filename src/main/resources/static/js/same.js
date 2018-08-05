@@ -20,7 +20,7 @@ $(document).ready(function () {
                 if (data.personality == null) personality = "您尚未设置个人签名" ;
                 touphoto.children("div").children("span").text(nickname);
                 touphoto.children("div").children("p:eq(0)").text(address);
-                touphoto.children("div").children("p:eq(1)").text(personality)
+                touphoto.children("div").children("p:eq(1)").text(personality);
             }
         }
     })

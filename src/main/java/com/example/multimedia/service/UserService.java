@@ -19,9 +19,12 @@ public interface UserService {
     String register(String username,String password);
 
     /*
-    * 修改用户信息
+    * 修改密码、头像
     * */
     String changeUser(String password,MultipartFile headimage);
+
+    //修改用户基础信息
+    String changeUserInfor(int sex,String personality,String address,String qq,String job,String weburl);
 
     /*
     * 返回全部用户
@@ -37,4 +40,7 @@ public interface UserService {
     * 判断是否已经登陆
     * */
     MulUser isLogin();
+
+    //获取用户名
+    String getUsername();
 }

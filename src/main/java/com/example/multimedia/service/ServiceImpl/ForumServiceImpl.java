@@ -69,8 +69,7 @@ public class ForumServiceImpl implements ForumService {
     @Override
     public List<ForumUser> getMineForum() {
         List<ForumUser> forumUsers = new ArrayList<>();
-        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
+        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
         List<Forum> forums = forumRepository.findByUserid(mulUser.getId());
         for (Forum forum:forums){
             forumUsers.add(new ForumUser(forum,userRepository.findOne(forum.getUserid())));
@@ -86,8 +85,7 @@ public class ForumServiceImpl implements ForumService {
         if (!title.equals(sensitivewordFilter.turnWord(title))){
             return "T_SENSITIVE";
         }
-        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        MulUser mulUser = userRepository.findByUsername(userDetails.getUsername());
+        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
         try{
             if (summary == null)
                 summary = content.substring(0,30);
@@ -148,9 +146,8 @@ public class ForumServiceImpl implements ForumService {
     * */
     @Override
     public String best(long forumid, long commentid) {
-        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Forum forum = forumRepository.findOne(forumid);
-        if (userRepository.findOne(forum.getUserid()).equals(userDetails.getUsername())){
+        if (userRepository.findOne(forum.getUserid()).equals(userService.getUsername())){
             forum.setResultid(commentid);
         }
         return "Y";
@@ -177,8 +174,7 @@ public class ForumServiceImpl implements ForumService {
     }
 
     public boolean power(long id,Forum forum){
-        User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userDetails.getUsername();
+        String username = userService.getUsername();
         MulUser mulUser = userRepository.findByUsername(username);
         if (userRepository.findOne(forumRepository.findOne(id).getUserid()).getUsername().equals(username) ||
                 (mulUser.getRole().equals("ROLE_MANAGER") && mulUser.getPower().contains("d")) ||

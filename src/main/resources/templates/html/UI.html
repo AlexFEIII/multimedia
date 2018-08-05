@@ -52,25 +52,25 @@
                         </form>
                     </li>
                     <li class="same_li last_li">
-                        <!-- <a href="javascript:;" id="login_a">登录</a>
-                                        <a href="javascript:;" id="register_a">注册</a> -->
+                        <a href="javascript:;" id="login_a">登录</a>
+                        <a href="javascript:;" id="register_a">注册</a>
                         <!-- 登录前 -->
-                        <div class="location_div_a">
-                            <a href="../html/personalCenter.html" class="photo_cicle" target="_blank">
-                                <img src="../img/10.jpg">
-                            </a>
-                            <div class="msg_index_dance">
-                                进入个人中心
-                            </div>
-                        </div>
-                        <div class="editor_article">
-                            <a href="RichEditor.html" target="_blank">
-                                <span>
-                                    <i class="iconfont">&#xe645;</i>
-                                </span>
-                                写文章
-                            </a>
-                        </div>
+                        <!--<div class="location_div_a">-->
+                            <!--<a href="../html/personalCenter.html" class="photo_cicle" target="_blank">-->
+                                <!--<img src="../img/10.jpg">-->
+                            <!--</a>-->
+                            <!--<div class="msg_index_dance">-->
+                                <!--进入个人中心-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="editor_article">-->
+                            <!--<a href="RichEditor.html" target="_blank">-->
+                                <!--<span>-->
+                                    <!--<i class="iconfont">&#xe645;</i>-->
+                                <!--</span>-->
+                                <!--写文章-->
+                            <!--</a>-->
+                        <!--</div>-->
                         <!-- 登陆后 -->
                     </li>
                 </ul>
@@ -118,7 +118,7 @@
                             <div class="tailoring-content">
                                 <div class="tailoring-content-one">
                                     <label title="上传图片" for="chooseImg" class="l-btn choose-btn">
-                                        <input type="file" accept="image/jpg,image/jpeg,image/png" name="file" id="chooseImg" class="hidden" onchange="selectImg(this)"> 选择图片
+                                        <input type="file" accept="image/jpg,image/jpeg,image/png" name="headimage" id="chooseImg" class="hidden" onchange="selectImg(this)"> 选择图片
                                     </label>
                                     <div class="close-tailoring" onclick="closeTailor(this)">
                                         <i class="iconfont">&#xe61a;</i>
@@ -148,13 +148,13 @@
                         <a href="javascript:;">
                             <span>性别</span>
                             <label for="inputRadio1" style="margin-left: 140px;">
-                                <input type="radio" id="inputRadio1" name="inputRadio" value="0"> 男
+                                <input type="radio" id="inputRadio1" name="inputRadio" value="1"> 男
                             </label>
                             <label for="inputRadio2">
-                                <input type="radio" id="inputRadio2" name="inputRadio" value="1"> 女
+                                <input type="radio" id="inputRadio2" name="inputRadio" value="2"> 女
                             </label>
                             <label for="inputRadio3">
-                                <input type="radio" id="inputRadio3" name="inputRadio" value="2" checked> 保密
+                                <input type="radio" id="inputRadio3" name="inputRadio" value="0" checked> 保密
                             </label>
                         </a>
                     </li>
@@ -177,7 +177,7 @@
                     <li>
                         <div class="same_div">
                             <span>电话</span>
-                            <input type="text" placeholder="请输入您的电话" class="inputText">
+                            <span title="手机号码不可改变"class="inputText"></span>
                         </div>
                     </li>
                     <li>
@@ -266,6 +266,7 @@
     <script src="../js/same.js"></script>
     <script src="../js/cropper.min.js"></script>
     <script src="../js/UI.js"></script>
+    <script src="../js/ajaxFileUpload.js"></script>
 </body>
 
 </html>

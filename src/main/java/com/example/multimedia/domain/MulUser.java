@@ -27,13 +27,13 @@ public class MulUser{
     //邮箱
     private String email;
     //性别
-    private int sex; //1:man ,2:woman , 3:unknown
+    private int sex; //1:man ,2:woman , 0:unknown
     //个人简介
     private String personality;
     //地址
     private String address;
     //QQ
-    private int qq;
+    private String qq;
     //昵称
     private String nickname;
     //职业
@@ -148,14 +148,6 @@ public class MulUser{
         this.address = address;
     }
 
-    public int getQq() {
-        return qq;
-    }
-
-    public void setQq(int qq) {
-        this.qq = qq;
-    }
-
     public String getNickname() {
         return nickname;
     }
@@ -194,5 +186,13 @@ public class MulUser{
 
     public void setPower(String power) {
         this.power = power;
+    }
+
+    public String getQq() {
+        return qq;
+    }
+
+    public void setQq(String qq) {
+        this.qq = qq;
     }
 }

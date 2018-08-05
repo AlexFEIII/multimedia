@@ -1,4 +1,10 @@
-$(".signIn_btn").on('click',function () {
+$("#main_content").keyup(function (event) {
+    if (event.keyCode == 13){
+        $(".signIn_btn").click();
+    }
+})
+
+$(".signIn_btn").click(function () {
     var username = $("input:first").val();
     var password = $("input").eq(1).val();
     $.ajax({

@@ -9,13 +9,20 @@ import java.util.Date;
 public class DocHistory {
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
     //用户id
     private long userid;
     //文章id
     private long docid;
     //浏览时间
     private Date date;
+
+    public DocHistory(){}
+    public DocHistory(long userid,long docid){
+        this.userid = userid;
+        this.docid = docid;
+        this.date = new Date();
+    }
 
     @Override
     public String toString() {

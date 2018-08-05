@@ -63,4 +63,9 @@ public class WebController {
     public String signUp(){
         return "html/signUp";
     }
+
+    @GetMapping("/html/particles.html")
+    public String particals(){
+        return "html/particles";
+    }
 }

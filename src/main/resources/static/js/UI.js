@@ -87,11 +87,31 @@ $('#sureCut').on('click', function () {
   if ($('#tailoringImg').attr('src') == null) {
     return false;
   } else {
-    var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
-    var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
-    $('#finalImg,.photo_cicle img').prop('src', base64url); //显示为图片的形式
-    //关闭裁剪框
-    closeTailor();
+    $.ajaxFileUpload({
+        url:"../user/changeImage",
+        type:"post",
+        secureuri:false,
+        fileElementId:["chooseImg"],
+        success:function (data) {
+          if (data == "IMAGE_N"){
+            alert("图片涉及不良内容，请重新选择图片！");
+          } else if(data == "BIG"){
+            alert("图片过大，请上传小于2M的图片。")
+          }else if(data == "WRONG_TYPE"){
+            alert("图片格式错误！目前仅支持jpg/jpeg/bmp/png/gif格式。")
+          }else{
+              var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
+              var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
+              $('#finalImg,.photo_cicle img').prop('src', base64url); //显示为图片的形式
+              //关闭裁剪框
+              closeTailor();
+          }
+
+         }, error:function () {
+           console.log("上传头像出错！")
+        }
+    })
+
   }
 });
 
@@ -182,7 +202,7 @@ $('.saveN').on('click', function () {
     $('#inputEmail')
     .val()
     .match(
-      /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/,
+      /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/
     ) &&
     $('.password1').val() != '' &&
     $('.password2').val() != '' &&
@@ -209,3 +229,64 @@ $(function () {
   $('.user_information textarea').val('');
   //结束
 });
+
+var userInformation = $(".user_information").children("ul");
+var userdata;
+$(document).ready(function () {
+    $.ajax({
+        url:"../user/isLogin",
+        type:"get",
+        success:function (data) {
+            console.log(data);
+            userdata = data;
+            if (data != ""){
+                $(".last_li").empty();
+                var image = "../img/14.png";
+                if (data.image != null) image = data.image;
+                $(".last_li").append('<div class="location_div_a"><a href="../html/personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="RichEditor.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
+                $("#finalImg").attr("src",image);
+                if (data.sex == 1) $("#inputRadio1").click();
+                else if (data.sex == 2) $("#inputRadio2").click();
+                if (data.personality != "") $("textarea").val(data.personality);
+                if (data.address != "") userInformation.children("li").eq(3).children("div").children("input").val(data.address);
+                if (data.qq != "")  userInformation.children("li").eq(4).children("div").children("input").val(data.qq);
+                console.log("username: "+data.username);
+                userInformation.children("li").eq(5).children("div").children("span").eq(1).val(data.username);
+                if (data.job != "") userInformation.children("li").eq(6).children("div").children("input").val(data.job);
+                if (data.weburl != "") userInformation.children("li").eq(7).children("div").children("input").val(data.weburl);
+            }
+        }
+    })
+});
+
+
+//保存信息按钮点击事件
+$(".save").click(function () {
+  var message = layer.confirm('确定保存?', {
+                    btn: ['确定', '取消'], //按钮
+                    title: '提示'
+                });
+  if (message){
+    var checkvalue;
+    for(var i = 0;i < 3;i ++){
+      if ($("#inputRadio"+(i+1)).prop('checked')){
+        checkvalue = i+1;
+        break;
+      }
+      if (checkvalue == 3) checkvalue = 0;
+    }
+    $.ajax({
+        url:"../user/changeUser",
+        type:"post",
+        data:{"sex":checkvalue,"personality":$("textarea").val(),"address":userInformation.children("li").eq(3).children("div").children("input").val(),
+            "qq":userInformation.children("li").eq(4).children("div").children("input").val(),"job":userInformation.children("li").eq(6).children("div").children("input").val(),
+            "weburl":userInformation.children("li").eq(7).children("div").children("input").val()},
+        success:function (data) {
+            console.log("changeSuccess")
+        },error:function () {
+
+        }
+    });
+  }
+});
+
