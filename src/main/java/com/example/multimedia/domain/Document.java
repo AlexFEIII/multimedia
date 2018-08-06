@@ -34,7 +34,7 @@ public class Document {
     //阅读个数
     private long sawnum = 0;
     //类别
-    private String type;
+    private String kind;
 //    //是否是互联网类别
 //    private boolean internet = false;
 //    //是否是法律
@@ -56,13 +56,13 @@ public class Document {
         date = new Date();
     }
 
-    public Document(String title,String summary,String content,String tpinyin,long userid,String type){
+    public Document(String title,String summary,String content,String tpinyin,long userid,String kind){
         this.title = title;
         this.summary = summary;
         this.content = content;
         this.tpinyin = tpinyin;;
         this.userid = userid;
-        this.type = type;
+        this.kind = kind;
         this.date = new Date();
     }
 
@@ -79,7 +79,7 @@ public class Document {
                 ", upvotenum=" + upvotenum +
                 ", commentnum=" + commentnum +
                 ", sawnum=" + sawnum +
-                ", type='" + type + '\'' +
+                ", kind='" + kind + '\'' +
                 ", date=" + date +
                 '}';
     }
@@ -164,12 +164,12 @@ public class Document {
         this.sawnum = sawnum;
     }
 
-    public String getType() {
-        return type;
+    public String getKind() {
+        return kind;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
     public Date getDate() {

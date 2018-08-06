@@ -19,10 +19,9 @@ public class SearchController {
     * key：关键词  obj：排序的字段  sort：顺序(asc/desc)
     * @timestamp 根据时间
     * */
-    @PostMapping("/user")
-    public Map<String,Map<String,Object>> searchUser(@RequestParam("key") String key,
-                                                  @RequestParam String sort){
-        return searchService.searchUser(key,"id",sort);
+    @GetMapping(value = "/user",params = "key")
+    public Map<String,Map<String,Object>> searchUser(String key){
+        return searchService.searchUser(key);
     }
 
     /*
@@ -30,22 +29,18 @@ public class SearchController {
     * 文章类型两种：doc/forum
     * 可根据id，热度（sawnum）
     * */
-    @PostMapping("/doc")
-    public Map<String,Map<String,Object>> searchDoc(@RequestParam String type,
-                                                    @RequestParam String key,
-                                                    @RequestParam String obj,
-                                                    @RequestParam String sort){
-        return searchService.searchDoc(type,key,obj,sort);
+    @GetMapping(value = "/doc",params = "key")
+    public Map<String,Map<String,Object>> searchDoc(String key){
+        return searchService.searchDoc(key);
     }
 
     /*
     * 搜索视频
     * */
-    @PostMapping("/video")
-    public Map<String,Map<String,Object>> searchVideo(@RequestParam String key,
-                                                      @RequestParam String obj,
-                                                      @RequestParam String sort){
-        return searchService.searchVideo(key,obj,sort);
+    @GetMapping(value = "/video",params = "key")
+    public Map<String,Map<String,Object>> searchVideo(String key){
+        System.out.println(searchService.searchVideo(key));
+        return searchService.searchVideo(key);
     }
 
     /*

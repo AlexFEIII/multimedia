@@ -3,6 +3,8 @@ package com.example.multimedia.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Entity
@@ -21,7 +23,7 @@ public class DocHistory {
     public DocHistory(long userid,long docid){
         this.userid = userid;
         this.docid = docid;
-        this.date = new Date();
+        this.date = Date.from(LocalDateTime.now().plusWeeks(2).atZone(ZoneId.systemDefault()).toInstant());
     }
 
     @Override
@@ -34,11 +36,11 @@ public class DocHistory {
                 '}';
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

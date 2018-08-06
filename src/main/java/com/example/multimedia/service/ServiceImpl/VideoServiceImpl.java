@@ -110,7 +110,7 @@ public class VideoServiceImpl implements VideoService {
         if (power(id,video)){
             videoRepository.delete(id);
             recyclerRepository.save(new Recycler("video",id));
-            VideoRecycler videoRecycler = new VideoRecycler(video.getTitle(),new Pinyin().getStringPinYin(video.getTitle()),video.getImage(),video.getSummary(),video.getUrl(),video.getType(),video.getDate());
+            VideoRecycler videoRecycler = new VideoRecycler(video.getTitle(),new Pinyin().getStringPinYin(video.getTitle()),video.getImage(),video.getSummary(),video.getUrl(),video.getKind(),video.getDate());
             return "Y";
         }
         return "N";
@@ -135,7 +135,7 @@ public class VideoServiceImpl implements VideoService {
                 video.setSummary(commentService.deleteHTML(summary));
             }
             if (url != null) video.setUrl(url);
-            if (type != null) video.setType(type);
+            if (type != null) video.setKind(type);
             videoRepository.save(video);
             return "Y";
         }

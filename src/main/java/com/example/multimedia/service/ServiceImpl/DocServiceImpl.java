@@ -78,7 +78,7 @@ public class DocServiceImpl implements DocService {
     public List<DocUserView> getMineDoc(String type) {
         List<DocUserView> docUserViews = new ArrayList<>();
         MulUser mulUser = userRepository.findByUsername(userService.getUsername());
-        List<Document> documents = documentRepository.findByUseridAndTypeOrderByDateAsc(mulUser.getId(),type);
+        List<Document> documents = documentRepository.findByUseridAndKindOrderByDateAsc(mulUser.getId(),type);
         for (Document document : documents){
             docUserViews.add(new DocUserView(document,userRepository.findOne(document.getUserid())));
         }
@@ -142,7 +142,7 @@ public class DocServiceImpl implements DocService {
                 }
                 document.setImage(flag);
             }
-            if (type!=null) document.setType(type);
+            if (type!=null) document.setKind(type);
             documentRepository.save(document);
             return "Y";
         }
@@ -160,7 +160,7 @@ public class DocServiceImpl implements DocService {
         if (power(id,document)){
             documentRepository.delete(id);
             recyclerRepository.save(new Recycler("doc",id));
-            DocRecycler docRecycler = new DocRecycler(document.getTitle(),document.getSummary(),document.getContent(),document.getTpinyin(),document.getUserid(),document.getUpvotenum(),document.getCommentnum(),document.getSawnum(),document.getType(),document.getDate());
+            DocRecycler docRecycler = new DocRecycler(document.getTitle(),document.getSummary(),document.getContent(),document.getTpinyin(),document.getUserid(),document.getUpvotenum(),document.getCommentnum(),document.getSawnum(),document.getKind(),document.getDate());
             if (document.getImage()!=null) docRecycler.setImage(document.getImage());
             docRecyclerRepository.save(docRecycler);
             return "Y";

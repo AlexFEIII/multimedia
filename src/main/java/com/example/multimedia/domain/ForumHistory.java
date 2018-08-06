@@ -3,6 +3,8 @@ package com.example.multimedia.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Entity
@@ -21,7 +23,7 @@ public class ForumHistory {
     public ForumHistory(long userid,long forumid){
         this.userid = userid;
         this.forumid = forumid;
-        this.date = new Date();
+        this.date = Date.from(LocalDateTime.now().plusWeeks(2).atZone(ZoneId.systemDefault()).toInstant());
     }
 
     @Override
@@ -34,7 +36,7 @@ public class ForumHistory {
                 '}';
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

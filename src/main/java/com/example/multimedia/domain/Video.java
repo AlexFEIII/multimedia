@@ -30,7 +30,7 @@ public class Video {
     //评论个数
     private long commentnum;
     //视频类别
-    private String type;
+    private String kind;
     //时间
     private Date date;
     //视频浏览个数
@@ -40,14 +40,14 @@ public class Video {
         this.date = new Date();
     }
 
-    public Video(String title,String tpinyin,String image,String summary,String url,long userid,String type){
+    public Video(String title,String tpinyin,String image,String summary,String url,long userid,String kind){
         this.title = title;
         this.tpinyin = tpinyin;
         this.image = image;
         this.summary = summary;
         this.url = url;
         this.userid = userid;
-        this.type = type;
+        this.kind = kind;
         this.date = new Date();
     }
 
@@ -63,7 +63,7 @@ public class Video {
                 ", userid=" + userid +
                 ", upvotenum=" + upvotenum +
                 ", commentnum=" + commentnum +
-                ", type='" + type + '\'' +
+                ", kind='" + kind + '\'' +
                 ", date=" + date +
                 ", sawnum=" + sawnum +
                 '}';
@@ -141,12 +141,12 @@ public class Video {
         this.commentnum = commentnum;
     }
 
-    public String getType() {
-        return type;
+    public String getKind() {
+        return kind;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
     public Date getDate() {

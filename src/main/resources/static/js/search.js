@@ -23,16 +23,8 @@ $('.leftParts .topA').on('click', function () {
 });
 
 var firstPart = $('.firstPart');
-for (var i = 0; i < 17; i++) {
-    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="../img/2.jpg"></a><span>梨视频</span></div>');
-    firstPart.append(select_one);
-};
 
 var secondPart = $('.secondPart');
-for (var i = 0; i < 17; i++) {
-    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="../img/dou.gif"></a><span>抖音短视频</span></div>');
-    secondPart.append(select_one);
-};
 
 $('.same_module a').hover(function () {
     $(this).addClass("a_hover a_hover_a");
@@ -226,3 +218,68 @@ $('.HiddenSpan').on('click', function () {
         $(this).parent().parent().remove();
     }
 });
+
+
+var content = window.location.search;
+var lf = false,vf = false,docf = false,ff = false;
+$(document).ready(function () {
+   // console.log("content: "+content);
+   //  $.ajax({
+   //      url:"../search/video"+content,
+   //      type:"get",
+   //      success:function (data) {
+   //          console.log(data);
+   //          for (var i = 0;i < data.length;i ++){
+   //              var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"></a><span>'+data[i].title+'</span></div>');
+   //              firstPart.append(select_one);
+   //          }
+   //      }
+   //  })
+});
+var clickUl = $(".leftParts ul");
+clickUl.children("li").eq(1).click(function () {
+    if (!vf){
+        $.ajax({
+            url:"../search/video"+content,
+            type:"get",
+            success:function (data) {
+                vf = true;
+                for (var i in data){
+                    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"></a><span>'+data[i].title+'</span></div>');
+                    secondPart.append(select_one);
+                }
+            }
+        })
+    }
+
+});
+clickUl.children("li").eq(2).click(function () {
+    if (!df){
+        $.ajax({
+            url:"../search/doc"+content,
+            type:"get",
+            success:function (data) {
+                console.log(data);
+                var obj,img,username;
+                for (var i = 0;i < data.length;i ++){
+                    df = true;
+                    if (data[i].kind == "internet") obj = 0;
+                    else if (data[i].kind == "law") obj = 1;
+                    else if (data[i].kind == "medicine") obj = 2;
+                    else if (data[i].kind == "economy") obj = 3;
+                    else if (data[i].kind == "history") obj = 4;
+                    else if (data[i].kind == "science") obj = 5;
+                    else obj = 6;
+                    img = "";
+                    username = data[i].nickname;
+                    if (username == null) username = data[i].nickname;
+                    if (data[i].i.image != null) image = '<img src="'+data[i].i.image+'"/>';
+                    var AddDiv = $('<div class="other_module"><div class="left_part"><a href="javascript:;" class="under_line">'+data[i].title+'</a><p class="draw_text">'+data[i].summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+img+'</aa></div>');
+                    SelectDiv.eq(obj).append(AddDiv);
+                }
+            }
+        })
+    }
+
+});
+

@@ -10,17 +10,17 @@ public interface SearchService {
     /*
     * 搜索用户
     * */
-    Map<String,Map<String,Object>> searchUser(String key,String obj,String sort);
+    Map<String,Map<String,Object>> searchUser(String key);
 
     /*
     * 搜索文章
     * */
-    Map<String,Map<String,Object>> searchDoc(String type,String key,String obj,String sort);
+    Map<String,Map<String,Object>> searchDoc(String key);
 
     /*
     * 搜索视频
     * */
-    Map<String,Map<String,Object>> searchVideo(String key,String obj,String sort);
+    Map<String,Map<String,Object>> searchVideo(String key);
 
     /*
     * 获取用户

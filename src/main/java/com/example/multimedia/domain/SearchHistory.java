@@ -1,8 +1,12 @@
 package com.example.multimedia.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Entity
@@ -13,15 +17,16 @@ public class SearchHistory {
     //搜索的用户
     private long userid;
     //搜索内容
-    private String key;
+    @Column(length = 65536)
+    private String content;
     //时间
     private Date date;
 
     public SearchHistory(){}
-    public SearchHistory(long userid,String key){
+    public SearchHistory(long userid,String content){
         this.userid = userid;
-        this.key = key;
-        this.date = new Date();
+        this.content = content;
+        this.date =   Date.from(LocalDateTime.now().plusWeeks(2).atZone(ZoneId.systemDefault()).toInstant());
     }
 
     @Override
@@ -29,16 +34,16 @@ public class SearchHistory {
         return "SearchHistory{" +
                 "id=" + id +
                 ", userid=" + userid +
-                ", key='" + key + '\'' +
+                ", content='" + content + '\'' +
                 ", date=" + date +
                 '}';
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -50,12 +55,12 @@ public class SearchHistory {
         this.userid = userid;
     }
 
-    public String getKey() {
-        return key;
+    public String getContent() {
+        return content;
     }
 
-    public void setKey(String key) {
-        this.key = key;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public Date getDate() {

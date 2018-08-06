@@ -7,5 +7,5 @@ import java.util.Date;
 import java.util.List;
 
 public interface SearchHistoryRepository extends JpaRepository<SearchHistory,Long> {
-    List<SearchHistory> findByUseridAndDateAfter(long id, Date date);
+    List<SearchHistory> findByUseridAndDateBefore(long id, Date date);
 }

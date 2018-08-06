@@ -36,7 +36,7 @@ public class Forum {
     //阅读个数
     private long sawnum;
     //类别
-    private String type;
+    private String kind;
 //    //是否是互联网类别
 //    private boolean internet;
 //    //是否是法律
@@ -56,13 +56,13 @@ public class Forum {
 
     public Forum(){}
 
-    public Forum(String title,String summary,String content,String tpinyin,long userid,String type){
+    public Forum(String title,String summary,String content,String tpinyin,long userid,String kind){
         this.title = title;
         this.summary = summary;
         this.content = content;
         this.tpinyin = tpinyin;
         this.userid = userid;
-        this.type = type;
+        this.kind = kind;
         date = new Date();
     }
 
@@ -80,7 +80,7 @@ public class Forum {
                 ", upvotenum=" + upvotenum +
                 ", commentnum=" + commentnum +
                 ", sawnum=" + sawnum +
-                ", type='" + type + '\'' +
+                ", kind='" + kind + '\'' +
                 ", date=" + date +
                 '}';
     }
@@ -173,12 +173,12 @@ public class Forum {
         this.sawnum = sawnum;
     }
 
-    public String getType() {
-        return type;
+    public String getKind() {
+        return kind;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
     public Date getDate() {

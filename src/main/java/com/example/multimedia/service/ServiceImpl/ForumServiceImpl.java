@@ -134,7 +134,7 @@ public class ForumServiceImpl implements ForumService {
                 }
                 forum.setImage(flag);
             }
-            if (type != null) forum.setType(type);
+            if (type != null) forum.setKind(type);
             forumRepository.save(forum);
             return "Y";
         }
@@ -162,7 +162,7 @@ public class ForumServiceImpl implements ForumService {
         if (power(id,forum)) {
             forumRepository.delete(id);
             recyclerRepository.save(new Recycler("doc",id));
-            ForumRecycler forumRecycler = new ForumRecycler(forum.getTitle(),forum.getSummary(),forum.getContent(),forum.getTpinyin(),forum.getUserid(),forum.getUpvotenum(),forum.getCommentnum(),forum.getSawnum(),forum.getType(),forum.getDate());
+            ForumRecycler forumRecycler = new ForumRecycler(forum.getTitle(),forum.getSummary(),forum.getContent(),forum.getTpinyin(),forum.getUserid(),forum.getUpvotenum(),forum.getCommentnum(),forum.getSawnum(),forum.getKind(),forum.getDate());
 
             if (forum.getImage()!=null) forumRecycler.setImage(forum.getImage());
             if (forum.getResultid()!=-1) forumRecycler.setResultid(forum.getResultid());
