@@ -9,7 +9,7 @@ $(document).ready(function () {
                 $(".last_li").empty();
                 var image = "../img/14.png";
                 if (data.image != null) image = data.image;
-                $(".last_li").append('<div class="location_div_a"><a href="../html/personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="RichEditor.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
+                $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
                 var touphoto = $(".contain_tou_photo");
                 touphoto.children("a").children("img").attr("src",image);
                 var nickname = data.nickname;

@@ -19,6 +19,9 @@ public class WebController {
         return "html/article";
     }
 
+    @GetMapping("/html/articlePage.html")
+    public String articlePage(){return "html/articlePage";}
+
     @GetMapping("/html/map.html")
     public String map(){
         return "html/map";

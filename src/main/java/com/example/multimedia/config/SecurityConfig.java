@@ -34,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(loginSuccess())
                 .failureHandler(loginFailure())
                 .and().rememberMe().tokenValiditySeconds(60*60*24*7)
+                .and().logout().logoutUrl("/logout").clearAuthentication(true).invalidateHttpSession(true)
         .and().csrf().disable();
         http.headers().frameOptions().sameOrigin();
     }
