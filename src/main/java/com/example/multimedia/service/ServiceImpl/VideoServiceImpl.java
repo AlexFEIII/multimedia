@@ -69,7 +69,7 @@ public class VideoServiceImpl implements VideoService {
     public List<VideoUser> getMineVideo(){
         List<VideoUser> videoUsers = new ArrayList<>();
         MulUser mulUser = userRepository.findByUsername(userService.getUsername());
-        List<Video> videos = videoRepository.findByUserid(mulUser.getId());
+        List<Video> videos = videoRepository.findByUseridOrderByDateAsc(mulUser.getId());
         for (Video video : videos){
             videoUsers.add(new VideoUser(video,userRepository.findOne(video.getUserid())));
         }

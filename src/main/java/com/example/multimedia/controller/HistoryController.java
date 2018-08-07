@@ -1,9 +1,16 @@
 package com.example.multimedia.controller;
 
+import com.example.multimedia.domain.Document;
+import com.example.multimedia.domain.Forum;
+import com.example.multimedia.domain.SearchHistory;
+import com.example.multimedia.domain.Video;
+import com.example.multimedia.domain.returnMessage.DocUserView;
 import com.example.multimedia.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/history")
@@ -22,6 +29,15 @@ public class HistoryController {
     }
 
     /**
+     * 得到文章浏览历史
+     * @return
+     */
+    @GetMapping("/doc")
+    public List<DocUserView> getDHistory(){
+        return historyService.getDHistory();
+    }
+
+    /**
      * 删除文章浏览记录
      */
     @DeleteMapping("/ddoc")
@@ -34,6 +50,15 @@ public class HistoryController {
     @PutMapping("/forum/{forumid}")
     public void fHistory(@PathVariable long forumid){
         historyService.fhistory(forumid);
+    }
+
+    /**
+     * 得到问答浏览历史
+     * @return
+     */
+    @GetMapping("/forum")
+    public List<Forum> getFHistory(){
+        return historyService.getFHistory();
     }
 
     /**
@@ -53,6 +78,12 @@ public class HistoryController {
         historyService.vhistory(videoid);
     }
 
+    //得到视频浏览历史
+    @GetMapping("/video")
+    public List<Video> getVHistory(){
+        return historyService.getVHistory();
+    }
+
     /**
      * 删除视频浏览记录
      */
@@ -65,8 +96,12 @@ public class HistoryController {
      */
     @PutMapping(value = "/search",params = "key")
     public void sHistory(String key){
-        System.out.println("key:"+key);
         historyService.shistory(key);
+    }
+
+    @GetMapping("/search")
+    public List<SearchHistory> getSHistory(){
+        return historyService.getSHistory();
     }
 
     /**

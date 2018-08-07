@@ -24,7 +24,7 @@ $(".signIn_btn").click(function () {
                 parent.$(".layui-layer-close").click();
                 parent.$(".last_li").empty();
                 var image = "../img/14.png";
-                if (data.image != null) image = data.image;
+                if (data.headimage != null) image = data.headimage;
                 parent.$(".last_li").append('<div class="location_div_a"><a href="../html/personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="RichEditor.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
             }
         },error:function (data) {

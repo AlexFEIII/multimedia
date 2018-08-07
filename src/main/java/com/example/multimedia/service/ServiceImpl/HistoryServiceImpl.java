@@ -1,8 +1,7 @@
 package com.example.multimedia.service.ServiceImpl;
 
-import com.example.multimedia.domain.DocHistory;
-import com.example.multimedia.domain.MulUser;
-import com.example.multimedia.domain.SearchHistory;
+import com.example.multimedia.domain.*;
+import com.example.multimedia.domain.returnMessage.DocUserView;
 import com.example.multimedia.repository.*;
 import com.example.multimedia.service.HistoryService;
 import com.example.multimedia.service.UserService;
@@ -11,7 +10,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class HistoryServiceImpl implements HistoryService {
@@ -27,6 +28,12 @@ public class HistoryServiceImpl implements HistoryService {
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private DocumentRepository documentRepository;
+    @Autowired
+    private ForumRepository forumRepository;
+    @Autowired
+    private VideoRepository videoRepository;
 
     //增加文章历史
     @Override
@@ -37,6 +44,16 @@ public class HistoryServiceImpl implements HistoryService {
         }catch (Exception e){
             //ignore
         }
+    }
+
+    //得到文章历史
+    @Override
+    public List<DocUserView> getDHistory(){
+        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        List<DocUserView> docUserViews = new ArrayList<>();
+        List<DocHistory> docHistories = docHistoryRepository.findByUserid(mulUser.getId());
+        for (DocHistory docHistory : docHistories) docUserViews.add(new DocUserView(documentRepository.findOne(docHistory.getDocid()),userRepository.findOne(docHistory.getUserid())));
+        return docUserViews;
     }
 
     //删除文章历史
@@ -56,6 +73,21 @@ public class HistoryServiceImpl implements HistoryService {
         }
     }
 
+    //得到问答历史
+    @Override
+    public List<Forum> getFHistory(){
+        try{
+            MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+            List<ForumHistory> forumHistories = forumHistoryRepository.findByUserid(mulUser.getId());
+            List<Forum> forums = new ArrayList<>();
+            for (ForumHistory forumHistory:forumHistories) forums.add(forumRepository.findOne(forumHistory.getForumid()));
+            return forums;
+        }catch (Exception e){
+            return null;
+        }
+
+    }
+
     //删除问答历史
     @Override
     public void dforum(){
@@ -73,6 +105,16 @@ public class HistoryServiceImpl implements HistoryService {
         }
     }
 
+    //得到视频历史
+    @Override
+    public List<Video> getVHistory(){
+        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        List<VideoHistory> videoHistories = videoHistoryRepository.findByUserid(mulUser.getId());
+        List<Video> videos = new ArrayList<>();
+        for (VideoHistory videoHistory:videoHistories) videos.add(videoRepository.findOne(videoHistory.getVideoid()));
+        return videos;
+    }
+
     //删除视频历史
     @Override
     public void dvideo(){
@@ -84,9 +126,24 @@ public class HistoryServiceImpl implements HistoryService {
     public void shistory(String key) {
         try{
             MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+            try{
+                searchHistoryRepository.delete(searchHistoryRepository.findByUseridAndContentEquals(mulUser.getId(),key));
+            }catch (Exception e){
+                //ignore
+            }
             searchHistoryRepository.save(new SearchHistory(mulUser.getId(),key));
         }catch (Exception e){
             //ignore
+        }
+    }
+
+    //得到搜索历史
+    @Override
+    public List<SearchHistory> getSHistory(){
+        try{
+            return searchHistoryRepository.findByUseridOrderByIdDesc(userRepository.findByUsername(userService.getUsername()).getId());
+        }catch (Exception e){
+            return null;
         }
     }
 

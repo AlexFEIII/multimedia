@@ -107,39 +107,8 @@ var get_more_one = $('<div class="contain_a"><a class="contain_span" href="javas
 var get_more_two = $('<div class="contain_a"><a class="contain_span" href="javascript:;"><span class="change_circle">Get More<i class="iconfont">&#xe6c3;</i></span></a></div>');
 var get_more_three = $('<div class="contain_a"><a class="contain_span" href="javascript:;"><span class="change_circle">Get More<i class="iconfont">&#xe6c3;</i></span></a></div>');
 
-for (var i = 0; i < 6; i++) {
-    var v_list = $('<div class="same_module"><a href="javascript:;"><img src="../img/2.jpg"></a><span>梨视频</span></div>');
-    Video_list.append(v_list);
-}
-
-Video_list.append(get_more_one);
-
-for (var i = 0; i < 5; i++) {
-    var a_list = $('<div class="other_module"><div class="left_part"><a href="javascript:;" class="under_line"></a><p class="draw_text"></p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a"></a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img"><img src=""/></aa></div>');
-    select_Btn.append(a_list);
-}
-
-article_list.append(select_Btn);
-article_list.append(get_more_two);
-
-select_Btn.eq(0).find("img").attr("src", ImgArray[0]);
-select_Btn.eq(0).find(".under_line").html("五一，差点只剩半条命！");
-select_Btn.eq(0).find(".bottom_first_a").html("5312Ana");
-select_Btn.eq(0).find(".bottom_two_a").append("<b>20</b>");
-select_Btn.eq(0).find(".bottom_first_span").append("<b>19</b>");
-select_Btn.eq(0).find(".bottom_two_span").append("<b>1</b>");
-select_Btn.eq(0).find("p").html("原本打算五一跟朋友跑完半程马拉松后就去北海拍海景，然而不幸的是，她准备跑到终点时突然晕倒了，虽然我没体验过这种晕倒的感觉，但可以想象出这种从鬼门关出来人的有多不易。");
 
 var answer_list = $('.answer_list');
-for (var i = 0; i < 8; i++) {
-    var w_list = $('<div><a href="javascript:;"><img src=""><span class="top_img_span"></span></a><span class="issue"></span></div>');
-    answer_list.append(w_list);
-}
-answer_list.append(get_more_three);
-
-$('.answer_list').find("img").attr("src", Issue[0]);
-$('.answer_list').find(".top_img_span").html("知识产权保卫战");
-$('.answer_list').find(".issue").html("该议题被浏览 2223661 次");
 
 var collect_video = $('.collect_video');
 var collect_article = $('.collect_article');
@@ -223,7 +192,7 @@ firstul.children("li:eq(0)").click(function () {
             success:function (data) {
                 vf = true;
                 for (var i = 0;i < data.length;i ++){
-                    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].video.image+'"></a><span>'+data[i].video.title+'<span class="videoidspan" style="display: none">'+data[i].video.id+'</span></span></div>');
+                    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].video.image+'"></a><span>'+data[i].video.title+'</span></div>');
                     Select_One_Div.append(select_one);
                 }
             },error:function (data) {
@@ -279,7 +248,7 @@ function getMineDoc(type,num) {
                 var image = "";
                 if (username == null) username = data[i].mulUser.username;
                 if (data[i].document.image != null) image = '<img src="'+data[i].document.image+'"/>';
-                var AddDiv = $('<div class="other_module"><div class="left_part"><a href="javascript:;" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>')
+                var AddDiv = $('<div class="other_module"><div class="left_part"><a href="article.html?id='+data[i].document.id+'" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>')
                 SelectDiv.eq(num).append(AddDiv);
             }
             return true;
@@ -310,39 +279,110 @@ firstul.children("li:eq(2)").click(function () {
 });
 firstul.children("li:eq(3)").click(function () {
     if (hf == false){
+        var historyVF = false;
         $.ajax({
-            url:"../video/history",
+            url:"../history/video",
             type:"get",
+            async:false,
             success:function (data) {
-                for (var i = 0;i < data.length;i ++){
-
+                var num = 20;
+                if (data.length < 20) num = data;
+                for (var i = 0;i < num;i ++){
+                    var v_list = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"></a><span>'+data[i].title+'</span></div>');
+                    Video_list.append(v_list);
+                }
+                if (data.length > 20){
+                    Video_list.append('<div id="pagingOne" class="pagingTool"></div>');
+                    historyVF = true;
+                }else{
+                    Video_list.append('<div class="contain_a" style="padding-bottom: 20px;"><span style="text-align: center;color: #8b8c8b;">——您当前仅浏览过这些视频——</span></div>')
                 }
             },error:function (data) {
                 //ignore
             }
         });
+        //分页
+        if (historyVF){
+            getPaging("pagingOne");
+        }
+        Video_list.append(get_more_one);
+        var historyD = false;
         $.ajax({
-            url:"../doc/history",
+            url:"../history/doc",
             type:"get",
+            async:false,
             success:function (data) {
-                for (var i = 0;i < data.length;i ++){
-
+                var username,num = 20;
+                if (data.length < 20) num = data.length;
+                for (var i = 0;i < num;i ++){
+                    username = data[i].mulUser.nickname;
+                    var image = "";
+                    if (username == null) username = data[i].mulUser.username;
+                    if (data[i].document.image != null) image = '<img src="'+data[i].document.image+'"/>';
+                    var a_list = $('<div class="other_module"><div class="left_part"><a href="article.html?id='+data[i].document.id+'" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>')
+                    select_Btn.append(a_list);
+                }
+                article_list.append(select_Btn);
+                if (data.length > 20) {
+                    article_list.append('<div id="pagingTwo" class="pagingTool"></div>');
+                    historyD = true;
+                }else{
+                    article_list.append('<div class="contain_a" style="padding-bottom: 20px;"><span style="text-align: center;color: #8b8c8b;">——您当前仅浏览过这些文章——</span></div>')
                 }
             },error:function () {
 
             }
         });
+        if (historyD){
+            getPaging("pagingTwo")
+        }
+        article_list.append(get_more_two);
+        var historyF = false;
         $.ajax({
-            url:"../forum/history",
+            url:"../history/forum",
             type:"get",
+            async: false,
             success:function (data) {
-                for (var i = 0;i < data.length;i ++){
-
+                var image,num = 24;
+                if (data.length < 24) num = data.length;
+                for (var i = 0;i < num;i ++){
+                    image = "../img/14.png";
+                    if (data[i].forum.image != null) image = data[i].forum.image;
+                    var w_list = $('<div><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span></div>');
+                    answer_list.append(w_list);
+                }
+                if (data.length > 24) {
+                    answer_list.append('<div id="pagingThree" class="pagingTool"></div>');
+                    historyF = true;
+                }else{
+                    answer_list.append('<div class="contain_a" style="padding-bottom: 20px;margin:0;"><span style="text-align: center;color: #8b8c8b;">——您当前仅浏览过这些问答——</span></div>')
                 }
             },error:function () {
 
             }
         });
+        if (historyF){
+            getPaging("pagingThree")
+        }
+        answer_list.append(get_more_three);
         hf = true;
     }
 });
+function getPaging(name){
+    $('#'+name).Paging({
+        pagesize: 10,
+        count: 100,
+        prevTpl: '<i class="iconfont">&#xe78c;</i>',
+        nextTpl: '<i class="iconfont">&#xe77c;</i>',
+        firstTpl: '<i class="iconfont">&#xe609;</i>',
+        lastTpl: '<i class="iconfont">&#xe6de;</i>',
+    });
+    $('#'+name).children("li").on('click', function () {
+        $('#'+name).css({
+            '-webkit-user-select': 'none',
+            '-moz-user-select': 'none',
+            '-ms-user-select': 'none',
+            'user-select': 'none'
+        });
+    });
+}

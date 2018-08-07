@@ -70,7 +70,7 @@ public class ForumServiceImpl implements ForumService {
     public List<ForumUser> getMineForum() {
         List<ForumUser> forumUsers = new ArrayList<>();
         MulUser mulUser = userRepository.findByUsername(userService.getUsername());
-        List<Forum> forums = forumRepository.findByUserid(mulUser.getId());
+        List<Forum> forums = forumRepository.findByUseridOrderByDateAsc(mulUser.getId());
         for (Forum forum:forums){
             forumUsers.add(new ForumUser(forum,userRepository.findOne(forum.getUserid())));
         }

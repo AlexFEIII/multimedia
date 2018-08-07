@@ -285,3 +285,18 @@ $(".save").click(function () {
   }
 });
 
+$(".logOut").click(function () {
+    var msg = confirm("确认注销账号？");
+    if (msg){
+        $.ajax({
+            url:"../logout",
+            success:function () {
+                window.location.replace("/html/index.html");
+            },error:function () {
+
+            }
+        })
+    }
+
+});
+

@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface VideoHistoryRepository extends JpaRepository<VideoHistory,Long> {
     List<VideoHistory> findByUseridAndDateBefore(long id, Date date);
+    List<VideoHistory> findByUserid(long id);
 }

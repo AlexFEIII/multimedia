@@ -429,3 +429,7 @@ $(document).on('click', '.toolBar_Btn a,.NewEditor .publish_A', function () {
     .resize();
 });
 //重载滚动条
+
+$(document).ready(function () {
+   //获取url内容取得文章内容
+});

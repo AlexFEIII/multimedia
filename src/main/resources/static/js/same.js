@@ -8,7 +8,7 @@ $(document).ready(function () {
                 $(".layui-layer-close").click();
                 $(".last_li").empty();
                 var image = "../img/14.png";
-                if (data.image != null) image = data.image;
+                if (data.headimage != null) image = data.headimage;
                 $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
                 var touphoto = $(".contain_tou_photo");
                 touphoto.children("a").children("img").attr("src",image);
@@ -200,6 +200,7 @@ $(window).keydown(function (event) {
         var value = $('.InputTextBtn').val();
         if (value != '') {
             window.open("/html/search.html?key="+value);
+            SearchFlag = false;
             $.ajax({
                 url:"../history/search?key="+value,
                 type:"put",
@@ -214,65 +215,86 @@ $(window).keydown(function (event) {
     }
 });
 
+var SearchFlag = false;
+
 function SearchFun(n) {
     var value = $('.InputTextBtn').val();
     if (value != '') {
         n.attr({
-        'href': '/html/search.html?key='+value,
-        'target': '_blank'
-    });
+            'href': '/html/search.html?key='+value,
+            'target': '_blank'
+        });
+        SearchFlag = false;
+    }
 }
+var allSearchHistory = "",changeHistory = "";
+
+function getSearch(){
+    if (!SearchFlag){
+        $.ajax({
+            url:"../history/search",
+            type:"get",
+            async:false,
+            success:function(data){
+                if (data != ""){
+                    if (data.length > 5){
+                        changeHistory = '<a href="javascript:;"><span class="longWidth"><i class="iconfont">&#xe6e3;</i>换一批</span></a>'
+                    }
+                    allSearchHistory = data;
+                    SearchFlag = true;
+                }
+            },error:function () {
+                console.log("获取搜索历史信息失败")
+            }
+        });
+    }
 }
+$('.InputTextBtn').click(function () {
+    console.log("click");
+    $(this).css('width','180px');
+    $('.search_special').css('background', '#BBB');
+    getSearch();
 
-$('.InputTextBtn').on('click', function () {
-    $('.HotAPast').remove();
-    var HotPast = $('<div class="HotAPast"><div class="topSearch"><p>搜索历史</p><a href="javascript:;"><span class="longWidth">' +
-        '<i class="iconfont">&#xe6e3;</i></span>换一批</a></div><ul class="past"><li><a href="javascript:;"><i class="iconfont">&#xe6c0;</i>' +
-        '<p class="pastP">上大学后，我一直坚持的三件事情</p></a></li><li><a href="javascript:;"><i class="iconfont">&#xe6c0;</i>' +
-        '<p class="pastP">上大学后，我一直坚持的三件事情</p></a></li><li><a href="javascript:;"><i class="iconfont">&#xe6c0;</i>' +
-        '<p class="pastP">上大学后，我一直坚持的三件事情</p></a></li><li><a href="javascript:;"><i class="iconfont">&#xe6c0;</i>' +
-        '<p class="pastP">上大学后，我一直坚持的三件事情</p></a></li><li><a href="javascript:;"><i class="iconfont">&#xe6c0;</i>' +
-        '<p class="pastP">上大学后，我一直坚持的三件事情</p></a></li></ul></div>');
-    $('.searchLi form').append(HotPast);
-    $('.InputTextBtn').css({
-        'width': '180px'
-    });
-    $('.search_special').css({
-        'background': '#BBB'
-    });
-    stopBubble();
+    function PageHistory(pagenum){
+        if (allSearchHistory != ""){
+            var num = pagenum*5+4;
+            var PASTP = $(".pastP");
+            $(".past").empty();
+            if (num > allSearchHistory.length) num = allSearchHistory.length-1;
+            for (var i = pagenum*5;i <= num;i ++) {
+                $(".past").append('<li><a href="/html/search.html?key='+allSearchHistory[i].content+'" target="_blank"><i class="iconfont">&#xe6c0;</i><p class="pastP">'+allSearchHistory[i].content+'</p></a></li>') ;
+            }
+        }
+    }
 
-    CutWord();
+    if (allSearchHistory != "" && SearchFlag){
+        var num = 4;
+        if (allSearchHistory.length < 5) num = allSearchHistory.length-1;
+        var HotPast = '<div class="HotAPast"><div class="topSearch"><p>搜索历史</p>'+changeHistory+'</div><ul class="past">';
+        for (var i = 0;i <= num;i ++) {
+            HotPast = HotPast + '<li><a href="/html/search.html?key='+allSearchHistory[i].content+'" target="_blank"><i class="iconfont">&#xe6c0;</i><p class="pastP">'+allSearchHistory[i].content+'</p></a></li>';
+        }
+        HotPast = HotPast + '</ul></div>';
+        stopBubble();
+        CutWord();
+        $('.searchLi form').append(HotPast);
+    }
 
     var NumAdd = 0;
     var pageChange = 0;
     $('.topSearch a').on('click', function () {
         NumAdd++;
         pageChange++;
-
         $(this).find('.iconfont').css({
-            'transform': 'rotate(' + 720 * NumAdd + 'deg)'
+            'transform': 'rotate(' + 720 * NumAdd + 'deg)',
+            '-webkit-transform': 'rotate('+ 720 * NumAdd + 'deg)',
+            '-ms-transform': 'rotate('+ 720 * NumAdd + 'deg)'
         });
-        switch (pageChange) {
-            case 0:
-                $('.pastP').html('上大学后，我一直坚持的三件事情');
-                break;
-            case 1:
-                $('.pastP').html('既然实现目标那么苦，你为什么还要继续苦下去');
-                break;
-            case 2:
-                $('.pastP').html('大学四年，我独立承担了我的生活费');
-                break;
-            case 3:
-                $('.pastP').html('使用Spring Data JPA访问关系型数据库');
-                break;
-            case 4:
-                $('.pastP').html('自律才能得自由---读《我的职业是小说家》');
-                break;
+        console.log("length: "+allSearchHistory.length/5+"  now:"+pageChange);
+        if (pageChange >= allSearchHistory.length/5) {
+            pageChange = 0;
         }
-        if (pageChange == 4) {
-            pageChange = -1;
-        }
+        PageHistory(pageChange);
         CutWord();
         stopBubble();
     });
