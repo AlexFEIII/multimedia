@@ -2,10 +2,7 @@ package com.example.multimedia.controller;
 
 import com.example.multimedia.service.UpvoteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UpvoteController {
@@ -17,10 +14,8 @@ public class UpvoteController {
     * 需要参数：点赞类型，用户id，点赞的事物id
     * 点赞类型：文章、文章评论、论坛、论坛评论、视频
     **/
-    @PostMapping("upvote")
-    public void upvote(@RequestParam String type,
-                       @RequestParam long userid,
-                       @RequestParam long objid){
+    @PutMapping(value = "upvote",params = {"type","userid","objid"})
+    public void upvote(String type,long userid,long objid){
         upvoteService.upvote(type,userid,objid);
     }
 

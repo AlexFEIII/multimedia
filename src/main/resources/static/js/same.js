@@ -201,19 +201,23 @@ $(window).keydown(function (event) {
         if (value != '') {
             window.open("/html/search.html?key="+value);
             SearchFlag = false;
-            $.ajax({
-                url:"../history/search?key="+value,
-                type:"put",
-                success:function () {
-                },error:function () {
-                    console.log("增加搜索历史出错")
-                }
-            })
+            addSHistgory(value);
         }
         $('.search_special').click();
         event.preventDefault();
     }
 });
+
+function addSHistgory(content){
+    $.ajax({
+        url:"../history/search?key="+content,
+        type:"put",
+        success:function () {
+        },error:function () {
+            console.log("增加搜索历史出错")
+        }
+    })
+}
 
 var SearchFlag = false;
 
@@ -250,9 +254,8 @@ function getSearch(){
     }
 }
 $('.InputTextBtn').click(function () {
-    console.log("click");
-    $(this).css('width','180px');
-    $('.search_special').css('background', '#BBB');
+    $(this).animate({'width':'180px'},300);
+    $('.search_special').css({'background':'#BBB'});
     getSearch();
 
     function PageHistory(pagenum){
@@ -290,7 +293,6 @@ $('.InputTextBtn').click(function () {
             '-webkit-transform': 'rotate('+ 720 * NumAdd + 'deg)',
             '-ms-transform': 'rotate('+ 720 * NumAdd + 'deg)'
         });
-        console.log("length: "+allSearchHistory.length/5+"  now:"+pageChange);
         if (pageChange >= allSearchHistory.length/5) {
             pageChange = 0;
         }

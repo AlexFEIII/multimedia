@@ -2,21 +2,6 @@ var DataTitle = $('.bottom_message').attr('data-title');
 var alertTitle = $('<span class="alertSpan"></span>');
 var onOff = true;
 var Judge = true;
-var titleImg = $('#ContainEditor img')
-  .eq(0)
-  .attr('src');
-$('#ContainEditor h1')
-  .eq(0)
-  .css({
-    display: 'none',
-  });
-var getNodeName = document.getElementById('ContainEditor').firstElementChild
-  .nodeName;
-var addContent = $('<' + getNodeName + '></' + getNodeName + '>');
-addContent.insertBefore($('#userInformation'));
-var getFirstContent = document.getElementById('ContainEditor').firstElementChild
-  .innerHTML;
-addContent.html(getFirstContent);
 
 var ListLan = $('.circle').attr('list-title');
 
@@ -26,13 +11,13 @@ $('.timeBar').hover(
     $('.alertSpan').html(DataTitle);
     setTimeout(function () {
       $('.alertSpan').css({
-        opacity: '1',
+        opacity: '1'
       });
     }, 10);
   },
   function () {
     $('.alertSpan').css({
-      opacity: '',
+      opacity: ''
     });
     setTimeout(function () {
       alertTitle.remove();
@@ -46,13 +31,13 @@ $('.circle').hover(
     $('.alertSpan').html(ListLan);
     setTimeout(function () {
       $('.alertSpan').css({
-        opacity: '1',
+        opacity: '1'
       });
     }, 10);
   },
   function () {
     $('.alertSpan').css({
-      opacity: '',
+      opacity: ''
     });
     setTimeout(function () {
       alertTitle.remove();
@@ -60,33 +45,7 @@ $('.circle').hover(
   }
 );
 
-$('.focus').on('click', function () {
-  if (onOff) {
-    onOff = false;
-    $('.focus').css({
-      background: '#869B74',
-    });
-    $('.focus .iconfont').html('&#xe642;');
-    $('.focus span').html('已关注');
-  } else {
-    onOff = true;
-    $('.focus').css({
-      background: '',
-    });
-    $('.focus .iconfont').html('&#xe604;');
-    $('.focus span').html('关注');
-  }
-});
-
 var UrlAddress = 'https://music.163.com';
-
-//配置share.js的参数
-socialShare('.social-share', {
-  title: getFirstContent, //分享的标题
-  image: titleImg, //分享的图片  一般是正文的第一张图片
-  url: UrlAddress, //填写当前页面的地址     window.location.href      分享的地址
-  description: getFirstContent, //分享到额描述
-});
 
 $('.circle').on('click', function () {
   if (Judge) {
@@ -429,7 +388,83 @@ $(document).on('click', '.toolBar_Btn a,.NewEditor .publish_A', function () {
     .resize();
 });
 //重载滚动条
-
+var userinfor = $("#userInformation");
 $(document).ready(function () {
    //获取url内容取得文章内容
+    $.ajax({
+        url:"../doc"+ window.location.search,
+        type:"get",
+        success:function (data) {
+            console.log(data);
+            var indiv = '<a class="userName" href="OhthersCenter.html?id=' + data.mulUser.id + '">' + data.mulUser.nickname
+                + '</a><a class="focus" href="javascript:;"><i class="iconfont">&#xe604;</i><span>关注</span></a>';
+            $(".top_message").append(indiv);
+            $('.focus').on('click', function () {
+                if (onOff) {
+                    onOff = false;
+                    $('.focus').css({
+                        background: '#869B74'
+                    });
+                    $('.focus .iconfont').html('&#xe642;');
+                    $('.focus span').html('已关注');
+                } else {
+                    onOff = true;
+                    $('.focus').css({
+                        background: ''
+                    });
+                    $('.focus .iconfont').html('&#xe604;');
+                    $('.focus span').html('关注');
+                }
+            });
+            if (data.isupvote){
+                $('.TwoPart a').eq(0).css("color", '#FF9500');
+                isGood = true;
+            }
+            $('.TwoPart a').eq(0).children("span").text(data.document.upvotenum);
+            if (data.iscollect){
+                $('.TwoPart a').eq(1).css("color", '#FF9500');
+                isBad = true;
+            }
+            if (data.isfollow) {
+                onOff = true;
+                $('.focus').css({
+                    background: '#869B74'
+                });
+                $('.focus .iconfont').html('&#xe642;');
+                $('.focus span').html('已关注');
+            }
+            userinfor.children(".photoIMg img").attr("src",data.mulUser.headimage);
+            var bMsg = $(".bottom_message");
+            bMsg.children("span").eq(0).text(data.document.date);
+            bMsg.children("span").eq(1).text("阅读"+data.document.sawnum);
+            bMsg.children("span").eq(2).text("评论"+data.document.commentnum);
+            bMsg.children("span").eq(3).text("喜欢"+data.document.upvotenum);
+            $("#ContainEditor").append(data.document.content);
+            var titleImg = $('#ContainEditor img')
+                .eq(0)
+                .attr('src');
+            $('#ContainEditor h1')
+                .eq(0)
+                .css({
+                    display: 'none'
+                });
+            var theNode = document.getElementById('ContainEditor').firstElementChild;
+            var getNodeName = theNode.nodeName;
+            var addContent = $('<' + getNodeName + '></' + getNodeName + '>');
+            console.log("addContent: "+addContent);
+            addContent.insertBefore($('#userInformation'));
+            var getFirstContent = $('.ContainEditor').html();
+            addContent.html(getFirstContent);
+
+            //配置share.js的参数
+            socialShare('.social-share', {
+                title: getFirstContent, //分享的标题
+                image: titleImg, //分享的图片  一般是正文的第一张图片
+                url: UrlAddress, //填写当前页面的地址     window.location.href      分享的地址
+                description: getFirstContent, //分享到额描述
+            });
+        },error:function () {
+            console.log("获取文章信息失败！");
+        }
+    })
 });

@@ -9,9 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class WebController {
-    @GetMapping({"/","/html/index.html"})
+    @GetMapping("/html/index.html")
     public String index(){
         return "html/index";
+    }
+
+    @GetMapping("/")
+    public String index2(){
+        return "redirect:html/index.html";
     }
 
     @GetMapping("/html/article.html")
@@ -33,7 +38,7 @@ public class WebController {
             User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return "html/personalCenter";
         }catch (Exception e){
-            return "html/index";
+            return "redirect:index.html";
         }
     }
 
@@ -53,7 +58,7 @@ public class WebController {
             User userDetails = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
             return "html/UI";
         }catch (Exception e){
-            return "html/index";
+            return "redirect:index.html";
         }
     }
 

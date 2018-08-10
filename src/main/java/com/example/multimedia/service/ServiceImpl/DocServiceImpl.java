@@ -5,10 +5,8 @@ import com.example.multimedia.domain.Document;
 import com.example.multimedia.domain.MulUser;
 import com.example.multimedia.domain.Recycler;
 import com.example.multimedia.domain.returnMessage.DocUserView;
-import com.example.multimedia.repository.DocRecyclerRepository;
-import com.example.multimedia.repository.DocumentRepository;
-import com.example.multimedia.repository.RecyclerRepository;
-import com.example.multimedia.repository.UserRepository;
+import com.example.multimedia.domain.returnMessage.GetDoc;
+import com.example.multimedia.repository.*;
 import com.example.multimedia.service.DocService;
 import com.example.multimedia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +44,14 @@ public class DocServiceImpl implements DocService {
     private CommentServiceImpl commentService;
 
     @Autowired
+    private DocUpvoteRepository docUpvoteRepository;
+    @Autowired
+    private CollectDocRepository collectDocRepository;
+    @Autowired
+    private CollectUserRepository collectUserRepository;
+
+
+    @Autowired
     private BaiduService baiduService;
 
     SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
@@ -67,10 +73,26 @@ public class DocServiceImpl implements DocService {
 
     //得到一篇文章
     @Override
-    public DocUserView getOneDoc(long id){
+    public GetDoc getOneDoc(long id){
         Document document = documentRepository.findOne(id);
-        MulUser mulUser = userRepository.findOne(document.getUserid());
-        return new DocUserView(document,mulUser);
+        MulUser userinfor = userRepository.findOne(document.getUserid());
+        boolean isfollow = false,isupvote = false,iscollect = false;
+        try{
+            MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+            if (docUpvoteRepository.findByDocidAndAndUserid(id,mulUser.getId()) != null){
+                isupvote = true;
+            }
+            if (collectDocRepository.findByUseridAndDocid(mulUser.getId(),id) != null){
+                iscollect = true;
+            }
+            if (collectUserRepository.findByUseridAndCuserid(mulUser.getId(),document.getUserid()) != null){
+                isfollow = true;
+            }
+
+        }catch (Exception e){
+            //ignore
+        }
+        return new GetDoc(document,userinfor,isfollow,isupvote,iscollect);
     }
 
     //得到我的文章

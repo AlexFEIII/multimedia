@@ -100,7 +100,7 @@ $(function () {
 var Issue = new Array(1);
 Issue[0] = "../img/4.jpg";
 
-var Video_list = $('.Video_list');
+var Video_list = $('#VideoList');
 var article_list = $('.article_list');
 var select_Btn = $('<div class="Select_Much" style="display:flex;"></div>');
 var get_more_one = $('<div class="contain_a"><a class="contain_span" href="javascript:;"><span class="change_circle">Get More<i class="iconfont">&#xe6c3;</i></span></a></div>');
@@ -108,7 +108,7 @@ var get_more_two = $('<div class="contain_a"><a class="contain_span" href="javas
 var get_more_three = $('<div class="contain_a"><a class="contain_span" href="javascript:;"><span class="change_circle">Get More<i class="iconfont">&#xe6c3;</i></span></a></div>');
 
 
-var answer_list = $('.answer_list');
+var answer_list = $('#AnswerList');
 
 var collect_video = $('.collect_video');
 var collect_article = $('.collect_article');
@@ -248,7 +248,7 @@ function getMineDoc(type,num) {
                 var image = "";
                 if (username == null) username = data[i].mulUser.username;
                 if (data[i].document.image != null) image = '<img src="'+data[i].document.image+'"/>';
-                var AddDiv = $('<div class="other_module"><div class="left_part"><a href="article.html?id='+data[i].document.id+'" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>')
+                var AddDiv = $('<div class="other_module"><div class="left_part"><a href="article.html?id='+data[i].document.id+'" target="_blank" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>')
                 SelectDiv.eq(num).append(AddDiv);
             }
             return true;
@@ -285,15 +285,40 @@ firstul.children("li:eq(3)").click(function () {
             type:"get",
             async:false,
             success:function (data) {
-                var num = 20;
-                if (data.length < 20) num = data;
+                var num = 15,count = data.length;
+                if (count < 15) num = count;
                 for (var i = 0;i < num;i ++){
                     var v_list = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"></a><span>'+data[i].title+'</span></div>');
-                    Video_list.append(v_list);
+                    $("#VideoBox").append(v_list);
                 }
-                if (data.length > 20){
+                if (count > 15){
                     Video_list.append('<div id="pagingOne" class="pagingTool"></div>');
-                    historyVF = true;
+                    $('#pagingOne').Paging({
+                        pagesize: 15,
+                        count:data.length,
+                        prevTpl: '<i class="iconfont">&#xe78c;</i>',
+                        nextTpl: '<i class="iconfont">&#xe77c;</i>',
+                        firstTpl: '<i class="iconfont">&#xe609;</i>',
+                        lastTpl: '<i class="iconfont">&#xe6de;</i>',
+                        callback:function (page,size,count) {
+                            console.log("num: "+page);
+                            $("#VideoBox").empty();
+                            var n = page*15-1;
+                            if (data.length-1 < n) n=data.length-1;
+                            for (var i = (page-1)*15;i <= n;i ++){
+                                var v_list = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"></a><span>'+data[i].title+'</span></div>');
+                                $("#VideoBox").append(v_list);
+                            }
+                        }
+                    });
+                    $('#pagingTwo').children("li").on('click', function () {
+                        $('#'+name).css({
+                            '-webkit-user-select': 'none',
+                            '-moz-user-select': 'none',
+                            '-ms-user-select': 'none',
+                            'user-select': 'none'
+                        });
+                    });
                 }else{
                     Video_list.append('<div class="contain_a" style="padding-bottom: 20px;"><span style="text-align: center;color: #8b8c8b;">——您当前仅浏览过这些视频——</span></div>')
                 }
@@ -301,31 +326,51 @@ firstul.children("li:eq(3)").click(function () {
                 //ignore
             }
         });
-        //分页
-        if (historyVF){
-            getPaging("pagingOne");
-        }
         Video_list.append(get_more_one);
-        var historyD = false;
         $.ajax({
             url:"../history/doc",
             type:"get",
             async:false,
             success:function (data) {
-                var username,num = 20;
-                if (data.length < 20) num = data.length;
+                var username,num = 8;
+                if (data.length < 8) num = data.length;
                 for (var i = 0;i < num;i ++){
                     username = data[i].mulUser.nickname;
                     var image = "";
                     if (username == null) username = data[i].mulUser.username;
                     if (data[i].document.image != null) image = '<img src="'+data[i].document.image+'"/>';
-                    var a_list = $('<div class="other_module"><div class="left_part"><a href="article.html?id='+data[i].document.id+'" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>')
+                    var a_list = $('<div class="other_module"><div class="left_part"><a href="article.html?id='+data[i].document.id+'" target="_blank" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>');
                     select_Btn.append(a_list);
                 }
                 article_list.append(select_Btn);
-                if (data.length > 20) {
+                if (data.length > 8) {
                     article_list.append('<div id="pagingTwo" class="pagingTool"></div>');
-                    historyD = true;
+                    $('#pagingTwo').Paging({
+                        pagesize: 8,
+                        count:data.length,
+                        prevTpl: '<i class="iconfont">&#xe78c;</i>',
+                        nextTpl: '<i class="iconfont">&#xe77c;</i>',
+                        firstTpl: '<i class="iconfont">&#xe609;</i>',
+                        lastTpl: '<i class="iconfont">&#xe6de;</i>',
+                        callback:function (page,size,count) {
+                            console.log("num: "+page);
+                            select_Btn.empty();
+                            var n = page*8-1;
+                            if (data.length-1 < n) n=data.length-1;
+                            for (var i = (page-1)*8;i <= n;i ++){
+                                var a_list = $('<div class="other_module"><div class="left_part"><a href="article.html?id='+data[i].document.id+'" target="_blank" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>');
+                                select_Btn.append(a_list);
+                            }
+                        }
+                    });
+                    $('#pagingTwo').children("li").on('click', function () {
+                        $('#'+name).css({
+                            '-webkit-user-select': 'none',
+                            '-moz-user-select': 'none',
+                            '-ms-user-select': 'none',
+                            'user-select': 'none'
+                        });
+                    });
                 }else{
                     article_list.append('<div class="contain_a" style="padding-bottom: 20px;"><span style="text-align: center;color: #8b8c8b;">——您当前仅浏览过这些文章——</span></div>')
                 }
@@ -333,9 +378,6 @@ firstul.children("li:eq(3)").click(function () {
 
             }
         });
-        if (historyD){
-            getPaging("pagingTwo")
-        }
         article_list.append(get_more_two);
         var historyF = false;
         $.ajax({
@@ -343,17 +385,42 @@ firstul.children("li:eq(3)").click(function () {
             type:"get",
             async: false,
             success:function (data) {
-                var image,num = 24;
-                if (data.length < 24) num = data.length;
+                var image,num = 18;
+                if (data.length < 18) num = data.length;
                 for (var i = 0;i < num;i ++){
                     image = "../img/14.png";
                     if (data[i].forum.image != null) image = data[i].forum.image;
                     var w_list = $('<div><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span></div>');
                     answer_list.append(w_list);
                 }
-                if (data.length > 24) {
+                if (data.length > 18) {
                     answer_list.append('<div id="pagingThree" class="pagingTool"></div>');
-                    historyF = true;
+                    $('#pagingThree').Paging({
+                        pagesize: 18,
+                        count:data.length,
+                        prevTpl: '<i class="iconfont">&#xe78c;</i>',
+                        nextTpl: '<i class="iconfont">&#xe77c;</i>',
+                        firstTpl: '<i class="iconfont">&#xe609;</i>',
+                        lastTpl: '<i class="iconfont">&#xe6de;</i>',
+                        callback:function (page,size,count) {
+                            console.log("num: "+page);
+                            $("#AnswerBox").empty();
+                            var n = page*18-1;
+                            if (data.length-1 < n) n=data.length-1;
+                            for (var i = (page-1)*18;i <= n;i ++){
+                                var w_list = $('<div><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span></div>');
+                                $("#AnswerBox").append(v_list);
+                            }
+                        }
+                    });
+                    $('#pagingTwo').children("li").on('click', function () {
+                        $('#'+name).css({
+                            '-webkit-user-select': 'none',
+                            '-moz-user-select': 'none',
+                            '-ms-user-select': 'none',
+                            'user-select': 'none'
+                        });
+                    });
                 }else{
                     answer_list.append('<div class="contain_a" style="padding-bottom: 20px;margin:0;"><span style="text-align: center;color: #8b8c8b;">——您当前仅浏览过这些问答——</span></div>')
                 }
@@ -368,21 +435,6 @@ firstul.children("li:eq(3)").click(function () {
         hf = true;
     }
 });
-function getPaging(name){
-    $('#'+name).Paging({
-        pagesize: 10,
-        count: 100,
-        prevTpl: '<i class="iconfont">&#xe78c;</i>',
-        nextTpl: '<i class="iconfont">&#xe77c;</i>',
-        firstTpl: '<i class="iconfont">&#xe609;</i>',
-        lastTpl: '<i class="iconfont">&#xe6de;</i>',
-    });
-    $('#'+name).children("li").on('click', function () {
-        $('#'+name).css({
-            '-webkit-user-select': 'none',
-            '-moz-user-select': 'none',
-            '-ms-user-select': 'none',
-            'user-select': 'none'
-        });
-    });
+function getPaging(name,pagesize){
+
 }

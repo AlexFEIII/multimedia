@@ -2,6 +2,7 @@ package com.example.multimedia.service;
 
 import com.example.multimedia.domain.Document;
 import com.example.multimedia.domain.returnMessage.DocUserView;
+import com.example.multimedia.domain.returnMessage.GetDoc;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +16,7 @@ public interface DocService {
     List<DocUserView> getAllDoc(int pageNum, int size, Sort.Direction direction, String key);
 
     //得到一篇文章
-    DocUserView getOneDoc(long id);
+    GetDoc getOneDoc(long id);
 
     //得到我的文章
     List<DocUserView> getMineDoc(String type);

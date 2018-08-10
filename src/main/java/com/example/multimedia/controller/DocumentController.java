@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.multimedia.domain.Document;
 import com.example.multimedia.domain.MulUser;
 import com.example.multimedia.domain.returnMessage.DocUserView;
+import com.example.multimedia.domain.returnMessage.GetDoc;
 import com.example.multimedia.repository.DocumentRepository;
 import com.example.multimedia.repository.UserRepository;
 import com.example.multimedia.service.DocService;
@@ -52,8 +53,8 @@ public class DocumentController {
      * @param id
      * @return
      */
-    @GetMapping("/{id}")
-    public DocUserView getOneDoc(@PathVariable long id){
+    @GetMapping(params = "id")
+    public GetDoc getOneDoc(long id){
         return docService.getOneDoc(id);
     }
 
