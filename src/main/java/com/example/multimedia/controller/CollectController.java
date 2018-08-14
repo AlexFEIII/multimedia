@@ -39,6 +39,10 @@ public class CollectController {
         collectService.changeVideoC(videoid);
     }
 
+    /**
+     * 关注用户
+     * @param cuserid
+     */
     @PutMapping(value = "/user",params = "cuserid")
     public void changeUserC(long cuserid){
         collectService.changeUserC(cuserid);

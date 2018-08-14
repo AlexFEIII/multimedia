@@ -15,6 +15,9 @@ public interface DocService {
     * */
     List<DocUserView> getAllDoc(int pageNum, int size, Sort.Direction direction, String key);
 
+    //获取一篇文章的点赞、关注、收藏情况
+    public List<Boolean> getBoolean(long docid);
+
     //得到一篇文章
     GetDoc getOneDoc(long id);
 

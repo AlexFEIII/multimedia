@@ -11,8 +11,8 @@ public interface CommentService {
     /*
     * 评论功能
     * */
-    String comment(String type,long objid,long userid,String content,long ruserid);
-    public String replyR(String type,String content,long objid,long rcommentid,long userid,long ruserid);
+    String comment(String type,long objid,String content,long ruserid);
+    public String replyR(String type,String content,long objid,long rcommentid,long ruserid);
 
     /*
     * 删除评论
@@ -23,7 +23,7 @@ public interface CommentService {
     /*
     * 返回评论
     * */
-    Map<DocCUser,List<DocRUser>> getDocComment(long docid, int pagenum);
-    Map<ForumCUser,List<ForumRUser>> getForumComment(long docid, int pageNum);
-    Map<VideoCUser,List<VideoRUser>> getVideoComment(long docid, int pageNum);
+    DCView getDocComment(long docid, int pagenum);
+    FCView getForumComment(long docid, int pageNum);
+    VCView getVideoComment(long docid, int pageNum);
 }

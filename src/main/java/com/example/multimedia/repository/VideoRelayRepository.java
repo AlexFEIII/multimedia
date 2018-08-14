@@ -8,4 +8,5 @@ import java.util.List;
 public interface VideoRelayRepository extends JpaRepository<VideoRelay,Long> {
     List<VideoRelay> findByCommentidAndRcommentidEquals(long id, long rid);
     List<VideoRelay> findByCommentidAndRcommentid(long cid,long rid);
+    List<VideoRelay> findByCommentid(long cid);
 }

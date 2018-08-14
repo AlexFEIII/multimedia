@@ -20,9 +20,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class DocServiceImpl implements DocService {
@@ -71,28 +69,34 @@ public class DocServiceImpl implements DocService {
         return docUserViews;
     }
 
-    //得到一篇文章
+    //获取一篇文章的点赞、关注、收藏情况
     @Override
-    public GetDoc getOneDoc(long id){
-        Document document = documentRepository.findOne(id);
-        MulUser userinfor = userRepository.findOne(document.getUserid());
+    public List<Boolean> getBoolean(long docid) {
         boolean isfollow = false,isupvote = false,iscollect = false;
         try{
             MulUser mulUser = userRepository.findByUsername(userService.getUsername());
-            if (docUpvoteRepository.findByDocidAndAndUserid(id,mulUser.getId()) != null){
+            if (docUpvoteRepository.findByDocidAndAndUserid(docid,mulUser.getId()) != null){
                 isupvote = true;
             }
-            if (collectDocRepository.findByUseridAndDocid(mulUser.getId(),id) != null){
+            if (collectDocRepository.findByUseridAndDocid(mulUser.getId(),docid) != null){
                 iscollect = true;
             }
-            if (collectUserRepository.findByUseridAndCuserid(mulUser.getId(),document.getUserid()) != null){
+            if (collectUserRepository.findByUseridAndCuserid(mulUser.getId(),documentRepository.findOne(docid).getUserid()) != null){
                 isfollow = true;
             }
 
         }catch (Exception e){
             //ignore
         }
-        return new GetDoc(document,userinfor,isfollow,isupvote,iscollect);
+        return Arrays.asList(isfollow,isupvote,iscollect);
+    }
+
+    //得到一篇文章
+    @Override
+    public GetDoc getOneDoc(long id){
+        Document document = documentRepository.findOne(id);
+        MulUser userinfor = userRepository.findOne(document.getUserid());
+        return new GetDoc(document,userinfor);
     }
 
     //得到我的文章

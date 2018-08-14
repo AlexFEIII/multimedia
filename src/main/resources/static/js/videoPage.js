@@ -1,5 +1,5 @@
 //视频播放
-const dp = new DPlayer({
+var dp = new DPlayer({
     container: document.getElementById('DPlayerVideo'),
     screenshot: true, //截图
     volume: 1,

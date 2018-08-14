@@ -48,6 +48,11 @@ public class DocumentController {
         return docService.getAllDoc(pageNum,size,direction,key);
     }
 
+    @GetMapping(value = "/is",params = "docid")
+    public List<Boolean> isBoolean(long docid){
+        return docService.getBoolean(docid);
+    }
+
     /**
      * 获取单篇文章
      * @param id
@@ -58,6 +63,11 @@ public class DocumentController {
         return docService.getOneDoc(id);
     }
 
+    /**
+     * 获取我的 某一类型的文章
+     * @param type
+     * @return
+     */
     @GetMapping("/mine/{type}")
     public List<DocUserView> getMineDoc(@PathVariable String type){return docService.getMineDoc(type);}
 

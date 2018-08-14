@@ -8,4 +8,5 @@ import java.util.List;
 public interface ForumRelayRepository extends JpaRepository<ForumRelay,Long> {
     List<ForumRelay> findByCommentidAndRcommentidEquals(long id,long rid);
     List<ForumRelay> findByCommentidAndRcommentid(long cid, long rid);
+    List<ForumRelay> findByCommentid(long cid);
 }

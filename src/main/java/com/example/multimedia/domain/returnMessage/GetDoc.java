@@ -6,17 +6,11 @@ import com.example.multimedia.domain.MulUser;
 public class GetDoc {
     private Document document;
     private MulUser mulUser;
-    private boolean isfollow;
-    private boolean isupvote;
-    private boolean iscollect;
 
     public GetDoc(){}
-    public GetDoc(Document document,MulUser mulUser,boolean isfollow,boolean isupvote,boolean iscollect){
+    public GetDoc(Document document,MulUser mulUser){
         this.document = document;
         this.mulUser = mulUser;
-        this.isfollow = isfollow;
-        this.isupvote = isupvote;
-        this.iscollect = iscollect;
     }
 
     @Override
@@ -24,9 +18,6 @@ public class GetDoc {
         return "GetDoc{" +
                 "document=" + document +
                 ", mulUser=" + mulUser +
-                ", isfollow=" + isfollow +
-                ", isupvote=" + isupvote +
-                ", iscollect=" + iscollect +
                 '}';
     }
 
@@ -46,27 +37,4 @@ public class GetDoc {
         this.mulUser = mulUser;
     }
 
-    public boolean isIsfollow() {
-        return isfollow;
-    }
-
-    public void setIsfollow(boolean isfollow) {
-        this.isfollow = isfollow;
-    }
-
-    public boolean isIsupvote() {
-        return isupvote;
-    }
-
-    public void setIsupvote(boolean isupvote) {
-        this.isupvote = isupvote;
-    }
-
-    public boolean isIscollect() {
-        return iscollect;
-    }
-
-    public void setIscollect(boolean iscollect) {
-        this.iscollect = iscollect;
-    }
 }
