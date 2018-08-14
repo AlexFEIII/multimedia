@@ -136,7 +136,7 @@ $('.same_module a').hover(function () {
 
 var select_Article = $('<div class="Select_Much" style="display:flex;"></div>');
 
-for (var i = 0; i < 6; i++) {
+for (var i = 0; i < 7; i++) {
     var wen_list = $('<div class="other_module"><div class="left_part"><a href="javascript:;" class="under_line"></a><p class="draw_text"></p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a"></a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img"><img src=""/></aa></div>');
     select_Article.append(wen_list);
 }
@@ -180,9 +180,19 @@ var hf = false;
 var cvf = false,cdf = false,cff = false;
 //页面加载的时候执行点击事件
 $(document).ready(function () {
-    if (vf == false){
-        firstul.children("li:eq(0)").click();
-    }
+    //加载视频
+    firstul.children("li:eq(0)").click();
+    //判断是否已经登录
+    $.ajax({
+        url:"../user/isLogin",
+        type:"get",
+        success:function (data) {
+            console.log(data);
+            if (data != ""){
+                loginSuccess(data);
+            }
+        }
+    });
 });
 firstul.children("li:eq(0)").click(function () {
     if (vf == false){
@@ -435,6 +445,23 @@ firstul.children("li:eq(3)").click(function () {
         hf = true;
     }
 });
-function getPaging(name,pagesize){
 
+//登录成功执行的方法
+function loginSuccess(data) {
+    $(".layui-layer-close").click();
+    $(".last_li").empty();
+    var image = "../img/14.png";
+    if (data.headimage != null) image = data.headimage;
+    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
+    var touphoto = $(".contain_tou_photo");
+    touphoto.children("a").children("img").attr("src",image);
+    var nickname = data.nickname;
+    if (data.nickname == null) nickname = "您尚未设置昵称";
+    var address = data.address;
+    if (data.address == null) address = "您尚未设置地址";
+    var personality = data.personality;
+    if (data.personality == null) personality = "您尚未设置个人签名" ;
+    touphoto.children("div").children("span").text(nickname);
+    touphoto.children("div").children("p:eq(0)").text(address);
+    touphoto.children("div").children("p:eq(1)").text(personality);
 }

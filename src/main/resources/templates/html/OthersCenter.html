@@ -50,25 +50,25 @@
                         </form>
                     </li>
                     <li class="same_li last_li">
-                        <a href="javascript:;" id="login_a">登录</a>
-                                        <a href="javascript:;" id="register_a">注册</a>
+                        <!-- <a href="javascript:;" id="login_a">登录</a>
+                                        <a href="javascript:;" id="register_a">注册</a> -->
                         <!-- 登录前 -->
-                        <!--<div class="location_div_a">-->
-                            <!--<a href="../html/personalCenter.html" class="photo_cicle" target="_blank">-->
-                                <!--<img src="../img/10.jpg">-->
-                            <!--</a>-->
-                            <!--<div class="msg_index_dance">-->
-                                <!--进入个人中心-->
-                            <!--</div>-->
-                        <!--</div>-->
-                        <!--<div class="editor_article">-->
-                            <!--<a href="RichEditor.html" target="_blank">-->
-                                <!--<span>-->
-                                    <!--<i class="iconfont">&#xe645;</i>-->
-                                <!--</span>-->
-                                <!--写文章-->
-                            <!--</a>-->
-                        <!--</div>-->
+                        <div class="location_div_a">
+                            <a href="personalCenter.html" class="photo_cicle" target="_blank">
+                                <img src="../img/10.jpg">
+                            </a>
+                            <div class="msg_index_dance">
+                                进入个人中心
+                            </div>
+                        </div>
+                        <div class="editor_article">
+                            <a href="preset.html" target="_blank">
+                                <span>
+                                    <i class="iconfont">&#xe645;</i>
+                                </span>
+                                写文章
+                            </a>
+                        </div>
                         <!-- 登陆后 -->
                     </li>
                 </ul>
@@ -106,41 +106,7 @@
                         问答
                     </a>
                 </li>
-                <li>
-                    <a href="javascript:;" class="same_a">
-                        浏览历史
-                    </a>
-                </li>
-                <li>
-                    <a href="javascript:;" class="same_a">
-                        收藏
-                    </a>
-                </li>
-                <li class="lastLong">
-                    <ul class="second_list">
-                        <li>
-                            <a href="javascript:;">
-                                收藏的视频
-                            </a>
-                        </li>
-                        <li>
-                            <a href="javascript:;">
-                                收藏的文章
-                            </a>
-                        </li>
-                        <li>
-                            <a href="javascript:;">
-                                收藏的问答
-                            </a>
-                        </li>
-                    </ul>
-                </li>
             </ul>
-            <div class="data_set">
-                <a href="../html/UI.html" target="_blank">
-                    编辑个人资料 &gt;
-                </a>
-            </div>
         </div>
         <div class="all_content">
             <div class="Select_One_Div Select" style="display: flex;"></div>
@@ -210,17 +176,17 @@
                 <div class="recommed_topic"></div>
             </div>
             <div class="Select_Four_Div Select">
-                <div id="VideoList" class="Video_list">
-                    <div id="VideoBox" class="Video_list"></div>
-                </div>
+                <div class="Video_list"></div>
                 <div class="article_list"></div>
-                <div id="AnswerList" class="answer_list">
-                    <div id="AnswerBox" class="answer_list"></div>
-                </div>
+                <div class="answer_list"></div>
             </div>
             <div class="Select_Five_Div Select">
                 <div class="collect_video collect" style="display: flex;"></div>
-                <div class="collect_article collect"></div>
+                <div class="collect_article collect">
+                    <div class="same_img">
+                        <img src="../img/article.png">
+                    </div>
+                </div>
                 <div class="collect_answer collect"></div>
             </div>
         </div>
@@ -236,7 +202,6 @@
     <iframe src="particles.html" id="particles"></iframe>
     <script src="../js/jquery.min.js"></script>
     <script src="../layui/layer.js"></script>
-    <script src="../js/paging.js"></script>
     <script src="../js/jquery.nicescroll.min.js"></script>
     <script src="../js/same.js"></script>
     <script src="../js/personalCenter.js"></script>

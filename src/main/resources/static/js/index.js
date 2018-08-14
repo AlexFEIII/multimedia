@@ -123,6 +123,14 @@ $(function () {
     });
 });
 
+var html5_player = document.getElementById('html5_player');
+html5_player.oncanplay = function () { //当视频加载完成时
+    var contain_videoHeight = $('.contain_video').outerHeight();
+    $('.live_list').css({
+        'height': contain_videoHeight - 20,
+    });
+}
+
 //数组存放文章所在的图片链接，方便存储
 var Img_Array = new Array(10);
 Img_Array[0] = "https://upload-images.jianshu.io/upload_images/10560804-8aa981c5b24fc5ac.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/300/h/240";
@@ -316,13 +324,13 @@ for (var i = 0; i < 10; i++) {
     var hall_1 = $('<div class="other_module"><div class="left_part"><a href="javascript:;" class="under_line"></a><p class="draw_text"></p><div class="bottom_meta"><a href="javascript:;"></a><a href="javascript:;"><i class="iconfont">&#xe684;</i></a><span><i class="iconfont">&#xe602;</i></span><span><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img"><img src=""/></aa></div>');
     $('.contain_other').append(hall_1);
 };
-var span_scene = $('<div class="contain_a"><a class="contain_span" href="javascript:;"><span class="change_circle">Get More<i class="iconfont">&#xe6c3;</i></span></a></div>');
+var span_scene = $('<div class="contain_a"><a class="contain_span" href="articlePage.html" target="_blank"><span class="change_circle">Get More<i class="iconfont">&#xe6c3;</i></span></a></div>');
 module_hall.append(span_scene);
 //推荐文章
 
 //问答专区
 var module_ans_que = $('.module_ans_que');
-var span_scene = $('<div class="contain_a"><a class="contain_span" href="javascript:;"><span class="change_circle">Get More<i class="iconfont">&#xe6c3;</i></span></a></div>');
+var span_scene = $('<div class="contain_a"><a class="contain_span" href="topic.html" target="_blank"><span class="change_circle">Get More<i class="iconfont">&#xe6c3;</i></span></a></div>');
 module_ans_que.append(span_scene);
 
 $('.same_module a').hover(function () {
@@ -330,3 +338,31 @@ $('.same_module a').hover(function () {
 }, function () {
     $(this).removeClass("a_hover a_hover_a");
 });
+
+(window.onresize = function () {
+    var contain_videoHeight = $('.contain_video').outerHeight();
+    $('.live_list').css({
+        'height': contain_videoHeight - 20,
+    });
+})();
+
+$(document).ready(function () {
+    $.ajax({
+        url:"../user/isLogin",
+        type:"get",
+        success:function (data) {
+            console.log(data);
+            if (data != ""){
+                loginSuccess(data);
+            }
+        }
+    });
+});
+
+function loginSuccess(data) {
+    $(".layui-layer-close").click();
+    $(".last_li").empty();
+    var image = "../img/14.png";
+    if (data.headimage != null) image = data.headimage;
+    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
+}

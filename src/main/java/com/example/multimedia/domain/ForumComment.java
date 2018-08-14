@@ -21,6 +21,8 @@ public class ForumComment {
     private long userid;
     //被评论的用户id
     private long replyid;
+    //点赞数
+    private long upvotenum;
     //时间
     private Date date;
 
@@ -42,6 +44,7 @@ public class ForumComment {
                 ", content='" + content + '\'' +
                 ", userid=" + userid +
                 ", replyid=" + replyid +
+                ", upvotenum=" + upvotenum +
                 ", date=" + date +
                 '}';
     }
@@ -84,6 +87,14 @@ public class ForumComment {
 
     public void setReplyid(long replyid) {
         this.replyid = replyid;
+    }
+
+    public long getUpvotenum() {
+        return upvotenum;
+    }
+
+    public void setUpvotenum(long upvotenum) {
+        this.upvotenum = upvotenum;
     }
 
     public Date getDate() {

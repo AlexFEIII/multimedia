@@ -3,6 +3,7 @@ package com.example.multimedia.service.ServiceImpl;
 import com.example.multimedia.domain.*;
 import com.example.multimedia.repository.*;
 import com.example.multimedia.service.UpvoteService;
+import com.example.multimedia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,23 +21,46 @@ public class UpvoteServiceImpl implements UpvoteService {
     private ForumCUpvoteRepository forumCUpvoteRepository;
     @Autowired
     private VideoCUpvoteRepository videoCUpvoteRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private DocumentRepository documentRepository;
+    @Autowired
+    private ForumRepository forumRepository;
+    @Autowired
+    private DocCommentRepository docCommentRepository;
+    @Autowired
+    private ForumCommentRepository forumCommentRepository;
     /*
     * 点赞功能
     * */
     @Override
-    public void upvote(String type, long userid, long objid) {
+    public void upvote(String type,long objid) {
+        long userid = userRepository.findByUsername(userService.getUsername()).getId();
         if (type.equals("doc")){
+            Document document = documentRepository.findOne(objid);
             Docupvote docUpvote = docUpvoteRepository.findByDocidAndAndUserid(objid,userid);
-            if(docUpvote == null)
+            if(docUpvote == null){
                 docUpvoteRepository.save(new Docupvote(userid,objid));
-            else
+                document.setUpvotenum(document.getUpvotenum()+1);
+            } else{
                 docUpvoteRepository.delete(docUpvote);
+                document.setUpvotenum(document.getUpvotenum()-1);
+            }
+            documentRepository.save(document);
         }else if (type.equals("forum")){
+            Forum forum = forumRepository.findOne(objid);
             Forumupvote forumUpvote = forumUpvoteRepository.findByForumidAndUserid(objid,userid);
-            if (forumUpvote == null)
+            if (forumUpvote == null){
                 forumUpvoteRepository.save(new Forumupvote(userid,objid));
-            else
+                forum.setUpvotenum(forum.getUpvotenum()+1);
+            } else{
                 forumUpvoteRepository.delete(forumUpvote);
+                forum.setUpvotenum(forum.getUpvotenum()-1);
+            }
+            forumRepository.save(forum);
         }else if (type.equals("video")){
             Videoupvote videoUpvote = videoUpvoteRepository.findByVideoidAndUserid(objid,userid);
             if (videoUpvote == null)
@@ -44,16 +68,28 @@ public class UpvoteServiceImpl implements UpvoteService {
             else
                 videoUpvoteRepository.delete(videoUpvote);
         }else if (type.equals("DCommemt")){
+            DocComment docComment = docCommentRepository.findOne(objid);
             DocCUpvote docCUpvote = docCUpvoteRepository.findByCommentidAndUserid(objid,userid);
-            if (docCUpvote == null)
+            if (docCUpvote == null){
                 docCUpvoteRepository.save(new DocCUpvote(userid,objid));
-            else docCUpvoteRepository.delete(docCUpvote);
+                docComment.setUpvotenum(docComment.getUpvotenum()+1);
+            } else{
+                docCUpvoteRepository.delete(docCUpvote);
+                docComment.setUpvotenum(docComment.getUpvotenum()-1);
+            }
+            docCommentRepository.save(docComment);
         }else if (type.equals("FComment")){
+            ForumComment forumComment = forumCommentRepository.findOne(objid);
             ForumCUpvote forumCUpvote = forumCUpvoteRepository.findByCommentidAndUserid(objid,userid);
-            if (forumCUpvote == null)
+            if (forumCUpvote == null){
                 forumCUpvoteRepository.save(new ForumCUpvote(userid,objid));
-            else
+                forumComment.setUpvotenum(forumComment.getUpvotenum()+1);
+            }
+            else{
                 forumCUpvoteRepository.delete(forumCUpvote);
+                forumComment.setUpvotenum(forumComment.getUpvotenum()-1);
+            }
+            forumCommentRepository.save(forumComment);
         }else {
             VideoCUpvote videoCUpvote = videoCUpvoteRepository.findByCommentidAndUserid(objid,userid);
             if (videoCUpvote == null)

@@ -14,9 +14,9 @@ public class UpvoteController {
     * 需要参数：点赞类型，用户id，点赞的事物id
     * 点赞类型：文章、文章评论、论坛、论坛评论、视频
     **/
-    @PutMapping(value = "upvote",params = {"type","userid","objid"})
-    public void upvote(String type,long userid,long objid){
-        upvoteService.upvote(type,userid,objid);
+    @PutMapping(value = "upvote",params = {"type","objid"})
+    public void upvote(String type,long objid){
+        upvoteService.upvote(type,objid);
     }
 
 }

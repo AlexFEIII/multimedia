@@ -1,32 +1,3 @@
-$(document).ready(function () {
-    $.ajax({
-        url:"../user/isLogin",
-        type:"get",
-        success:function (data) {
-            console.log(data);
-            if (data != ""){
-                $(".layui-layer-close").click();
-                $(".last_li").empty();
-                var image = "../img/14.png";
-                if (data.headimage != null) image = data.headimage;
-                $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
-                var touphoto = $(".contain_tou_photo");
-                touphoto.children("a").children("img").attr("src",image);
-                var nickname = data.nickname;
-                if (data.nickname == null) nickname = "您尚未设置昵称";
-                var address = data.address;
-                if (data.address == null) address = "您尚未设置地址";
-                var personality = data.personality;
-                if (data.personality == null) personality = "您尚未设置个人签名" ;
-                touphoto.children("div").children("span").text(nickname);
-                touphoto.children("div").children("p:eq(0)").text(address);
-                touphoto.children("div").children("p:eq(1)").text(personality);
-            }
-        }
-    })
-});
-
-
 $(function () {
     //兼容edge的png黑框
     $(function () {

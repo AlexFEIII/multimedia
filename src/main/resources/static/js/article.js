@@ -3,6 +3,8 @@ var alertTitle = $('<span class="alertSpan"></span>');
 var onOff = true;
 var Judge = true;
 
+var DOCDATA;
+
 var ListLan = $('.circle').attr('list-title');
 
 $('.timeBar').hover(
@@ -50,22 +52,16 @@ var UrlAddress = 'https://music.163.com';
 $('.circle').on('click', function () {
   if (Judge) {
     Judge = false;
-    $('.listTop')
-      .eq(0)
-      .css({
-        top: '50%',
-        transform: 'translate(-50%,-50%) rotateZ(-45deg)',
+      $('.listTop').eq(0).css({
+          top: '50%',
+          transform: 'translate(-50%,-50%) rotateZ(-45deg)',
       });
-    $('.listTop')
-      .eq(2)
-      .css({
-        top: '50%',
-        transform: 'translate(-50%,-50%) rotateZ(45deg)',
+      $('.listTop').eq(2).css({
+          top: '50%',
+          transform: 'translate(-50%,-50%) rotateZ(45deg)',
       });
-    $('.listTop')
-      .eq(1)
-      .css({
-        display: 'none',
+      $('.listTop').eq(1).css({
+          display: 'none',
       });
     $('.social-share').css({
       display: 'block',
@@ -73,22 +69,16 @@ $('.circle').on('click', function () {
     });
   } else {
     Judge = true;
-    $('.listTop')
-      .eq(0)
-      .css({
-        top: '',
-        transform: '',
+      $('.listTop').eq(0).css({
+          top: '',
+          transform: '',
       });
-    $('.listTop')
-      .eq(2)
-      .css({
-        top: '',
-        transform: '',
+      $('.listTop').eq(2).css({
+          top: '',
+          transform: '',
       });
-    $('.listTop')
-      .eq(1)
-      .css({
-        display: '',
+      $('.listTop').eq(1).css({
+          display: '',
       });
     $('.social-share').css({
       height: '',
@@ -172,33 +162,29 @@ $('#QRCode').qrcode({
   text: UrlAddress,
 });
 
-var initNum = 100;
-$('.numCount').html(initNum);
+
 var isGood = true;
 var isBad = true;
-$('.TwoPart a')
-  .eq(0)
-  .on('click', function () {
+var initNum;
+$('.TwoPart a').eq(0).on('click', function () {
     if (isGood) {
-      isGood = false;
-      Change(1, $(this), 1);
+        isGood = false;
+        Change(1, $(this), 1);
     } else {
-      isGood = true;
-      Change(0, $(this), 1);
+        isGood = true;
+        Change(0, $(this), 1);
     }
-  });
+});
 
-$('.TwoPart a')
-  .eq(1)
-  .on('click', function () {
+$('.TwoPart a').eq(1).on('click', function () {
     if (isBad) {
-      isBad = false;
-      Change(1, $(this), 0);
+        isBad = false;
+        Change(1, $(this), 0);
     } else {
-      isBad = true;
-      Change(0, $(this), 0);
+        isBad = true;
+        Change(0, $(this), 0);
     }
-  });
+});
 
 function Change(n, m, o) {
   if (n) {
@@ -216,6 +202,14 @@ function Change(n, m, o) {
       color: '',
     });
   }
+  $.ajax({
+     url:"../upvote?type=doc&objid="+DOCDATA.document.id,
+      type:"put",
+      success:function () {
+      },error:function () {
+          console.log("文章点赞出错！")
+      }
+  });
   $('.numCount').html(initNum);
 }
 
@@ -235,9 +229,7 @@ $('.NewEditor .publish_A').on('click', function () {
     '<span class="goodNum">0</span><span>人赞</span></a><a href="javascript:;"><i class="iconfont replyBack">&#xe61b;</i><span>回复</span>' +
     '</a></div></div></div></li>'
   );
-  var Content = $('.NewEditor .w-e-text')
-    .html()
-    .replace(/<(?!img).*?>/g, '');
+  var Content = $('.NewEditor .w-e-text').html();
   if (Content == '') {
     alert('请您写一点内容再发送，当前状态不可发送');
   } else {
@@ -245,36 +237,24 @@ $('.NewEditor .publish_A').on('click', function () {
     $('.commentsNum span').html(++NumNumber); //用于记录有多少条的评论
     $('.commentsList').prepend(addComments);
     $('.commentsList li:first-child .OneFirst').html(Content);
-    $('.commentsList li:first-child .timeMessage span')
-      .eq(0)
-      .html('' + Year + '/' + Month + '/' + Day + '');
-    $('.commentsList li:first-child .timeMessage span')
-      .eq(1)
-      .html(
-        '' + addZero(Hour) + ':' + addZero(Minute) + ':' + addZero(Second) + ''
-      );
+      $('.commentsList li:first-child .timeMessage span').eq(0).html('' + Year + '/' + Month + '/' + Day + '');
+      $('.commentsList li:first-child .timeMessage span').eq(1).html('' + addZero(Hour) + ':' + addZero(Minute) + ':' + addZero(Second) + '');
   }
   $('.NewEditor .w-e-text').html('<p><br></p>');
 
   //点赞
   var NotSame = true;
   var GoodNum = parseInt($('.goodNum').html());
-  $('.toolBar_Btn a')
-    .eq(0)
-    .on('click', function () {
-      if (NotSame) {
-        NotSame = false;
-        onNotSame($(this).find('.iconfont'), 1);
-        $(this)
-          .find('.goodNum')
-          .html(++GoodNum);
-      } else {
-        NotSame = true;
-        onNotSame($(this).find('.iconfont'), 0);
-        $(this)
-          .find('.goodNum')
-          .html(--GoodNum);
-      }
+    $('.toolBar_Btn a').eq(0).on('click', function () {
+        if (NotSame) {
+            NotSame = false;
+            onNotSame($(this).find('.iconfont'), 1);
+            $(this).find('.goodNum').html(++GoodNum);
+        } else {
+            NotSame = true;
+            onNotSame($(this).find('.iconfont'), 0);
+            $(this).find('.goodNum').html(--GoodNum);
+        }
     });
 
     //回复
@@ -337,6 +317,16 @@ function getNewEditor(n) {
     NewEditor.customConfig.zIndex = 0;
     NewEditor.create();
     cancel();
+
+    //解决火狐不能自动去除占位符的问题
+    var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+    var isFF = userAgent.indexOf('Firefox') > -1; //判断是否Firefox浏览器
+    if (isFF) {
+        $('#NewUser_edit .w-e-text p').eq(0).find('br').css({
+            'display': 'none',
+        });
+    }
+
     $('.NewGoodEditor .publish_A').on('click', function () {
         var Now = new Date();
         var Year = Now.getFullYear();
@@ -345,9 +335,7 @@ function getNewEditor(n) {
         var Hour = Now.getHours();
         var Minute = Now.getMinutes();
         var Second = Now.getSeconds();
-        var ContentNew = $('.NewGoodEditor .w-e-text')
-            .html()
-            .replace(/<(?!img).*?>/g, '');
+        var ContentNew = $('.NewGoodEditor .w-e-text').html();
         if (ContentNew == '') {
             alert('请您写一点内容再发送，当前状态不可发送');
         } else {
@@ -390,6 +378,17 @@ $(document).on('click', '.toolBar_Btn a,.NewEditor .publish_A', function () {
 //重载滚动条
 var userinfor = $("#userInformation");
 $(document).ready(function () {
+    $.ajax({
+        url:"../user/isLogin",
+        type:"get",
+        success:function (data) {
+            console.log(data);
+            if (data != ""){
+                loginSuccess(data);
+            }
+        }
+    });
+
    //获取url内容取得文章内容
     $.ajax({
         url:"../doc"+ window.location.search,
@@ -418,12 +417,12 @@ $(document).ready(function () {
             });
             if (data.isupvote){
                 $('.TwoPart a').eq(0).css("color", '#FF9500');
-                isGood = true;
+                isGood = false;
             }
             $('.TwoPart a').eq(0).children("span").text(data.document.upvotenum);
             if (data.iscollect){
                 $('.TwoPart a').eq(1).css("color", '#FF9500');
-                isBad = true;
+                isBad = false;
             }
             if (data.isfollow) {
                 onOff = true;
@@ -433,28 +432,19 @@ $(document).ready(function () {
                 $('.focus .iconfont').html('&#xe642;');
                 $('.focus span').html('已关注');
             }
-            userinfor.children(".photoIMg img").attr("src",data.mulUser.headimage);
+            userinfor.children(".photoIMg").children("img").attr("src",data.mulUser.headimage);
             var bMsg = $(".bottom_message");
             bMsg.children("span").eq(0).text(data.document.date);
             bMsg.children("span").eq(1).text("阅读"+data.document.sawnum);
             bMsg.children("span").eq(2).text("评论"+data.document.commentnum);
             bMsg.children("span").eq(3).text("喜欢"+data.document.upvotenum);
+            $(".w-e-text").children("h1").text(data.document.title);
+            $("#docid").text(data.document.id);
+            initNum = data.document.upvotenum;
             $("#ContainEditor").append(data.document.content);
-            var titleImg = $('#ContainEditor img')
-                .eq(0)
-                .attr('src');
-            $('#ContainEditor h1')
-                .eq(0)
-                .css({
-                    display: 'none'
-                });
-            var theNode = document.getElementById('ContainEditor').firstElementChild;
-            var getNodeName = theNode.nodeName;
-            var addContent = $('<' + getNodeName + '></' + getNodeName + '>');
-            console.log("addContent: "+addContent);
-            addContent.insertBefore($('#userInformation'));
-            var getFirstContent = $('.ContainEditor').html();
-            addContent.html(getFirstContent);
+
+            var titleImg = $('#ContainEditor img').eq(0).attr('src');
+            var getFirstContent = $('.w-e-text h1').eq(0).html();
 
             //配置share.js的参数
             socialShare('.social-share', {
@@ -468,3 +458,10 @@ $(document).ready(function () {
         }
     })
 });
+function loginSuccess(data) {
+    $(".layui-layer-close").click();
+    $(".last_li").empty();
+    var image = "../img/14.png";
+    if (data.headimage != null) image = data.headimage;
+    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
+}

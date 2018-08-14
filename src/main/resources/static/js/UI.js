@@ -1,9 +1,3 @@
-var InformationWidth = $('.user_information').width();
-var SelectWidth = $('.user_select').width();
-$('.user_information').css({
-  'margin-left': SelectWidth - InformationWidth,
-});
-
 (window.onresize = function () {
   var win_height = $(window).height();
   var win_width = $(window).width();
@@ -235,20 +229,7 @@ $(document).ready(function () {
             console.log(data);
             userdata = data;
             if (data != ""){
-                $(".last_li").empty();
-                var image = "../img/14.png";
-                if (data.image != null) image = data.image;
-                $(".last_li").append('<div class="location_div_a"><a href="../html/personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="RichEditor.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
-                $("#finalImg").attr("src",image);
-                if (data.sex == 1) $("#inputRadio1").click();
-                else if (data.sex == 2) $("#inputRadio2").click();
-                if (data.personality != "") $("textarea").val(data.personality);
-                if (data.address != "") userInformation.children("li").eq(3).children("div").children("input").val(data.address);
-                if (data.qq != "")  userInformation.children("li").eq(4).children("div").children("input").val(data.qq);
-                console.log("username: "+data.username);
-                userInformation.children("li").eq(5).children("div").children("span").eq(1).val(data.username);
-                if (data.job != "") userInformation.children("li").eq(6).children("div").children("input").val(data.job);
-                if (data.weburl != "") userInformation.children("li").eq(7).children("div").children("input").val(data.weburl);
+                loginSuccess(data)
             }
         }
     })
@@ -300,3 +281,20 @@ $(".logOut").click(function () {
 
 });
 
+function loginSuccess(data) {
+    $(".layui-layer-close").click();
+    $(".last_li").empty();
+    var image = "../img/14.png";
+    if (data.headimage != null) image = data.headimage;
+    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
+    $("#finalImg").attr("src",image);
+    if (data.sex == 1) $("#inputRadio1").click();
+    else if (data.sex == 2) $("#inputRadio2").click();
+    if (data.personality != "") $("textarea").val(data.personality);
+    if (data.address != "") userInformation.children("li").eq(3).children("div").children("input").val(data.address);
+    if (data.qq != "")  userInformation.children("li").eq(4).children("div").children("input").val(data.qq);
+    console.log("username: "+data.username);
+    userInformation.children("li").eq(5).children("div").children("span").eq(1).val(data.username);
+    if (data.job != "") userInformation.children("li").eq(6).children("div").children("input").val(data.job);
+    if (data.weburl != "") userInformation.children("li").eq(7).children("div").children("input").val(data.weburl);
+}
