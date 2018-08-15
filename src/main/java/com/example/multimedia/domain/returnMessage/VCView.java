@@ -5,19 +5,22 @@ import java.util.Map;
 
 public class VCView {
     private int totalPage;
-    private Map<VideoCUser, List<VideoRUser>> maps;
+    private VideoCUser videoCUser;
+    private List<VideoRUser> videoRUsers;
 
     public VCView(){}
-    public VCView(int totalPage,Map<VideoCUser, List<VideoRUser>> maps){
+    public VCView(int totalPage,VideoCUser videoCUser, List<VideoRUser> videoRUsers){
         this.totalPage = totalPage;
-        this.maps = maps;
+        this.videoCUser = videoCUser;
+        this.videoRUsers = videoRUsers;
     }
 
     @Override
     public String toString() {
         return "VCView{" +
                 "totalPage=" + totalPage +
-                ", maps=" + maps +
+                ", videoCUser=" + videoCUser +
+                ", videoRUsers=" + videoRUsers +
                 '}';
     }
 
@@ -29,11 +32,19 @@ public class VCView {
         this.totalPage = totalPage;
     }
 
-    public Map<VideoCUser, List<VideoRUser>> getMaps() {
-        return maps;
+    public VideoCUser getVideoCUser() {
+        return videoCUser;
     }
 
-    public void setMaps(Map<VideoCUser, List<VideoRUser>> maps) {
-        this.maps = maps;
+    public void setVideoCUser(VideoCUser videoCUser) {
+        this.videoCUser = videoCUser;
+    }
+
+    public List<VideoRUser> getVideoRUsers() {
+        return videoRUsers;
+    }
+
+    public void setVideoRUsers(List<VideoRUser> videoRUsers) {
+        this.videoRUsers = videoRUsers;
     }
 }

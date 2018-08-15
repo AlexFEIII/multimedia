@@ -23,7 +23,7 @@ public interface CommentService {
     /*
     * 返回评论
     * */
-    DCView getDocComment(long docid, int pagenum);
-    FCView getForumComment(long docid, int pageNum);
-    VCView getVideoComment(long docid, int pageNum);
+    List<DCView> getDocComment(long docid, int pagenum);
+    List<FCView> getForumComment(long docid, int pageNum);
+    List<VCView> getVideoComment(long docid, int pageNum);
 }

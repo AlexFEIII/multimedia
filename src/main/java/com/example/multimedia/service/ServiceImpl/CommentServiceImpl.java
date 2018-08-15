@@ -44,6 +44,12 @@ public class CommentServiceImpl implements CommentService {
     private VideoRepository videoRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private DocCUpvoteRepository docCUpvoteRepository;
+    @Autowired
+    private ForumCUpvoteRepository forumCUpvoteRepository;
+    @Autowired
+    private VideoCUpvoteRepository videoCUpvoteRepository;
 
     SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
 
@@ -163,9 +169,16 @@ public class CommentServiceImpl implements CommentService {
 
     //返回评论*3
     @Override
-    public DCView getDocComment(long docid, int pagenum) {
-        LinkedHashMap<DocCUser,List<DocRUser>> map = new LinkedHashMap<>();
-        Pageable pageable = new PageRequest(pagenum-1,20,new Sort(Sort.Direction.ASC,"id"));
+    public List<DCView> getDocComment(long docid, int pagenum) {
+        List<DCView> dcViews = new ArrayList<>();
+        boolean isLogin = true;
+        MulUser mulUser = null;
+        try{
+            mulUser = userRepository.findByUsername(userService.getUsername());
+        }catch (Exception e){
+            isLogin = false;
+        }
+        Pageable pageable = new PageRequest(pagenum-1,20,new Sort(Sort.Direction.DESC,"id"));
         Page<DocComment> list = docCommentRepository.findByDocid(docid,pageable);
         for (DocComment docComment : list){
 //            List<DocRUser> result = new ArrayList<>();
@@ -184,16 +197,22 @@ public class CommentServiceImpl implements CommentService {
 //            }
             List<DocRUser> docRelays = new ArrayList<>();
             List<DocRelay> docRelay = docRelayRepository.findByCommentid(docComment.getId());
-            for (int i = 0;i < docRelay.size();i ++)
-                docRelays.add(new DocRUser(docRelay.get(i),userRepository.findOne(docRelay.get(i).getUserid())));
+            for (int i = 0;i < docRelay.size();i ++){
+                MulUser user = userRepository.findOne(docRelay.get(i).getUserid());
+                MulUser ruser = userRepository.findOne(docRelay.get(i).getReplyid());
+                docRelays.add(new DocRUser(docRelay.get(i),user.getNickname(),user.getId(),ruser.getNickname(),ruser.getId()));
+            }
+            boolean flag = false;
+            if (isLogin){
+                if (docCUpvoteRepository.findByCommentidAndUserid(docComment.getId(),mulUser.getId()) != null) flag = true;
+            }
             if (docRelays.size() != 0){
-                System.out.println("DocRelays :   "+docRelays);
-                map.put(new DocCUser(docComment,userRepository.findOne(docComment.getUserid())),docRelays);
+                dcViews.add(new DCView(list.getTotalPages(),list.getTotalElements(),flag,new DocCUser(docComment,userRepository.findOne(docComment.getUserid())),docRelays));
             }else{
-                map.put(new DocCUser(docComment,userRepository.findOne(docComment.getUserid())),null);
+                dcViews.add(new DCView(list.getTotalPages(),list.getTotalElements(),flag,new DocCUser(docComment,userRepository.findOne(docComment.getUserid())),null));
             }
         }
-        return new DCView(list.getTotalPages(),map);
+        return dcViews;
     }
 
 //    public void findDSonRelay(List<DocRUser> result,long cid,long rid){   //递归查找文章子评论
@@ -208,8 +227,8 @@ public class CommentServiceImpl implements CommentService {
 //    }
 
     @Override
-    public FCView getForumComment(long docid, int pagenum) {
-        LinkedHashMap<ForumCUser,List<ForumRUser>> map = new LinkedHashMap<>();
+    public List<FCView> getForumComment(long docid, int pagenum) {
+        List<FCView> fcViews = new ArrayList<>();
         Pageable pageable = new PageRequest(pagenum-1,20,new Sort(Sort.Direction.DESC,"id"));
         Page<ForumComment> list = forumCommentRepository.findByForumid(docid,pageable);
         for (ForumComment forumComment : list){
@@ -218,17 +237,17 @@ public class CommentServiceImpl implements CommentService {
             for(int i = 0;i < forumRelay.size();i ++)
                 forumRelays.add(new ForumRUser(forumRelay.get(i),userRepository.findOne(forumRelay.get(i).getUserid())));
             if (forumRelays.size() == 0){
-                map.put(new ForumCUser(forumComment,userRepository.findOne(forumComment.getUserid())),null);
+                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumComment,userRepository.findOne(forumComment.getUserid())),null));
             }else{
-                map.put(new ForumCUser(forumComment,userRepository.findOne(forumComment.getUserid())),forumRelays);
+                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumComment,userRepository.findOne(forumComment.getUserid())),forumRelays));
             }
         }
-        return new FCView(list.getTotalPages(),map);
+        return fcViews;
     }
 
     @Override
-    public VCView getVideoComment(long docid,int pagenum) {
-        LinkedHashMap<VideoCUser,List<VideoRUser>> map = new LinkedHashMap<>();
+    public List<VCView> getVideoComment(long docid,int pagenum) {
+        List<VCView> vcViews = new ArrayList<>();
         Pageable pageable = new PageRequest(pagenum-1,20,new Sort(Sort.Direction.DESC,"id"));
         Page<VideoComment> list = videoCommentRepository.findByVideoid(docid,pageable);
         for (VideoComment videoComment : list){
@@ -237,12 +256,12 @@ public class CommentServiceImpl implements CommentService {
             for (int i = 0;i < videoRelay.size();i ++)
                 videoRelays.add(new VideoRUser(videoRelay.get(i),userRepository.findOne(videoRelay.get(i).getUserid())));
             if (videoRelays.size() == 0){
-                map.put(new VideoCUser(videoComment,userRepository.findOne(videoComment.getUserid())),null);
+                vcViews.add(new VCView(list.getTotalPages(),new VideoCUser(videoComment,userRepository.findOne(videoComment.getUserid())),null));
             }else{
-                map.put(new VideoCUser(videoComment,userRepository.findOne(videoComment.getUserid())),videoRelays);
+                vcViews.add(new VCView(list.getTotalPages(),new VideoCUser(videoComment,userRepository.findOne(videoComment.getUserid())),videoRelays));
             }
         }
-        return new VCView(list.getTotalPages(),map);
+        return vcViews;
     }
 
     //进行输入的心情中处理文本除需要的img html元素以外的删除。

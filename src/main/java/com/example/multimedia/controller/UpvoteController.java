@@ -9,11 +9,11 @@ public class UpvoteController {
     @Autowired
     private UpvoteService upvoteService;
 
-    /*
-    * 点赞功能
-    * 需要参数：点赞类型，用户id，点赞的事物id
-    * 点赞类型：文章、文章评论、论坛、论坛评论、视频
-    **/
+    /**
+     * 点赞
+     * @param type doc文章 DComment文章平评论 forum\video相同
+     * @param objid
+     */
     @PutMapping(value = "upvote",params = {"type","objid"})
     public void upvote(String type,long objid){
         upvoteService.upvote(type,objid);

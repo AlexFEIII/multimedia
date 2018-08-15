@@ -5,19 +5,22 @@ import java.util.Map;
 
 public class FCView {
     private int totalPage;
-    private Map<ForumCUser, List<ForumRUser>> maps;
+    private ForumCUser forumCUser;
+    private List<ForumRUser> forumRUsers;
 
     public FCView(){}
-    public FCView(int totalPage,Map<ForumCUser, List<ForumRUser>> maps){
+    public FCView(int totalPage,ForumCUser forumCUser, List<ForumRUser> forumRUsers){
         this.totalPage = totalPage;
-        this.maps = maps;
+        this.forumCUser = forumCUser;
+        this.forumRUsers = forumRUsers;
     }
 
     @Override
     public String toString() {
         return "FCView{" +
                 "totalPage=" + totalPage +
-                ", maps=" + maps +
+                ", forumCUser=" + forumCUser +
+                ", forumRUsers=" + forumRUsers +
                 '}';
     }
 
@@ -29,11 +32,19 @@ public class FCView {
         this.totalPage = totalPage;
     }
 
-    public Map<ForumCUser, List<ForumRUser>> getMaps() {
-        return maps;
+    public ForumCUser getForumCUser() {
+        return forumCUser;
     }
 
-    public void setMaps(Map<ForumCUser, List<ForumRUser>> maps) {
-        this.maps = maps;
+    public void setForumCUser(ForumCUser forumCUser) {
+        this.forumCUser = forumCUser;
+    }
+
+    public List<ForumRUser> getForumRUsers() {
+        return forumRUsers;
+    }
+
+    public void setForumRUsers(List<ForumRUser> forumRUsers) {
+        this.forumRUsers = forumRUsers;
     }
 }

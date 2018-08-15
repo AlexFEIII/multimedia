@@ -19,6 +19,7 @@ public class MulUser{
     //用户名/手机号
     private String username;
     //用户名拼音
+    @JsonIgnore
     private String upinyin;
     //密码
     @JsonIgnore

@@ -6,19 +6,28 @@ import com.example.multimedia.domain.MulUser;
 //文章回复+用户
 public class DocRUser {
     private DocRelay docRelay;
-    private MulUser mulUser;
+    private String nickname;
+    private long id;
+    private String rname;
+    private long rid;
 
     public DocRUser(){}
-    public DocRUser(DocRelay docRelay,MulUser mulUser){
+    public DocRUser(DocRelay docRelay,String nickname,long id,String rname,long rid){
         this.docRelay = docRelay;
-        this.mulUser = mulUser;
+        this.nickname = nickname;
+        this.id = id;
+        this.rname = rname;
+        this.rid = rid;
     }
 
     @Override
     public String toString() {
         return "DocRUser{" +
                 "docRelay=" + docRelay +
-                ", mulUser=" + mulUser +
+                ", nickname='" + nickname + '\'' +
+                ", id=" + id +
+                ", rname='" + rname + '\'' +
+                ", rid=" + rid +
                 '}';
     }
 
@@ -30,11 +39,35 @@ public class DocRUser {
         this.docRelay = docRelay;
     }
 
-    public MulUser getMulUser() {
-        return mulUser;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setMulUser(MulUser mulUser) {
-        this.mulUser = mulUser;
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getRname() {
+        return rname;
+    }
+
+    public void setRname(String rname) {
+        this.rname = rname;
+    }
+
+    public long getRid() {
+        return rid;
+    }
+
+    public void setRid(long rid) {
+        this.rid = rid;
     }
 }

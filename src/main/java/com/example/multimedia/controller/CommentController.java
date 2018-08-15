@@ -69,7 +69,7 @@ public class CommentController {
      * @return 返回一个Map
     * */
     @GetMapping("/getDComment/{docid}/{pagenum}")
-    public DCView getDComment(@PathVariable long docid,@PathVariable int pagenum){
+    public List<DCView> getDComment(@PathVariable long docid,@PathVariable int pagenum){
         return commentService.getDocComment(docid,pagenum);
     }
 
@@ -78,7 +78,7 @@ public class CommentController {
      * @return 返回一个Map
      * */
     @GetMapping("/getFComment/{docid}/{pagenum}")
-    public FCView getFComment(@PathVariable long docid,@PathVariable int pagenum){
+    public List<FCView> getFComment(@PathVariable long docid,@PathVariable int pagenum){
         return commentService.getForumComment(docid,pagenum);
     }
     /**
@@ -86,7 +86,7 @@ public class CommentController {
      * @return 返回一个Map
      * */
     @GetMapping("/getVComment/{docid}/{pagenum}")
-    public VCView getVComment(@PathVariable long docid,@PathVariable int pagenum){
+    public List<VCView> getVComment(@PathVariable long docid,@PathVariable int pagenum){
         return commentService.getVideoComment(docid,pagenum);
     }
 }

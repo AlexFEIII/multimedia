@@ -218,6 +218,15 @@ function onNotSame(m, n) {
       color: '',
     });
   }
+    $.ajax({
+        url:"../upvote?type=DComment&objid="+m.parent().parent().parent().parent().children('.ComID').text(),
+        type:"put",
+        success:function () {
+        },error:function () {
+            console.log("文章评论点赞出错！")
+        }
+
+    })
 }
 function cancel() {
     $('.NewGoodEditor .cancel_A').on('click', function () {
@@ -275,7 +284,7 @@ function getNewEditor(n) {
         if (ContentNew == '') {
             alert('请您写一点内容再发送，当前状态不可发送');
         } else {
-            $('.NewGoodEditor').before('<div class="insertComment"><p class="TwoSecond"></p><span class="oneSpanTWO"></span><span class="TwoSpanTWO"></span><a href="javascript:;" class="ADDCommit">评论</a><a href="javascript:;" class="DEl">删除</a></div>');
+            $('.NewGoodEditor').before('<div class="insertComment"><span style="display: none" class="ReID"></span><p class="TwoSecond"></p><span class="oneSpanTWO"></span><span class="TwoSpanTWO"></span><a href="javascript:;" class="ADDCommit">评论</a><a href="javascript:;" class="DEl">删除</a></div>');
             $(this).parent().parent().parent().parent().parent().parent().find('.insertComment:last .TwoSecond').html(ContentNew);
             $(this).parent().parent().parent().parent().parent().parent().find('.insertComment:last .oneSpanTWO').html('' + Year + '/' + Month + '/' + Day + '');
             $(this).parent().parent().parent().parent().parent().parent().find('.insertComment:last .TwoSpanTWO').html('' + addZero(Hour) + ':' + addZero(Minute) + ':' + addZero(Second) + '');
@@ -286,7 +295,7 @@ function getNewEditor(n) {
             var This = $(this);
             layer.confirm('确定要删除此评论吗?', {
                 btn: ['确定', '取消'], //按钮
-                title: '提示',
+                title: '提示'
             }, function (index) {
                 This.parent().remove();
                 layer.close(index);
@@ -353,7 +362,54 @@ $(document).ready(function () {
             console.log("获取文章信息失败！");
         }
     });
-
+//页面加载时获取第一页的评论内容
+    $.ajax({
+        url:"/getDComment/"+DOCDATA.document.id+"/1",
+        type:"get",
+        async:false,
+        success:function (data) {
+            console.log(data);
+            if (data != ""){
+                $('.commentsNum span').html(data[0].totalNum);
+                showComment(data);
+                if (data.length > 12){
+                    $(".commentsDetail").after('<div class="pagingTool"></div>');
+                    $(".pagingTool").Paging({
+                        pagesize: 12,
+                        count:data.length,
+                        prevTpl: '<i class="iconfont">&#xe78c;</i>',
+                        nextTpl: '<i class="iconfont">&#xe77c;</i>',
+                        firstTpl: '<i class="iconfont">&#xe609;</i>',
+                        lastTpl: '<i class="iconfont">&#xe6de;</i>',
+                        callback:function (page,size,count) {
+                            console.log("num: "+page);
+                            $('.commentsList').empty();
+                            $.ajax({
+                                url:"getDComment/"+DOCDATA.document.id+"/"+page,
+                                type:"get",
+                                success:function (data) {
+                                    showComment(data);
+                                },error:function() {
+                                    console.log("请求评论失败！")
+                                }
+                            })
+                        }
+                    });
+                }
+                $('.toolBar_Btn a').on('click', function () {
+                    layer.msg("请先登录！");
+                });
+                $('.ADDCommit').on('click',function () {
+                    layer.msg("请先登录！");
+                });
+                $('.DEl').on('click',function () {
+                    layer.msg("请先登录！");
+                })
+            }
+        },error:function () {
+            console.log("加载页面时获取评论失败！")
+        }
+    })
     //获取登陆信息
     $.ajax({
         url:"../user/isLogin",
@@ -368,16 +424,7 @@ $(document).ready(function () {
         }
     });
 
-    //页面加载时获取第一页的评论内容
-    $.ajax({
-        url:"/getDComment/"+DOCDATA.document.id+"/1",
-        type:"get",
-        success:function (data) {
-            console.log(data)
-        },error:function () {
-            console.log("加载页面时获取评论失败！")
-        }
-    })
+
 });
 function loginSuccess(data) {
     $.ajax({
@@ -485,10 +532,10 @@ function loginSuccess(data) {
         var image = "../img/14.png";
         if (data.headimage != null) image = data.headimage;
         var addComments = $(
-            '<li class="Number"><div class="commentsMessage"><div class="topMessage"><a href="javascript:;"><img src="'+image+'"></a>' +
-            '<div class="rightMessage"><div class="commentsName">data.nickname</div><div class="timeMessage"><span></span><span></span>' +
-            '</div></div></div><div class="bottomMessage"><p class="OneFirst"></p><div class="toolBar_Btn"><a href="javascript:;"><i class="iconfont">&#xe606;</i>' +
-            '<span class="goodNum">0</span><span>人赞</span></a><a href="javascript:;"><i class="iconfont replyBack">&#xe61b;</i><span>回复</span>' +
+            '<li class="Number"><div class="commentsMessage"><span style="display: none" class="ComID"></span><div class="topMessage"><a href="javascript:;"><img src="'+image+'"></a>' +
+            '<div class="rightMessage"><div class="commentsName">'+data.nickname+'</div><div class="timeMessage"><span></span><span></span>' +
+            '</div></div></div><div class="bottomMessage"><p class="OneFirst"></p><div class="toolBar_Btn"><a href="javascript:;" class="upComment"><i class="iconfont">&#xe606;</i>' +
+            '<span class="goodNum">0</span><span>人赞</span></a><a href="javascript:;" class="reComment"><i class="iconfont replyBack">&#xe61b;</i><span>回复</span>' +
             '</a></div></div></div></li>'
         );
         var Content = $('.NewEditor .w-e-text').html();
@@ -513,25 +560,73 @@ function loginSuccess(data) {
         }
         $('.NewEditor .w-e-text').html('<p><br></p>');
 
-        //点赞
-        var NotSame = true;
         var GoodNum = parseInt($('.goodNum').html());
-        $('.toolBar_Btn a').eq(0).on('click', function () {
-            if (NotSame) {
-                NotSame = false;
+        $(".toolBar_Btn a").off("click");
+        $('.upComment').on('click', function () {
+            if ($(this).children("i")[0].style.color == "") {
                 onNotSame($(this).find('.iconfont'), 1);
-                $(this).find('.goodNum').html(++GoodNum);
+                $(this).find('.goodNum').html($(this).find(".goodNum").val()+1);
             } else {
-                NotSame = true;
                 onNotSame($(this).find('.iconfont'), 0);
-                $(this).find('.goodNum').html(--GoodNum);
+                $(this).find('.goodNum').html($(this).find(".goodNum").val()-1);
             }
         });
 
         //回复
-        $('.toolBar_Btn a').eq(1).on('click', function () {
+        $('.reComment').on('click', function () {
             getNewEditor($(this));
         });
-
     });
+    var GoodNum = parseInt($('.goodNum').html());
+    $(".toolBar_Btn a").off("click");
+    $('.upComment').on('click', function () {
+        if ($(this).children("i")[0].style.color == "") {
+            onNotSame($(this).find('.iconfont'), 1);
+            $(this).find('.goodNum').html($(this).find(".goodNum").val()+1);
+        } else {
+            onNotSame($(this).find('.iconfont'), 0);
+            $(this).find('.goodNum').html($(this).find(".goodNum").val()-1);
+        }
+    });
+
+    //回复
+    $('.reComment').on('click', function () {
+        getNewEditor($(this));
+    });
+    $('.DEl').off("click");
+    $(".ADDCommit").off("click");
+    $('.DEl').unbind('click').on('click', function () {
+        var This = $(this);
+        layer.confirm('确定要删除此评论吗?', {
+            btn: ['确定', '取消'], //按钮
+            title: '提示'
+        }, function (index) {
+            This.parent().remove();
+            layer.close(index);
+        });
+    }); //删除评论
+    $('.ADDCommit').on('click', function () {
+        getNewEditor($(this));
+    });
+}
+//显示评论的方法
+function showComment(data) {
+    for(var i = 0;i < data.length;i ++){
+        var image = "../img/14.png";
+        var DCtime = new Date(data[i].docCUser.docComment.date);
+        if (data[i].docCUser.mulUser.headimage != null) image = data[i].docCUser.mulUser.headimage;
+        $('.commentsList').append('<li class="Number"><div class="commentsMessage"><span style="display: none" class="ComID">'+data[i].docCUser.docComment.id+'</span><div class="topMessage"><a href="javascript:;"><img src="'+image+'"></a>' +
+            '<div class="rightMessage"><div class="commentsName">'+data[i].docCUser.mulUser.nickname+'</div><div class="timeMessage"><span>'+DCtime.getFullYear()+'/'+DCtime.getMonth()+'/'+DCtime.getDate()+'</span><span>'+DCtime.getHours()+':'+DCtime.getMinutes()+':'+DCtime.getMilliseconds()+'</span>' +
+            '</div></div></div><div class="bottomMessage"><p class="OneFirst">'+data[i].docCUser.docComment.content+'</p><div class="toolBar_Btn"><a href="javascript:;" class="upComment"><i class="iconfont">&#xe606;</i>' +
+            '<span class="goodNum">'+data[i].docCUser.docComment.upvotenum+'</span><span>人赞</span></a><a href="javascript:;" class="reComment"><i class="iconfont replyBack">&#xe61b;</i><span>回复</span>' +
+            '</a></div></div></div></li>');
+        if (data[i].docRUsers != null){
+            console.log(data[i].docRUsers);
+            for (var j = 0;j < data[i].docRUsers.length;j ++){
+                var DRtime = new Date(data[i].docRUsers[j].docRelay.date);
+                $(".Number").last().children(".commentsMessage").children(".bottomMessage").append('<div class="insertComment"><span style="display: none" class="ReID">'+data[i].docRUsers[j].docRelay.id+'</span><span class="twoUser"><a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+data[i].docRUsers[j].id+'">'+data[i].docRUsers[j].nickname+'</a>：回复<a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+data[i].docRUsers[j].rid+'">@'+data[i].docRUsers[j].rname+'</a></span><p class="TwoSecond">'+data[i].docRUsers[j].docRelay.content+'</p><span class="oneSpanTWO" style="padding-right: 5px;">'+DRtime.getFullYear()+'/'+DRtime.getMonth()+'/'+DRtime.getDate()+'</span><span class="TwoSpanTWO">'+DRtime.getHours()+':'+DRtime.getMinutes()+':'+DRtime.getMilliseconds()+'</span><a href="javascript:;" class="ADDCommit">评论</a><a href="javascript:;" class="DEl">删除</a></div>')
+            }
+        }
+        if (data[i].up){$(".upComment").last().children("i").css('color', '#00B38C')}
+    }
 }

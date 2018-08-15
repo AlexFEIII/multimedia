@@ -38,6 +38,7 @@ public class UpvoteServiceImpl implements UpvoteService {
     * */
     @Override
     public void upvote(String type,long objid) {
+        System.out.println("type: "+type+"  objid: "+objid);
         long userid = userRepository.findByUsername(userService.getUsername()).getId();
         if (type.equals("doc")){
             Document document = documentRepository.findOne(objid);
@@ -67,7 +68,7 @@ public class UpvoteServiceImpl implements UpvoteService {
                 videoUpvoteRepository.save(new Videoupvote(userid,objid));
             else
                 videoUpvoteRepository.delete(videoUpvote);
-        }else if (type.equals("DCommemt")){
+        }else if (type.equals("DComment")){
             DocComment docComment = docCommentRepository.findOne(objid);
             DocCUpvote docCUpvote = docCUpvoteRepository.findByCommentidAndUserid(objid,userid);
             if (docCUpvote == null){
@@ -90,7 +91,7 @@ public class UpvoteServiceImpl implements UpvoteService {
                 forumComment.setUpvotenum(forumComment.getUpvotenum()-1);
             }
             forumCommentRepository.save(forumComment);
-        }else {
+        }else if (type.equals("VComment")) {
             VideoCUpvote videoCUpvote = videoCUpvoteRepository.findByCommentidAndUserid(objid,userid);
             if (videoCUpvote == null)
                 videoCUpvoteRepository.save(new VideoCUpvote(userid,objid));

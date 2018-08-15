@@ -9,21 +9,21 @@ $(function () {
             if (isChrome && isEdge) {
                 if (osTop == 0) {
                     $('#html5_player').css({
-                        "z-index": "999",
+                        "z-index": "999"
                     });
                     $('.control_bar').css({
-                        "z-index": "1000",
+                        "z-index": "1000"
                     })
                 } else {
                     $('#html5_player').css({
-                        "z-index": "",
+                        "z-index": ""
                     });
                     $('.control_bar').css({
-                        "z-index": "",
+                        "z-index": ""
                     })
-                };
-            };
-        };
+                }
+            }
+        }
         BrowserType(); //解决edge浏览器往下移的时候video上画面消失的问题
     });
 
@@ -119,7 +119,7 @@ $(function () {
         if ($(this).text().length > maxwidth) {
             $(this).text($(this).text().substring(0, maxwidth));
             $(this).html($(this).html() + "...");
-        };
+        }
     });
 });
 
@@ -127,9 +127,9 @@ var html5_player = document.getElementById('html5_player');
 html5_player.oncanplay = function () { //当视频加载完成时
     var contain_videoHeight = $('.contain_video').outerHeight();
     $('.live_list').css({
-        'height': contain_videoHeight - 20,
+        'height': contain_videoHeight - 20
     });
-}
+};
 
 //数组存放文章所在的图片链接，方便存储
 var Img_Array = new Array(10);
@@ -191,7 +191,7 @@ imgNewWidth = $ul_box.children().length;
 
 $ul_box.css({
     left: 0 - imgWidth,
-    width: imgNewWidth * imgWidth,
+    width: imgNewWidth * imgWidth
 });
 
 var judge = true;
@@ -211,44 +211,44 @@ function playnext() {
     if (judge) {
         judge = false;
         $ul_box.animate({
-            left: '-=' + mov * imgWidth,
+            left: '-=' + mov * imgWidth
         }, 500, function () {
             judge = true;
             curidx += mov;
             if (curidx === imgCount) {
                 $ul_box.css({
-                    left: 0 - imgWidth,
+                    left: 0 - imgWidth
                 });
                 curidx = 0;
-            };
+            }
         });
-    };
-};
+    }
+}
 
 function playpre() {
     if (judge) {
         judge = false;
         $ul_box.animate({
-            left: '+=' + mov * imgWidth,
+            left: '+=' + mov * imgWidth
         }, 500, function () {
             judge = true;
             curidx -= mov;
             if (curidx === (-1)) {
                 $ul_box.css({
-                    left: 0 - imgWidth * imgCount,
+                    left: 0 - imgWidth * imgCount
                 });
                 curidx = imgCount - 1;
-            };
+            }
         });
-    };
-};
+    }
+}
 
 function autoPlay() {
     clearInterval(timer);
     timer = setInterval(function () {
         playnext();
     }, 5000);
-};
+}
 
 autoPlay();
 
@@ -256,24 +256,24 @@ $(window).resize(function () {
     imgWidth = $('.carousel').width();
     $ul_box.css({
         left: 0 - imgWidth,
-        width: imgNewWidth * imgWidth,
+        width: imgNewWidth * imgWidth
     });
     autoPlay();
 });
 
 $('.module_ans_que').hover(function () {
     $pre.css({
-        opacity: 1,
+        opacity: 1
     });
     $next.css({
-        opacity: 1,
+        opacity: 1
     });
 }, function () {
     $pre.css({
-        opacity: 0,
+        opacity: 0
     });
     $next.css({
-        opacity: 0,
+        opacity: 0
     });
 });
 

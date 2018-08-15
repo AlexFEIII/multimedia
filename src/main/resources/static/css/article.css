@@ -606,7 +606,7 @@ blockquote b {
   padding-right: 5px !important;
 }
 
-.insertComment a {
+.insertComment>a {
   position: absolute;
   right: 0;
   bottom: 0;
@@ -619,7 +619,7 @@ blockquote b {
   right: 50px;
 }
 
-.insertComment:hover a {
+.insertComment:hover>a {
   display: block;
   padding-right: 30px;
 }
