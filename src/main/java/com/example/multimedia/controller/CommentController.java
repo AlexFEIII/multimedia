@@ -18,15 +18,13 @@ public class CommentController {
      * @param type 类型：doc 文章  forum 论坛文章  video 视频 docR 文章评论 forumR 论坛评论 videoR 视频评论
      * @param objid 该类型某对象的id
      * @param content 评论的内容
-     * @param ruserid 被评论的用户id
      * @return 敏感词过滤之后的评论内容
      */
     @PostMapping("/comment")
-    public String comment(@RequestParam String type,
+    public Map<Long,String> comment(@RequestParam String type,
                           @RequestParam long objid,
-                          @RequestParam String content,
-                          @RequestParam long ruserid){
-        return commentService.comment(type,objid,content,ruserid);
+                          @RequestParam String content){
+        return commentService.comment(type,objid,content);
     }
 
     /**
@@ -35,15 +33,14 @@ public class CommentController {
      * @param content 内容
      * @param objid 所在评论的id
      * @param rcommentid 回复的回复id
-     * @param ruserid 被评论的用户id
      * @return
      */
-    public String rRelay(@RequestParam String type,
+    @PostMapping("/reCom")
+    public Map<Long,String> rRelay(@RequestParam String type,
                          @RequestParam String content,
                          @RequestParam long objid,
-                         @RequestParam long rcommentid,
-                         @RequestParam long ruserid){
-        return commentService.replyR(type,content,objid,rcommentid,ruserid);
+                         @RequestParam long rcommentid){
+        return commentService.replyR(type,content,objid,rcommentid);
     }
 
     /*

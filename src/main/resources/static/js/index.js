@@ -1,32 +1,4 @@
 $(function () {
-    $("html").niceScroll();
-
-    $(window).scroll(function () {
-        function BrowserType() {
-            var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
-            var isEdge = userAgent.indexOf('Edge') > -1; //判断是否IE的Edge浏览器
-            var isChrome = userAgent.indexOf("Chrome") > -1 && userAgent.indexOf("Safari") > -1; //判断Chrome浏览器
-            if (isChrome && isEdge) {
-                if (osTop == 0) {
-                    $('#html5_player').css({
-                        "z-index": "999"
-                    });
-                    $('.control_bar').css({
-                        "z-index": "1000"
-                    })
-                } else {
-                    $('#html5_player').css({
-                        "z-index": ""
-                    });
-                    $('.control_bar').css({
-                        "z-index": ""
-                    })
-                }
-            }
-        }
-        BrowserType(); //解决edge浏览器往下移的时候video上画面消失的问题
-    });
-
     //10个推荐文章
     $('.other_module').eq(0).find("img").attr("src", Img_Array[0]);
     $('.left_part').eq(0).find(".under_line").html("五一，差点只剩半条命！");
@@ -123,14 +95,6 @@ $(function () {
     });
 });
 
-var html5_player = document.getElementById('html5_player');
-html5_player.oncanplay = function () { //当视频加载完成时
-    var contain_videoHeight = $('.contain_video').outerHeight();
-    $('.live_list').css({
-        'height': contain_videoHeight - 20
-    });
-};
-
 //数组存放文章所在的图片链接，方便存储
 var Img_Array = new Array(10);
 Img_Array[0] = "https://upload-images.jianshu.io/upload_images/10560804-8aa981c5b24fc5ac.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/300/h/240";
@@ -144,174 +108,33 @@ Img_Array[7] = "https://upload-images.jianshu.io/upload_images/4923048-bc60d3577
 Img_Array[8] = "https://upload-images.jianshu.io/upload_images/2879246-28b72f30b23fd91d.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/300/h/240";
 Img_Array[9] = "https://upload-images.jianshu.io/upload_images/11145786-f0bf3ad51abf6b64.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/300/h/240";
 
-//轮播的讨论
-var carousel_contain = $('<section></section>');
-for (var i = 0; i < 5; i++) {
-    var five_block = $('<div><a href="javascript:;"><img src=""><span></span></a><span class="issue"></span></div>');
-    carousel_contain.append(five_block);
-}
-$('.carousel_ul li').append(carousel_contain);
 
 for (var i = 0; i < 8; i++) {
-    var five_block_new = $('<div><a href="javascript:;"><img src=""><span></span></a><span class="issue"></span></div>');
+    var five_block_new = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src=""><span></span></a><span class="issue"></span></div></div>');
     $('.recommed_topic').append(five_block_new);
 }
 
-var Issue = new Array(4);
+var Issue = new Array(1);
 Issue[0] = "../img/4.jpg";
-Issue[1] = "../img/5.jpg";
-Issue[2] = "../img/6.jpg";
-Issue[3] = "../img/7.jpg";
 
-$('.carousel_ul li').eq(0).find("img").attr("src", Issue[0]);
-$('.carousel_ul li').eq(0).find("span").html("「分开」这件小事");
-$('.carousel_ul li').eq(0).find(".issue").html("该议题被浏览 61651564 次");
-$('.carousel_ul li').eq(1).find("img").attr("src", Issue[1]);
-$('.carousel_ul li').eq(1).find("span").html("悄声抑郁");
-$('.carousel_ul li').eq(1).find(".issue").html("该议题被浏览 9221631 次");
-$('.carousel_ul li').eq(2).find("img").attr("src", Issue[2]);
-$('.carousel_ul li').eq(2).find("span").html("知识产权保卫战");
-$('.carousel_ul li').eq(2).find(".issue").html("该议题被浏览 2223661 次");
-$('.recommed_topic').find("img").attr("src", Issue[3]);
+$('.recommed_topic').find("img").attr("src", Issue[0]);
 $('.recommed_topic').find("span").html("知识产权保卫战");
 $('.recommed_topic').find(".issue").html("该议题被浏览 2223661 次");
-//结束
-
-//轮播图开始
-var $ul_box = $(".carousel_ul"),
-    $items = $ul_box.children("li"),
-    $pre = $('.left_move'),
-    $next = $('.right_move'),
-    imgWidth = $('.carousel').width();
-imgCount = $items.length;
-
-$ul_box.prepend($items.last().clone());
-$ul_box.append($items.first().clone());
-imgNewWidth = $ul_box.children().length;
-
-$ul_box.css({
-    left: 0 - imgWidth,
-    width: imgNewWidth * imgWidth
-});
-
-var judge = true;
-var timer = null;
-
-$next.on('click', function () {
-    playnext();
-});
-$pre.on('click', function () {
-    playpre();
-});
-
-var curidx = 0;
-var mov = 1;
-
-function playnext() {
-    if (judge) {
-        judge = false;
-        $ul_box.animate({
-            left: '-=' + mov * imgWidth
-        }, 500, function () {
-            judge = true;
-            curidx += mov;
-            if (curidx === imgCount) {
-                $ul_box.css({
-                    left: 0 - imgWidth
-                });
-                curidx = 0;
-            }
-        });
-    }
-}
-
-function playpre() {
-    if (judge) {
-        judge = false;
-        $ul_box.animate({
-            left: '+=' + mov * imgWidth
-        }, 500, function () {
-            judge = true;
-            curidx -= mov;
-            if (curidx === (-1)) {
-                $ul_box.css({
-                    left: 0 - imgWidth * imgCount
-                });
-                curidx = imgCount - 1;
-            }
-        });
-    }
-}
-
-function autoPlay() {
-    clearInterval(timer);
-    timer = setInterval(function () {
-        playnext();
-    }, 5000);
-}
-
-autoPlay();
-
-$(window).resize(function () {
-    imgWidth = $('.carousel').width();
-    $ul_box.css({
-        left: 0 - imgWidth,
-        width: imgNewWidth * imgWidth
-    });
-    autoPlay();
-});
-
-$('.module_ans_que').hover(function () {
-    $pre.css({
-        opacity: 1
-    });
-    $next.css({
-        opacity: 1
-    });
-}, function () {
-    $pre.css({
-        opacity: 0
-    });
-    $next.css({
-        opacity: 0
-    });
-});
-
-$('.left_move,.right_move').hover(function () {
-    clearInterval(timer);
-}, function () {
-    autoPlay();
-});
-//轮播图结束
-
-// $('#login_a').click(function () {
-//     $("body").getNiceScroll(0).doScrollTop(2000, .1);
-// });
-// 模拟target过渡的效果
-
-var Pic = $('.pic');
-setTimeout(function () {
-    var pic_height = Pic.height();
-    $('.down_btn').on('click', function () {
-        $("body").getNiceScroll(0).doScrollTop(pic_height);
-    });
-}, 10); //为了兼容火狐不可获取pic的高
 
 //推荐直播
 var module_scene = $('.module_scene');
 
 for (var i = 0; i < 12; i++) {
-    var scene_1 = $('<div class="same_module"><a href="javascript:;"><img src="../img/2.jpg"></a><span>梨视频</span></div>');
+    var scene_1 = $('<div class="same_module"><a href="javascript:;"><img src="../img/15.jpg"></a><span>梨视频</span></div>');
     module_scene.append(scene_1);
 }
 var span_scene = $('<div class="contain_a"><a class="contain_span" href="javascript:;"><span class="change_circle">Get More<i class="iconfont">&#xe6c3;</i></span></a></div>');
 module_scene.append(span_scene);
-//推荐直播
 
 //推荐视频
 var module_news = $('.module_news');
 for (var i = 0; i < 12; i++) {
-    var news_1 = $('<div class="same_module"><a href="javascript:;"><img src="../img/2.jpg"></a><span>梨视频</span></div>');
+    var news_1 = $('<div class="same_module"><a href="javascript:;"><img src="../img/15.jpg"></a><span>梨视频</span></div>');
     module_news.append(news_1);
 }
 var span_scene = $('<div class="contain_a"><a class="contain_span" href="javascript:;"><span class="change_circle">Get More<i class="iconfont">&#xe6c3;</i></span></a></div>');
@@ -339,12 +162,31 @@ $('.same_module a').hover(function () {
     $(this).removeClass("a_hover a_hover_a");
 });
 
-(window.onresize = function () {
-    var contain_videoHeight = $('.contain_video').outerHeight();
+//视频播放
+var dp = new DPlayer({
+    container: document.getElementById('DPlayerVideo'),
+    screenshot: true, //截图
+    volume: 1,
+    live: true,
+    theme: '#FF5983', //主题颜色
+    video: {
+        url: 'http://pdc3kp6os.bkt.clouddn.com/Soda1.mp4' //视频地址
+    }
+});
+//视频加载完
+dp.on('canplay', function () {
+    var ContainerOutVideoH = $('.ContainerOutVideo').outerHeight();
     $('.live_list').css({
-        'height': contain_videoHeight - 20,
+        'height': ContainerOutVideoH - 20
     });
-})();
+});
+//页页面的尺寸发生变化
+$(window).resize(function () {
+    var ContainerOutVideoH = $('.ContainerOutVideo').outerHeight();
+    $('.live_list').css({
+        'height': ContainerOutVideoH - 20
+    });
+});
 
 $(document).ready(function () {
     $.ajax({

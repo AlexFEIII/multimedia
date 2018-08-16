@@ -11,8 +11,8 @@ public interface CommentService {
     /*
     * 评论功能
     * */
-    String comment(String type,long objid,String content,long ruserid);
-    public String replyR(String type,String content,long objid,long rcommentid,long ruserid);
+    Map<Long,String> comment(String type,long objid,String content);
+    Map<Long,String> replyR(String type,String content,long objid,long rcommentid);
 
     /*
     * 删除评论

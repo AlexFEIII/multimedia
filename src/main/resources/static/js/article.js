@@ -4,6 +4,7 @@ var onOff = true;
 var Judge = true;
 
 var DOCDATA;
+var USERDATA;
 
 var ListLan = $('.circle').attr('list-title');
 
@@ -159,7 +160,7 @@ $('.publish_A').html('<i class="iconfont">&#xe815;</i>发送');
 $('#QRCode').qrcode({
   width: 105,
   height: 105,
-  text: UrlAddress,
+  text: UrlAddress
 });
 
 
@@ -183,14 +184,14 @@ function Change(n, m, o) {
       initNum++;
     }
     m.css({
-      color: '#FF9500',
+      color: '#FF9500'
     });
   } else {
     if (o) {
       initNum--;
     }
     m.css({
-      color: '',
+      color: ''
     });
   }
   $('.numCount').html(initNum);
@@ -211,11 +212,11 @@ function addZero(n) {
 function onNotSame(m, n) {
   if (n) {
     m.css({
-      color: '#00B38C',
+      color: '#00B38C'
     });
   } else {
     m.css({
-      color: '',
+      color: ''
     });
   }
     $.ajax({
@@ -236,24 +237,23 @@ function cancel() {
         });
     });
 }
-function getNewEditor(n) {
+function getNewEditor(n,type,href,name,rcommentid,reid) {
     var NewGoodEditor = $('<div class="NewGoodEditor"><div class="NewEditor">' +
         '<div id="Newtoolbar" class="NewToolbar" style="width:100%;background: #fff;border-bottom: 1px solid #DDD;"></div>' +
         '<div id="NewUser_edit" class="EditorNew" style="width:100%;height:200px;display: flex;justify-content: center;' +
         'align-content: center;flex-wrap:wrap;background:#fff;"></div></div></div>');
     $('.replyBack').css({
-        color: '',
+        color: ''
     });
     CodeSame($('.NewGoodEditor'));
-    onNotSame(n.find('.iconfont'), 1);
-    n.parent().parent().append(NewGoodEditor);
+    n.parent().after(NewGoodEditor);
     setTimeout(function () {
         $('.NewGoodEditor').css({
             opacity: '1',
-            top: '0',
+            top: '0'
         });
         $('.NewGoodEditor .cancel_A').css({
-            display: 'flex',
+            display: 'flex'
         });
         $('.NewGoodEditor .publish_A').html('<i class="iconfont">&#xe815;</i>发送');
     }, 10);
@@ -281,13 +281,36 @@ function getNewEditor(n) {
         var Minute = Now.getMinutes();
         var Second = Now.getSeconds();
         var ContentNew = $('.NewGoodEditor .w-e-text').html();
-        if (ContentNew == '') {
+        console.log(ContentNew)
+        if (ContentNew == '<p><br></p>') {
             alert('请您写一点内容再发送，当前状态不可发送');
         } else {
-            $('.NewGoodEditor').before('<div class="insertComment"><span style="display: none" class="ReID"></span><p class="TwoSecond"></p><span class="oneSpanTWO"></span><span class="TwoSpanTWO"></span><a href="javascript:;" class="ADDCommit">评论</a><a href="javascript:;" class="DEl">删除</a></div>');
-            $(this).parent().parent().parent().parent().parent().parent().find('.insertComment:last .TwoSecond').html(ContentNew);
-            $(this).parent().parent().parent().parent().parent().parent().find('.insertComment:last .oneSpanTWO').html('' + Year + '/' + Month + '/' + Day + '');
-            $(this).parent().parent().parent().parent().parent().parent().find('.insertComment:last .TwoSpanTWO').html('' + addZero(Hour) + ':' + addZero(Minute) + ':' + addZero(Second) + '');
+            if (type == "reCom"){
+                $.ajax({
+                    url:"../comment",
+                    type:"post",
+                    async:false,
+                    data:{"type":"docR","objid":reid,"content":ContentNew},
+                    success:function (data) {
+                        for(var i in data){
+                            n.parent().parent().children(".insertComment").last().after('<div class="insertComment"><span style="display: none" class="ReID">'+i+'</span><span class="twoUser"><a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+USERDATA.id+'">'+USERDATA.nickname+'</a>：回复<a style="color: #2D93CA;display: inline;" target="_blank" href="'+href+'">@'+name+'</a></span><p class="TwoSecond">'+data[i]+'</p><span class="oneSpanTWO" style="padding-right: 5px;">'+Year+'/'+Month+'/'+Day+'</span><span class="TwoSpanTWO">'+Hour+':'+Minute+':'+Second+'</span><a href="javascript:;" class="ADDCommit">评论</a><a href="javascript:;" class="DEl">删除</a></div>')
+                        }
+                    }
+                });
+            } else if (type == "RRCom"){
+                $.ajax({
+                    url:"../reCom",
+                    type:"post",
+                    async:false,
+                    data:{"type":"docRR","objid":rcommentid,"content":ContentNew,"rcommentid":reid},
+                    success:function (data) {
+                        for (var i in data) {
+                            n.parent().parent().children(".insertComment").last().after('<div class="insertComment"><span style="display: none" class="ReID">' + i + '</span><span class="twoUser"><a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id=' + USERDATA.id + '">' + USERDATA.nickname + '</a>：回复<a style="color: #2D93CA;display: inline;" target="_blank" href="' + href + '">@' + name + '</a></span><p class="TwoSecond">' + data[i] + '</p><span class="oneSpanTWO" style="padding-right: 5px;">' + Year + '/' + Month + '/' + Day + '</span><span class="TwoSpanTWO">' + Hour + ':' + Minute + ':' + Second + '</span><a href="javascript:;" class="ADDCommit">评论</a><a href="javascript:;" class="DEl">删除</a></div>')
+                        }
+                    }
+                });
+            }
+
         }
         $('.NewGoodEditor .w-e-text').html('<p><br></p>');
         cancel();
@@ -302,7 +325,7 @@ function getNewEditor(n) {
             });
         }); //删除评论
         $('.ADDCommit').on('click', function () {
-            getNewEditor($(this));
+            getNewEditor($(this),"RRCom",$(this).parent().children(".twoUser").children("a").eq(0).attr("href"),$(this).parent().children(".twoUser").children("a").eq(0).text(),$(this).parent().parent().parent().children(".ComID").text(),$(this).parent().children(".ReID").text());
         });
     });
 }
@@ -415,8 +438,8 @@ $(document).ready(function () {
         url:"../user/isLogin",
         type:"get",
         success:function (data) {
-            console.log(data);
             if (data != ""){
+                USERDATA = data;
                 loginSuccess(data);
             }
         },error:function () {
@@ -532,7 +555,7 @@ function loginSuccess(data) {
         var image = "../img/14.png";
         if (data.headimage != null) image = data.headimage;
         var addComments = $(
-            '<li class="Number"><div class="commentsMessage"><span style="display: none" class="ComID"></span><div class="topMessage"><a href="javascript:;"><img src="'+image+'"></a>' +
+            '<li class="Number"><div class="commentsMessage"><span style="display: none" class="ComID"></span><div class="topMessage"><a href="OhthersCenter.html?id=' + USERDATA.id + '"><img src="'+image+'"></a>' +
             '<div class="rightMessage"><div class="commentsName">'+data.nickname+'</div><div class="timeMessage"><span></span><span></span>' +
             '</div></div></div><div class="bottomMessage"><p class="OneFirst"></p><div class="toolBar_Btn"><a href="javascript:;" class="upComment"><i class="iconfont">&#xe606;</i>' +
             '<span class="goodNum">0</span><span>人赞</span></a><a href="javascript:;" class="reComment"><i class="iconfont replyBack">&#xe61b;</i><span>回复</span>' +
@@ -551,47 +574,49 @@ function loginSuccess(data) {
                     var NumNumber = $('.commentsList li').length;
                     $('.commentsNum span').html(++NumNumber); //用于记录有多少条的评论
                     $('.commentsList').prepend(addComments);
-                    $('.commentsList li:first-child .OneFirst').html(data);
+                    for(var i in data){
+                        $('.commentsList li:first-child .ComID').text(i);
+                        $('.commentsList li:first-child .OneFirst').html(data[i]);
+                    }
                     $('.commentsList li:first-child .timeMessage span').eq(0).html('' + Year + '/' + Month + '/' + Day + '');
                     $('.commentsList li:first-child .timeMessage span').eq(1).html('' + addZero(Hour) + ':' + addZero(Minute) + ':' + addZero(Second) + '');
+                    //点赞事件
+                    $(".toolBar_Btn a").off("click");
+                    $('.upComment').on('click', function () {
+                        if ($(this).children("i")[0].style.color == "") {
+                            onNotSame($(this).find('.iconfont'), 1);
+                            $(this).find('.goodNum').html(parseInt($(this).find(".goodNum").text())+1);
+                        } else {
+                            onNotSame($(this).find('.iconfont'), 0);
+                            $(this).find('.goodNum').html(parseInt($(this).find(".goodNum").text())-1);
+                        }
+                    });
+                    //回复
+                    $('.reComment').on('click', function () {
+                        getNewEditor($(this),"reCom",$(this).parent().parent().parent().children(".topMessage").children("a").eq(0).attr("href"),$(this).parent().parent().parent().children(".commentsName").text(),"",$(this).parent().parent().parent().children(".ComID").text());
+                    });
                 }
             });
 
         }
         $('.NewEditor .w-e-text').html('<p><br></p>');
 
-        var GoodNum = parseInt($('.goodNum').html());
-        $(".toolBar_Btn a").off("click");
-        $('.upComment').on('click', function () {
-            if ($(this).children("i")[0].style.color == "") {
-                onNotSame($(this).find('.iconfont'), 1);
-                $(this).find('.goodNum').html($(this).find(".goodNum").val()+1);
-            } else {
-                onNotSame($(this).find('.iconfont'), 0);
-                $(this).find('.goodNum').html($(this).find(".goodNum").val()-1);
-            }
-        });
-
-        //回复
-        $('.reComment').on('click', function () {
-            getNewEditor($(this));
-        });
     });
     var GoodNum = parseInt($('.goodNum').html());
     $(".toolBar_Btn a").off("click");
     $('.upComment').on('click', function () {
         if ($(this).children("i")[0].style.color == "") {
             onNotSame($(this).find('.iconfont'), 1);
-            $(this).find('.goodNum').html($(this).find(".goodNum").val()+1);
+            $(this).find('.goodNum').html(parseInt($(this).find(".goodNum").text())+1);
         } else {
             onNotSame($(this).find('.iconfont'), 0);
-            $(this).find('.goodNum').html($(this).find(".goodNum").val()-1);
+            $(this).find('.goodNum').html(parseInt($(this).find(".goodNum").text())-1);
         }
     });
 
     //回复
     $('.reComment').on('click', function () {
-        getNewEditor($(this));
+        getNewEditor($(this),"reCom",$(this).parent().parent().parent().children(".topMessage").children("a").eq(0).attr("href"),$(this).parent().parent().parent().children(".commentsName").text(),"",$(this).parent().parent().parent().children(".ComID").text());
     });
     $('.DEl').off("click");
     $(".ADDCommit").off("click");
@@ -606,7 +631,7 @@ function loginSuccess(data) {
         });
     }); //删除评论
     $('.ADDCommit').on('click', function () {
-        getNewEditor($(this));
+        getNewEditor($(this),"RRCom",$(this).parent().children(".twoUser").children("a").eq(0).attr("href"),$(this).parent().children(".twoUser").children("a").eq(0).text(),$(this).parent().parent().parent().children(".ComID").text(),$(this).parent().children(".ReID").text());
     });
 }
 //显示评论的方法
@@ -615,7 +640,7 @@ function showComment(data) {
         var image = "../img/14.png";
         var DCtime = new Date(data[i].docCUser.docComment.date);
         if (data[i].docCUser.mulUser.headimage != null) image = data[i].docCUser.mulUser.headimage;
-        $('.commentsList').append('<li class="Number"><div class="commentsMessage"><span style="display: none" class="ComID">'+data[i].docCUser.docComment.id+'</span><div class="topMessage"><a href="javascript:;"><img src="'+image+'"></a>' +
+        $('.commentsList').append('<li class="Number"><div class="commentsMessage"><span style="display: none" class="ComID">'+data[i].docCUser.docComment.id+'</span><div class="topMessage"><a href="OhthersCenter.html?id=' + data[i].docCUser.mulUser.id + '"><img src="'+image+'"></a>' +
             '<div class="rightMessage"><div class="commentsName">'+data[i].docCUser.mulUser.nickname+'</div><div class="timeMessage"><span>'+DCtime.getFullYear()+'/'+DCtime.getMonth()+'/'+DCtime.getDate()+'</span><span>'+DCtime.getHours()+':'+DCtime.getMinutes()+':'+DCtime.getMilliseconds()+'</span>' +
             '</div></div></div><div class="bottomMessage"><p class="OneFirst">'+data[i].docCUser.docComment.content+'</p><div class="toolBar_Btn"><a href="javascript:;" class="upComment"><i class="iconfont">&#xe606;</i>' +
             '<span class="goodNum">'+data[i].docCUser.docComment.upvotenum+'</span><span>人赞</span></a><a href="javascript:;" class="reComment"><i class="iconfont replyBack">&#xe61b;</i><span>回复</span>' +

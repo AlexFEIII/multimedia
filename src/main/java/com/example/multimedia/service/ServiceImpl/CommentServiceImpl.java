@@ -57,44 +57,70 @@ public class CommentServiceImpl implements CommentService {
     * 评论功能
     * */
     @Override
-    public String comment(String type, long objid, String content, long ruserid) {
+    public Map<Long,String> comment(String type, long objid, String content) {
         long userid = userRepository.findByUsername(userService.getUsername()).getId();
+        long ruserid = docCommentRepository.findOne(objid).getUserid();
         content = sensitivewordFilter.turnWord(content);
+        long id = 0;
         if (type.equals("doc")){
-            docCommentRepository.save(new DocComment(deleteHTML(content),objid,userid,ruserid));
+            DocComment docComment = new DocComment(deleteHTML(content),objid,userid,ruserid);
+            docCommentRepository.save(docComment);
+            id = docComment.getId();
         }else if (type.equals("forum")){
-            forumCommentRepository.save(new ForumComment(deleteHTML(content),objid,userid,ruserid));
+            ForumComment forumComment = new ForumComment(deleteHTML(content),objid,userid,ruserid);
+            forumCommentRepository.save(forumComment);
+            id = forumComment.getId();
         }else if (type.equals("video")){
-            videoCommentRepository.save(new VideoComment(deleteHTML(content),objid,userid,ruserid));
+            VideoComment videoComment = new VideoComment(deleteHTML(content),objid,userid,ruserid);
+            videoCommentRepository.save(videoComment);
+            id = videoComment.getId();
         }else if (type.equals("docR")){
-            docRelayRepository.save(new DocRelay(deleteHTML(content),objid,userid,ruserid));
+            DocRelay docRelay = new DocRelay(deleteHTML(content),objid,userid,ruserid);
+            docRelayRepository.save(docRelay);
+            id = docRelay.getId();
         }else if (type.equals("forumR")){
-            forumRelayRepository.save(new ForumRelay(deleteHTML(content),objid,userid,ruserid));
+            ForumRelay forumRelay = new ForumRelay(deleteHTML(content),objid,userid,ruserid);
+            forumRelayRepository.save(forumRelay);
+            id = forumRelay.getId();
         }else if (type.equals("videoR")){
-            videoRelayRepository.save(new VideoRelay(deleteHTML(content),objid,userid,ruserid));
+            VideoRelay videoRelay = new VideoRelay(deleteHTML(content),objid,userid,ruserid);
+            videoRelayRepository.save(videoRelay);
+            id = videoRelay.getId();
         }else{
             return null;
         }
-        return content;
+        Map<Long,String> map = new HashMap<Long,String>();
+        map.put(id,content);
+        return map;
     }
 
     /*
     * 回复 回复
     * */
     @Override
-    public String replyR(String type,String content,long objid,long rcommentid,long ruserid){
+    public Map<Long,String> replyR(String type,String content,long objid,long rcommentid){
         long userid = userRepository.findByUsername(userService.getUsername()).getId();
+        long ruserid = docRelayRepository.findOne(objid).getUserid();
         content = sensitivewordFilter.turnWord(content);
+        long id = 0;
         if (type.equals("docRR")){
-            docRelayRepository.save(new DocRelay(deleteHTML(content),objid,rcommentid,userid,ruserid));
+            DocRelay docRelay = new DocRelay(deleteHTML(content),objid,rcommentid,userid,ruserid);
+            docRelayRepository.save(docRelay);
+            id = docRelay.getId();
         }else if (type.equals("forumRR")){
-            forumRelayRepository.save(new ForumRelay(deleteHTML(content),objid,rcommentid,userid,ruserid));
+            ForumRelay forumRelay = new ForumRelay(deleteHTML(content),objid,rcommentid,userid,ruserid);
+            forumRelayRepository.save(forumRelay);
+            id = forumRelay.getId();
         }else if (type.equals("videoRR")){
-            videoRelayRepository.save(new VideoRelay(deleteHTML(content),objid,rcommentid,userid,ruserid));
+            VideoRelay videoRelay = new VideoRelay(deleteHTML(content),objid,rcommentid,userid,ruserid);
+            videoRelayRepository.save(videoRelay);
+            id = videoRelay.getId();
         }else{
             return null;
         }
-        return content;
+        Map<Long,String> map = new HashMap<>();
+        map.put(id,content);
+        return map;
     }
 
     /*

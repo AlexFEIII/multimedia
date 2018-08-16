@@ -124,7 +124,7 @@ $('.collect_answer').find(".top_img_span").html("知识产权保卫战");
 $('.collect_answer').find(".issue").html("该议题被浏览 2223661 次");
 
 for (var i = 0; i < 22; i++) {
-    var c_video = $('<div class="same_module"><a href="javascript:;"><img src="../img/2.jpg"></a><span>梨视频</span></div>');
+    var c_video = $('<div class="same_module"><a href="javascript:;"><img src="../img/15.jpg"></a><span>梨视频</span></div>');
     collect_video.append(c_video);
 }
 
@@ -278,7 +278,7 @@ firstul.children("li:eq(2)").click(function () {
                 for (var i = 0;i < data.length;i ++){
                     var image = "../img/14.png";
                     if (data[i].forum.image != null) image = data[i].forum.image;
-                    var five_block = $('<div><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span></div>');
+                    var five_block = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue"></span></div></div>');
                     $('.recommed_topic').append(five_block);
                 }
             },error:function (data) {
