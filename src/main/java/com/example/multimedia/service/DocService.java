@@ -1,8 +1,10 @@
 package com.example.multimedia.service;
 
 import com.example.multimedia.domain.Document;
+import com.example.multimedia.domain.returnMessage.DocType;
 import com.example.multimedia.domain.returnMessage.DocUserView;
 import com.example.multimedia.domain.returnMessage.GetDoc;
+import org.apache.http.HttpResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +26,9 @@ public interface DocService {
     //得到我的文章
     List<DocUserView> getMineDoc(String type);
 
+    //得到别人的文章
+    List<DocUserView> getOthersDoc(long id, String type);
+
     /*
     * 增加文章
     * */
@@ -38,4 +43,7 @@ public interface DocService {
     * 删除文章
     * */
     String deleteDoc(long id);
+
+    //获取某一类型 文章
+    DocType getDocType(String type,int pagenum);
 }

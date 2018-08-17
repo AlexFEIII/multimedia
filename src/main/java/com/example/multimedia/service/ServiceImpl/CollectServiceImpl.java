@@ -13,6 +13,8 @@ public class CollectServiceImpl implements CollectService {
     private UserRepository userRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private DocumentRepository documentRepository;
 
     @Autowired
     private CollectDocRepository collectDocRepository;
@@ -22,6 +24,8 @@ public class CollectServiceImpl implements CollectService {
     private CollectVideoRepository collectVideoRepository;
     @Autowired
     private CollectUserRepository collectUserRepository;
+    @Autowired
+    private CollectDKindRepository collectDKindRepository;
 
     //改变文章收藏
     @Override
@@ -32,6 +36,18 @@ public class CollectServiceImpl implements CollectService {
             collectDocRepository.delete(collectDoc);
         }else{
             collectDocRepository.save(new CollectDoc(mulUser.getId(),docid));
+        }
+    }
+
+    //改变文章专题收藏
+    @Override
+    public void changeDocK(String kind) {
+        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        CollectDKind collectDKind = collectDKindRepository.findByUseridAndKindEquals(mulUser.getId(),kind);
+        if (collectDKind != null){
+            collectDKindRepository.delete(collectDKind);
+        }else{
+            collectDKindRepository.save(new CollectDKind(mulUser.getId(),kind));
         }
     }
 

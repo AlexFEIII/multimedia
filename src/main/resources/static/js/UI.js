@@ -281,6 +281,14 @@ $(".logOut").click(function () {
 
 });
 
+$(".user_list").find("li").eq(1).on("click",function () {
+    console.log("点击~")
+});
+
+$(".user_list").find("li").eq(2).on("click",function () {
+    console.log("点击点击~")
+});
+
 function loginSuccess(data) {
     $(".layui-layer-close").click();
     $(".last_li").empty();

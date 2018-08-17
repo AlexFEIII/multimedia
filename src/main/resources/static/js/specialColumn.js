@@ -1,41 +1,10 @@
-var onOff = true;
 $('.leftColumns a').on('click', function () {
-    if (onOff) {
-        onOff = false;
-        $(this).html('已关注');
-        $(this).css({
-            'background': '#C1194E',
-        });
-    } else {
-        onOff = true;
-        $(this).html('关注教程');
-        $(this).css({
-            'background': '',
-        });
-    }
+    layer.msg("请先登录！")
 });
 
 $('.articleContainer').append('<div class="Select_Much"></div>');
 
 var SelectDiv = $('.Select_Much');
-for (var i = 0; i < 9; i++) {
-    var AddDiv = $('<div class="other_module"><div class="left_part"><a href="javascript:;" class="under_line"></a><p class="draw_text"></p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a"></a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img"><img src=""/></aa></div>')
-    SelectDiv.append(AddDiv);
-};
-
-var ImgArray = new Array(1);
-ImgArray[0] = "https://upload-images.jianshu.io/upload_images/10560804-8aa981c5b24fc5ac.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/300/h/240";
-
-SelectDiv.find("img").attr("src", ImgArray[0]);
-SelectDiv.find(".under_line").html("五一，差点只剩半条命！");
-SelectDiv.find(".bottom_first_a").html("5312Ana");
-SelectDiv.find(".bottom_two_a").append("<b>20</b>");
-SelectDiv.find(".bottom_first_span").append("<b>19</b>");
-SelectDiv.find(".bottom_two_span").append("<b>1</b>");
-SelectDiv.find("p").html("原本打算五一跟朋友跑完半程马拉松后就去北海拍海景，然而不幸的是，她准备跑到终点时突然晕倒了，虽然我没体验过这种晕倒的感觉，但可以想象出这种从鬼门关出来人的有多不易。");
-
-CutWordColumns('.wordP', 60);
-CutWordColumns('.draw_text', 72);
 
 function CutWordColumns(n, num) {
     $(n).each(function () {
@@ -44,5 +13,93 @@ function CutWordColumns(n, num) {
             $(this).text($(this).text().substring(0, maxwidth));
             $(this).html($(this).html() + "...");
         };
+    });
+}
+
+$(document).ready(function () {
+    var H;
+    if (window.location.search == "?type=internet"){
+        H = "互联网";
+    } else if (window.location.search == "?type=law") {
+        H = "法律";
+    } else if (window.location.search == "?type=medicine") {
+        H = "医药";
+    } else if (window.location.search == "?type=economy") {
+        H = "经济";
+    } else if (window.location.search == "?type=history") {
+        H = "历史";
+    } else if (window.location.search == "?type=science") {
+        H = "理工";
+    } else if (window.location.search == "?type=art") {
+        H = "艺术";
+    }
+    $(".leftColumns").children("h1").text(H);
+    $.ajax({
+        url:"../user/isLogin",
+        type:"get",
+        success:function (data) {
+            console.log(data);
+            if (data != ""){
+                loginSuccess(data);
+            }
+        }
+    });
+
+    $.ajax({
+        url:"../doc"+window.location.search+"&pagenum=1",
+        type:"get",
+        success:function (data) {
+            console.log(data);
+            $(".leftColumns").children("p").eq(1).children("span").text(data.colnum);
+            $(".leftColumns").children("p").eq(2).children("span").text(data.docnum);
+            if (!data.col){
+                $('.leftColumns a').html('关注教程');
+                $('.leftColumns a').css({
+                    'background': ''
+                });
+            } else {
+                $('.leftColumns a').html('已关注');
+                $('.leftColumns a').css({
+                    'background': '#C1194E'
+                });
+            }
+            var username;
+            for (var i = 0;i < data.docUserViews.length;i ++){
+                username = data.docUserViews[i].mulUser.nickname;
+                var image = "";
+                if (username == null) username = data.docUserViews[i].mulUser.username;
+                if (data.docUserViews[i].document.image != null) image = '<img src="'+data.docUserViews[i].document.image+'"/>';
+                var AddDiv = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data.docUserViews[i].document.id+'" target="_blank" class="under_line">'+data.docUserViews[i].document.title+'</a><p class="draw_text">'+data.docUserViews[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data.docUserViews[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data.docUserViews[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>');
+
+                SelectDiv.append(AddDiv);
+            }
+            CutWordColumns('.wordP', 60);
+            CutWordColumns('.draw_text', 72);
+        },error:function () {
+            console.log("获取文章失败！")
+        }
+    })
+});
+
+function loginSuccess(data) {
+    $(".layui-layer-close").click();
+    $(".last_li").empty();
+    var image = "../img/14.png";
+    if (data.headimage != null) image = data.headimage;
+    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
+    $(".rightColumns").attr("src",image);
+    $(".leftColumns a").off("click");
+    $('.leftColumns a').on('click', function () {
+        if ($(this).style.color == "") {
+            $(this).html('已关注');
+            $(this).css({
+                'background': '#C1194E'
+            });
+        } else {
+            $(this).html('关注教程');
+            $(this).css({
+                'background': ''
+            });
+        }
     });
 }

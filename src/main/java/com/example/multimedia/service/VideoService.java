@@ -18,6 +18,9 @@ public interface VideoService {
     //获得我的视频
     List<VideoUser> getMineVideo();
 
+    //得到别人的视频
+    List<VideoUser> getOthersVideo(long userid);
+
     /*
     * 增加视频
     * */

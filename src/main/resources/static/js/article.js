@@ -354,7 +354,7 @@ $(document).ready(function () {
         success:function (data) {
             DOCDATA = data;
             console.log(data);
-            var indiv = '<a class="userName" href="OhthersCenter.html?id=' + data.mulUser.id + '">' + data.mulUser.nickname
+            var indiv = '<a class="userName" href="OthersCenter.html?id=' + data.mulUser.id + '">' + data.mulUser.nickname
                 + '</a><a class="focus" href="javascript:;"><i class="iconfont">&#xe604;</i><span>关注</span></a>';
             $(".top_message").append(indiv);
             $(".focus").click(function () {
@@ -555,7 +555,7 @@ function loginSuccess(data) {
         var image = "../img/14.png";
         if (data.headimage != null) image = data.headimage;
         var addComments = $(
-            '<li class="Number"><div class="commentsMessage"><span style="display: none" class="ComID"></span><div class="topMessage"><a href="OhthersCenter.html?id=' + USERDATA.id + '"><img src="'+image+'"></a>' +
+            '<li class="Number"><div class="commentsMessage"><span style="display: none" class="ComID"></span><div class="topMessage"><a href="OthersCenter.html?id=' + USERDATA.id + '"><img src="'+image+'"></a>' +
             '<div class="rightMessage"><div class="commentsName">'+data.nickname+'</div><div class="timeMessage"><span></span><span></span>' +
             '</div></div></div><div class="bottomMessage"><p class="OneFirst"></p><div class="toolBar_Btn"><a href="javascript:;" class="upComment"><i class="iconfont">&#xe606;</i>' +
             '<span class="goodNum">0</span><span>人赞</span></a><a href="javascript:;" class="reComment"><i class="iconfont replyBack">&#xe61b;</i><span>回复</span>' +
@@ -640,7 +640,7 @@ function showComment(data) {
         var image = "../img/14.png";
         var DCtime = new Date(data[i].docCUser.docComment.date);
         if (data[i].docCUser.mulUser.headimage != null) image = data[i].docCUser.mulUser.headimage;
-        $('.commentsList').append('<li class="Number"><div class="commentsMessage"><span style="display: none" class="ComID">'+data[i].docCUser.docComment.id+'</span><div class="topMessage"><a href="OhthersCenter.html?id=' + data[i].docCUser.mulUser.id + '"><img src="'+image+'"></a>' +
+        $('.commentsList').append('<li class="Number"><div class="commentsMessage"><span style="display: none" class="ComID">'+data[i].docCUser.docComment.id+'</span><div class="topMessage"><a href="OthersCenter.html?id=' + data[i].docCUser.mulUser.id + '"><img src="'+image+'"></a>' +
             '<div class="rightMessage"><div class="commentsName">'+data[i].docCUser.mulUser.nickname+'</div><div class="timeMessage"><span>'+DCtime.getFullYear()+'/'+DCtime.getMonth()+'/'+DCtime.getDate()+'</span><span>'+DCtime.getHours()+':'+DCtime.getMinutes()+':'+DCtime.getMilliseconds()+'</span>' +
             '</div></div></div><div class="bottomMessage"><p class="OneFirst">'+data[i].docCUser.docComment.content+'</p><div class="toolBar_Btn"><a href="javascript:;" class="upComment"><i class="iconfont">&#xe606;</i>' +
             '<span class="goodNum">'+data[i].docCUser.docComment.upvotenum+'</span><span>人赞</span></a><a href="javascript:;" class="reComment"><i class="iconfont replyBack">&#xe61b;</i><span>回复</span>' +

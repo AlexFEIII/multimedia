@@ -68,6 +68,16 @@ public class ForumController {
         return forumService.getMineForum();
     }
 
+    /**
+     * 取得别人的问答
+     * @param id 用户id
+     * @return
+     */
+    @GetMapping(value = "others",params = "id")
+    public List<ForumUser> getOthersForum(long id){
+        return forumService.getOthersForum(id);
+    }
+
     /*
      * 修改文章，可修改标题，概要，内容，图片，类别
      * */

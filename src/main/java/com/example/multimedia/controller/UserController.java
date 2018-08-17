@@ -98,4 +98,9 @@ public class UserController {
     public MulUser isLogin(){
         return userService.isLogin();
     }
+
+    @GetMapping(params = "id")
+    public MulUser getOne(long id){
+        return userService.getOne(id);
+    }
 }

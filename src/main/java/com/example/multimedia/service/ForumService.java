@@ -20,6 +20,9 @@ public interface ForumService {
     //获得我的文章
     List<ForumUser> getMineForum();
 
+    //获得别人的问答
+    List<ForumUser> getOthersForum(long id);
+
     /*
      * 增加文章
      * */

@@ -43,6 +43,11 @@ public class VideoController {
         return videoService.getMineVideo();
     }
 
+    @GetMapping(value = "others",params = "id")
+    public List<VideoUser> getOthersVideo(long id){
+        return videoService.getOthersVideo(id);
+    }
+
     /*
     * 增加视频
     * */

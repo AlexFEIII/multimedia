@@ -21,6 +21,11 @@ public class CollectController {
         collectService.changeDocC(docid);
     }
 
+    @PutMapping(value = "/docK",params = "kind")
+    public void changeDocK(String kind){
+        collectService.changeDocK(kind);
+    }
+
     /**
      * 改变文章收藏
      * @param forumid

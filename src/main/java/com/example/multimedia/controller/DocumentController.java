@@ -4,19 +4,27 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.multimedia.domain.Document;
 import com.example.multimedia.domain.MulUser;
+import com.example.multimedia.domain.returnMessage.DocType;
 import com.example.multimedia.domain.returnMessage.DocUserView;
 import com.example.multimedia.domain.returnMessage.GetDoc;
+import com.example.multimedia.repository.CollectDKindRepository;
 import com.example.multimedia.repository.DocumentRepository;
 import com.example.multimedia.repository.UserRepository;
 import com.example.multimedia.service.DocService;
+import org.apache.coyote.Response;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.print.Doc;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.util.List;
 
 @RestController
@@ -29,6 +37,8 @@ public class DocumentController {
     private UserRepository userRepository;
     @Autowired
     private DocumentRepository documentRepository;
+    @Autowired
+    private CollectDKindRepository collectDKindRepository;
 
 
     /*
@@ -71,6 +81,17 @@ public class DocumentController {
     @GetMapping("/mine/{type}")
     public List<DocUserView> getMineDoc(@PathVariable String type){return docService.getMineDoc(type);}
 
+    /**
+     * 获得别人的文章
+     * @param type
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "others/{type}",params = "id")
+    public List<DocUserView> getOthersDoc(@PathVariable String type, long id){
+        return docService.getOthersDoc(id,type);
+    }
+
     /*
     * 增加文章
     * 需要参数：文章标题，文章概要（可空），文章内容，文章图片（可空），类别
@@ -104,5 +125,34 @@ public class DocumentController {
     @DeleteMapping("/delete/{id}")
     public String deleteDoc(@PathVariable long id){
         return docService.deleteDoc(id);
+    }
+
+    @GetMapping("typemsg")
+    public int[] getTypeMsg(){
+        int[] ints = new int[]{documentRepository.countAllByKindEquals("internet"),
+                                collectDKindRepository.countAllByKindEquals("internet"),
+                                documentRepository.countAllByKindEquals("law"),
+                                collectDKindRepository.countAllByKindEquals("law"),
+                                documentRepository.countAllByKindEquals("medicine"),
+                                collectDKindRepository.countAllByKindEquals("medicine"),
+                                documentRepository.countAllByKindEquals("economy"),
+                                collectDKindRepository.countAllByKindEquals("economy"),
+                                documentRepository.countAllByKindEquals("history"),
+                                collectDKindRepository.countAllByKindEquals("history"),
+                                documentRepository.countAllByKindEquals("science"),
+                                collectDKindRepository.countAllByKindEquals("science"),
+                                documentRepository.countAllByKindEquals("art"),
+                                collectDKindRepository.countAllByKindEquals("art")};
+        return ints;
+    }
+
+    /**
+     * 获取某一类型 的文章
+     * @param type
+     * @return
+     */
+    @GetMapping(params = {"type","pagenum"})
+    public DocType getDocType(String type,int pagenum){
+        return docService.getDocType(type,pagenum);
     }
 }

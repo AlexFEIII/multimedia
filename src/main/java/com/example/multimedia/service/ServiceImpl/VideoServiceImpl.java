@@ -76,6 +76,18 @@ public class VideoServiceImpl implements VideoService {
         return videoUsers;
     }
 
+    //取得别人的视频
+    @Override
+    public List<VideoUser> getOthersVideo(long userid){
+        List<VideoUser> videoUsers = new ArrayList<>();
+        MulUser mulUser = userRepository.findOne(userid);
+        List<Video> videos = videoRepository.findByUseridOrderByDateAsc(mulUser.getId());
+        for (Video video : videos){
+            videoUsers.add(new VideoUser(video,userRepository.findOne(video.getUserid())));
+        }
+        return videoUsers;
+    }
+
     /*
     * 增加视频
     * */

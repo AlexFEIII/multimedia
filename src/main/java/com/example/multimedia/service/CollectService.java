@@ -3,6 +3,8 @@ package com.example.multimedia.service;
 public interface CollectService {
     //改变文章收藏
     void changeDocC(long docid);
+    //改变文章专题收藏
+    void changeDocK(String kind);
     //改变问答收藏
     void changeForumC(long forumid);
     //改变视频收藏

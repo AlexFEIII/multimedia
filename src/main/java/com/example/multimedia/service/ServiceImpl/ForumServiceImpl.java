@@ -66,10 +66,23 @@ public class ForumServiceImpl implements ForumService {
         return new ForumUser(forum,mulUser);
     }
 
+    //返回我的问答
     @Override
     public List<ForumUser> getMineForum() {
         List<ForumUser> forumUsers = new ArrayList<>();
         MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        List<Forum> forums = forumRepository.findByUseridOrderByDateAsc(mulUser.getId());
+        for (Forum forum:forums){
+            forumUsers.add(new ForumUser(forum,userRepository.findOne(forum.getUserid())));
+        }
+        return forumUsers;
+    }
+
+    //返回别人的问答
+    @Override
+    public List<ForumUser> getOthersForum(long userid){
+        List<ForumUser> forumUsers = new ArrayList<>();
+        MulUser mulUser = userRepository.findOne(userid);
         List<Forum> forums = forumRepository.findByUseridOrderByDateAsc(mulUser.getId());
         for (Forum forum:forums){
             forumUsers.add(new ForumUser(forum,userRepository.findOne(forum.getUserid())));

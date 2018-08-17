@@ -191,4 +191,10 @@ public class UserServiceImpl implements UserService {
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return user.getUsername();
     }
+
+    //取得一个用户
+    @Override
+    public MulUser getOne(long id) {
+        return userRepository.findOne(id);
+    }
 }

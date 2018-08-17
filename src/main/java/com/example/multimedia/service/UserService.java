@@ -43,4 +43,7 @@ public interface UserService {
 
     //获取用户名
     String getUsername();
+
+    //取得一个用户
+    MulUser getOne(long id);
 }

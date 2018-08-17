@@ -4,11 +4,13 @@ import com.example.multimedia.domain.DocRecycler;
 import com.example.multimedia.domain.Document;
 import com.example.multimedia.domain.MulUser;
 import com.example.multimedia.domain.Recycler;
+import com.example.multimedia.domain.returnMessage.DocType;
 import com.example.multimedia.domain.returnMessage.DocUserView;
 import com.example.multimedia.domain.returnMessage.GetDoc;
 import com.example.multimedia.repository.*;
 import com.example.multimedia.service.DocService;
 import com.example.multimedia.service.UserService;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,6 +49,9 @@ public class DocServiceImpl implements DocService {
     private CollectDocRepository collectDocRepository;
     @Autowired
     private CollectUserRepository collectUserRepository;
+
+    @Autowired
+    private CollectDKindRepository collectDKindRepository;
 
 
     @Autowired
@@ -106,7 +111,19 @@ public class DocServiceImpl implements DocService {
         MulUser mulUser = userRepository.findByUsername(userService.getUsername());
         List<Document> documents = documentRepository.findByUseridAndKindOrderByDateAsc(mulUser.getId(),type);
         for (Document document : documents){
-            docUserViews.add(new DocUserView(document,userRepository.findOne(document.getUserid())));
+            docUserViews.add(new DocUserView(document,mulUser));
+        }
+        return docUserViews;
+    }
+
+    //得到别人的文章
+    @Override
+    public List<DocUserView> getOthersDoc(long id, String type) {
+        List<DocUserView> docUserViews = new ArrayList<>();
+        MulUser mulUser = userRepository.findOne(id);
+        List<Document> documents = documentRepository.findByUseridAndKindOrderByDateAsc(id,type);
+        for (Document document : documents){
+            docUserViews.add(new DocUserView(document,mulUser));
         }
         return docUserViews;
     }
@@ -116,6 +133,7 @@ public class DocServiceImpl implements DocService {
     * */
     @Override
     public String addDoc(String title, String summary, String content, MultipartFile image, String type) {
+        if (!(type.equals("internet") || type.equals("law") || type.equals("")))
         if (!title.equals(sensitivewordFilter.turnWord(title))){
             return "T_SENSITIVE";
         }
@@ -194,6 +212,7 @@ public class DocServiceImpl implements DocService {
         return "N";
     }
 
+    //检测权限
     public boolean power(long id,Document document){
         User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
@@ -203,5 +222,26 @@ public class DocServiceImpl implements DocService {
                 mulUser.getRole().equals("ROLE_SMANAGER"))
             return true;
         else return false;
+    }
+
+    //获取某一类型的文章
+    @Override
+    public DocType getDocType(String type,int pagenum) {
+        List<DocUserView> docUserViews = new ArrayList<>();
+        Pageable pageable = new PageRequest(pagenum-1,20,new Sort(Sort.Direction.DESC,"id"));
+        Page<Document> list = documentRepository.findAllByKindEquals(type,pageable);
+        for (Document document:list){
+            docUserViews.add(new DocUserView(document,userRepository.findOne(document.getUserid())));
+        }
+        boolean isCol = false;
+        try{
+            MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+            if (collectDKindRepository.findByUseridAndKindEquals(mulUser.getId(),type) != null){
+                isCol = true;
+            }
+        }catch (Exception e){
+            //ignore
+        }
+        return new DocType(collectDKindRepository.countAllByKindEquals(type),list.getTotalElements(),list.getTotalPages(),isCol,docUserViews);
     }
 }
