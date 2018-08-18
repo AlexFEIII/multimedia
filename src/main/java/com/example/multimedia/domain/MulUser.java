@@ -54,6 +54,7 @@ public class MulUser{
         this.upinyin = upinyin;
         this.password = password;
         this.role = role;
+        headimage = "../img/14.png";
     }
 
     @Override

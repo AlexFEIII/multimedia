@@ -53,7 +53,7 @@ $('#login_a').on('click', function () {
         maxmin: false,
         shadeClose: true, //点击遮罩关闭层
         content: ['../html/signIn.html'],
-        area: ['400px', '595px']
+        area: ['400px', '585px']
     });
 });
 
@@ -143,7 +143,7 @@ if (isChrome && isEdge) {
         }
 
         ST = e.screenY;
-        if (ST >= 1040) {
+        if (ST >= 1000) {
             MoveChange(1, ST);
         } else if (ST >= 0 && ST <= 200) {
             MoveChange(-1, ST);
@@ -306,3 +306,4 @@ function CutWord() {
         }
     });
 }
+

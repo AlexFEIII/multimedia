@@ -43,22 +43,29 @@ public class CommentController {
         return commentService.replyR(type,content,objid,rcommentid);
     }
 
-    /*
-    * 删除评论
-    * 需要参数：类型（doc、forum、video），文档id，评论id，回复id(relayid <= 0表示评论。 > 0表示回复)
-    * */
-    @PostMapping("/deleteC")
-    public String deleteC(@RequestParam String type,
-                          @RequestParam long docid,
-                          @RequestParam long bigid,
-                          @RequestParam long relayid){
-        String str;
-        if (relayid > 0){
-            str = commentService.deleteComment(type,docid,bigid);
-        }
-        else
-            str = commentService.deleteComment(type,docid,bigid,relayid);
-        return str;
+    /**
+     * 删除评论
+     * @param type 类型：doc/forum/video
+     * @param docid 文章id
+     * @param commentid 评论id
+     * @return
+     */
+    @DeleteMapping(value = "/deleteC",params = {"type","docid","commentid"})
+    public String deleteC(String type, long docid, long commentid){
+        return commentService.deleteComment(type,docid,commentid);
+    }
+
+    /**
+     * 删除回复
+     * @param type 类型：doc/forum/video
+     * @param docid 文章id
+     * @param commentid 评论id
+     * @param rcommentid 回复id
+     * @return
+     */
+    @DeleteMapping(value = "/deleteR",params = {"type","docid","commentid","rcommentid"})
+    public List<Long> deleteR(String type, long docid, long commentid, long rcommentid){
+        return commentService.deleteComment(type,docid,commentid,rcommentid);
     }
 
     /**

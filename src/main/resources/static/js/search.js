@@ -120,7 +120,7 @@ $(document).ready(function () {
    //          console.log(data);
    //          for (var i = 0;i < data.length;i ++){
    //              var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"></a><span>'+data[i].title+'</span></div>');
-   //              firstPart.append(select_one);
+    //              firstPart.append(select_one);
    //          }
    //      }
    //  })
@@ -193,7 +193,7 @@ clickUl.children("li").eq(3).click(function () {
                     }catch (e) {
                         //ignore
                     }
-                    var five_block = $('<div><a href="javascript:;"><img src="'+image+'"><span>'+data[i].title+'</span></a><span class="issue">该议题被浏览 '+data[i].sawnum+' 次</span></div>');
+                    var five_block = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src="'+image+'"><span>'+data[i].title+'</span></a><span class="issue">该议题被浏览 '+data[i].sawnum+' 次</span></div></div>');
                     $('.recommed_topic').append(five_block);
                 }
             }

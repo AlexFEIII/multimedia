@@ -1,0 +1,249 @@
+.UploadVideo {
+    margin-top: 100px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+#fileLoad {
+    display: none;
+}
+
+.UploadContainer {
+    width: 800px;
+    padding-top: 80px;
+}
+
+.UploadVideoDiv {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.UPloadVIdeo,
+.editorCoverUpload {
+    width: 50%;
+}
+
+.FileLoadLabel {
+    cursor: pointer;
+    background: #363636;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+}
+
+.FileLoadLabel .iconfont,
+.FileLoadLabel {
+    color: #fff;
+    font-size: 16px;
+}
+
+.editorCoverUpload a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+}
+
+.editorCoverUpload a .iconfont {
+    font-weight: 700;
+    padding: 0 10px 0 0;
+    font-size: 18px;
+}
+
+.editorCoverUpload #replaceImg,
+.editorCoverUpload #replaceImg .iconfont {
+    font-size: 16px;
+    color: #34352C;
+}
+
+.editorCoverUpload #replaceImg .iconfont {
+    font-size: 18px;
+}
+
+.FileLoadLabel .iconfont {
+    padding: 0 10px 0 0;
+    font-size: 18px;
+}
+
+.editorCoverUpload {
+    background: #F5F6EB;
+}
+
+/* 图片预览框 */
+
+.previewDiv {
+    width: 100%;
+    height: 400px;
+    margin: 30px 0 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #d0d1d0;
+    font-size: 45px;
+    background: #EDEDED;
+    position: relative;
+}
+
+/* 文件的删除 */
+
+.Uploadprogress {
+    width: 100%;
+    margin-top: 30px;
+    background: #EDEDED;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.leftProgress {
+    width: 580px;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    padding-left: 20px;
+}
+
+.videoName {
+    padding: 20px 0;
+    overflow-y: auto;
+}
+
+.rightProgress {
+    width: calc(100% - 600px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rightProgress a {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #363636;
+}
+
+/* 设置标签 */
+
+.SetLabel {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin-top: 30px;
+}
+
+.LeftLabel {
+    font-size: 16px;
+    color: #000;
+}
+
+.LeftLabel span {
+    color: #7a7979;
+    font-size: 14px;
+    padding-right: 80px;
+}
+
+.rightLabel a {
+    background: #EDEDED;
+    padding: 6px 25px;
+    color: #363636;
+    font-size: 14px;
+    transition: all .3s ease;
+}
+
+.rightLabel a:hover {
+    background: #363636;
+    color: #EDEDED;
+}
+
+/* 视频标题 */
+
+.VideoTitle {
+    width: 100%;
+    margin: 45px 0;
+    position: relative;
+}
+
+.VideoTitle input {
+    border: none;
+    font-size: 24px;
+    color: #363636;
+    width: 100%;
+}
+
+/* 发布 */
+
+.release {
+    width: 100%;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+}
+
+.release a {
+    background: #363636;
+    width: 100%;
+    display: block;
+    padding: 10px 0;
+    font-size: 16px;
+    text-align: center;
+    color: #EDEDED;
+}
+
+/* 遮罩层 */
+
+.ProgressFixed {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: none;
+    z-index: 10;
+    transition: all .3s ease;
+    opacity: 1;
+}
+
+/* jcanvas绘制进度条 */
+
+.CanvasNumUploadVideo {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, .8);
+}
+
+.NumTopCanvasUploadVideo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    color: #83FCD8;
+    transform: translate(-50%, -50%);
+}
+
+#DrawProgressUploadVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.WordProgress {
+    color: #83FCD8;
+    position: absolute;
+    top: calc(50% + 200px);
+    left: 50%;
+    font-size: 25px;
+    transform: translate(-50%, -50%);
+}

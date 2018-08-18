@@ -18,7 +18,7 @@ public interface CommentService {
     * 删除评论
     * */
     String deleteComment(String type,long docid,long commentid);  //删除评论
-    String deleteComment(String type,long docid,long commentid,long relayid);  //删除评论下回复
+    List<Long> deleteComment(String type,long docid,long commentid,long rcommentid);  //删除评论下回复
 
     /*
     * 返回评论

@@ -115,13 +115,13 @@ var collect_article = $('.collect_article');
 var collect_answer = $('.collect_answer');
 
 for (var i = 0; i < 8; i++) {
-    var collect_answer_list = $('<div><a href="javascript:;"><img src=""><span class="top_img_span"></span></a><span class="issue"></span></div>');
-    collect_answer.append(collect_answer_list);
+    var collect_answer_list = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src=""><span></span></a><span class="issue"></span></div></div>');
+    $('.collect_answer .recommed_topic').append(collect_answer_list);
 }
 
-$('.collect_answer').find("img").attr("src", Issue[0]);
-$('.collect_answer').find(".top_img_span").html("知识产权保卫战");
-$('.collect_answer').find(".issue").html("该议题被浏览 2223661 次");
+$('.collect_answer .recommed_topic').find("img").attr("src", Issue[0]);
+$('.collect_answer .recommed_topic').find(".top_img_span").html("知识产权保卫战");
+$('.collect_answer .recommed_topic').find(".issue").html("该议题被浏览 2223661 次");
 
 for (var i = 0; i < 22; i++) {
     var c_video = $('<div class="same_module"><a href="javascript:;"><img src="../img/15.jpg"></a><span>梨视频</span></div>');
@@ -279,7 +279,7 @@ firstul.children("li:eq(2)").click(function () {
                     var image = "../img/14.png";
                     if (data[i].forum.image != null) image = data[i].forum.image;
                     var five_block = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue"></span></div></div>');
-                    $('.recommed_topic').append(five_block);
+                    $('.Select_Three_Div .recommed_topic').append(five_block);
                 }
             },error:function (data) {
                 //ignore
@@ -400,7 +400,7 @@ firstul.children("li:eq(3)").click(function () {
                 for (var i = 0;i < num;i ++){
                     image = "../img/14.png";
                     if (data[i].forum.image != null) image = data[i].forum.image;
-                    var w_list = $('<div><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span></div>');
+                    var w_list = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span></div></div>');
                     answer_list.append(w_list);
                 }
                 if (data.length > 18) {
@@ -418,7 +418,7 @@ firstul.children("li:eq(3)").click(function () {
                             var n = page*18-1;
                             if (data.length-1 < n) n=data.length-1;
                             for (var i = (page-1)*18;i <= n;i ++){
-                                var w_list = $('<div><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span></div>');
+                                var w_list = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span></div></div>');
                                 $("#AnswerBox").append(v_list);
                             }
                         }

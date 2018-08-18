@@ -37,15 +37,13 @@ blockquote b {
 }
 
 #userInformation .photoIMg {
-  overflow: hidden;
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
   display: block;
 }
 
 #userInformation img {
-  width: 100%;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
 }
 
 .right_message {
@@ -355,11 +353,16 @@ blockquote b {
   z-index: 10;
 }
 
-.w-e-text img,
-.commentsMessage .bottomMessage img {
+.w-e-text img{
   display: inline-block !important;
   position: relative;
   top: 5px;
+}
+
+.OneFirst img {
+  display: inline-block !important;
+  margin-bottom: -5px;
+  padding: 0 5px !important;
 }
 
 .photoIMg img {
@@ -541,7 +544,8 @@ blockquote b {
   align-items: center;
 }
 
-.toolBar_Btn a:nth-of-type(2) {
+.toolBar_Btn a:nth-of-type(2),
+.toolBar_Btn a:nth-of-type(3) {
   padding-left: 20px;
 }
 
@@ -619,7 +623,7 @@ blockquote b {
   right: 50px;
 }
 
-.insertComment:hover>a {
+.insertComment:hover>.ADDCommit {
   display: block;
   padding-right: 30px;
 }
@@ -632,9 +636,15 @@ blockquote b {
    font-size: 12px;
    box-shadow: 5px 5px 20px rgba(0, 0, 0, .5);
    transition: all .3s linear;
+   white-space: nowrap;
  }
 
 .editorAgain:hover {
   background: #1b1b1b;
   box-shadow: 8px 8px 10px rgba(0, 0, 0, .5);
+}
+
+.TwoSecond img {
+  display: inline-block;
+  margin-bottom: -5px;
 }

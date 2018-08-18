@@ -5,6 +5,7 @@ import com.example.multimedia.domain.returnMessage.*;
 import com.example.multimedia.repository.*;
 import com.example.multimedia.service.CommentService;
 import com.example.multimedia.service.UserService;
+import org.elasticsearch.common.recycler.Recycler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -100,7 +101,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Map<Long,String> replyR(String type,String content,long objid,long rcommentid){
         long userid = userRepository.findByUsername(userService.getUsername()).getId();
-        long ruserid = docRelayRepository.findOne(objid).getUserid();
+        long ruserid = docRelayRepository.findOne(rcommentid).getUserid();
         content = sensitivewordFilter.turnWord(content);
         long id = 0;
         if (type.equals("docRR")){
@@ -124,45 +125,73 @@ public class CommentServiceImpl implements CommentService {
     }
 
     /*
-    * 删除评论
+    * 删除回复
     * */
     @Override
-    public String deleteComment(String type,long docid,long commentid,long relayid) {
-        User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userDetails.getUsername();
-        if (type.equals("doc")){
-            //如果文章是自己的可以删除||如果评论是自己的，可以删除||如果被回复的用户是自己，可以删除
-            if (userRepository.findOne(documentRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
-                    userRepository.findOne(docCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username) ||
-                    userRepository.findOne(docRelayRepository.findOne(relayid).getUserid()).getUsername().equals(username)){
-                docRelayRepository.delete(relayid);
-                return "Y";
+    public List<Long> deleteComment(String type,long docid,long commentid,long rcommentid) {
+        List<Long> longs = new ArrayList<>();
+        longs.add(rcommentid);
+        try{
+            User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = userDetails.getUsername();
+            if (type.equals("doc")){
+                //如果文章是自己的可以删除||如果评论是自己的，可以删除||如果被回复的用户是自己，可以删除
+                if (userRepository.findOne(documentRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
+                        userRepository.findOne(docCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username) ||
+                        userRepository.findOne(docRelayRepository.findOne(rcommentid).getUserid()).getUsername().equals(username)){
+                    docRelayRepository.delete(rcommentid);
+                    return deleteDocRelay(rcommentid,longs);
+                }
+            }else if (type.equals("forum")){
+                if (userRepository.findOne(forumRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
+                        userRepository.findOne(forumCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username) ||
+                        userRepository.findOne(forumRelayRepository.findOne(rcommentid).getUserid()).getUsername().equals(username)){
+                    forumRelayRepository.delete(rcommentid);
+                    return deleteForumRelay(rcommentid,longs);
+                }
+            }else {
+                if (userRepository.findOne(videoRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
+                        userRepository.findOne(videoCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username) ||
+                        userRepository.findOne(videoRelayRepository.findOne(rcommentid).getUserid()).getUsername().equals(username)){
+                    videoRelayRepository.delete(rcommentid);
+                    return deleteVideoRelay(rcommentid,longs);
+                }
             }
-            return "N";
-        }else if (type.equals("forum")){
-            if (userRepository.findOne(forumRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
-                    userRepository.findOne(forumCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username) ||
-                    userRepository.findOne(forumRelayRepository.findOne(relayid).getUserid()).getUsername().equals(username)){
-                forumRelayRepository.delete(relayid);
-                return "Y";
-            }
-            return "N";
-        }else {
-            if (userRepository.findOne(videoRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
-                    userRepository.findOne(videoCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username) ||
-                    userRepository.findOne(videoRelayRepository.findOne(relayid).getUserid()).getUsername().equals(username)){
-                videoRelayRepository.delete(relayid);
-                return "Y";
-            }
-            return "N";
+        }catch (Exception e){
+            //ignore
         }
+        return null;
     }
 
-    /**
-     * @param type 类型，doc，forum，video
-     * @param docid 该类型中文章的id
-     * @param commentid 文章中评论id;
-     */
+    private List<Long> deleteDocRelay(long rcommentid,List<Long> longs){
+        List<DocRelay> docRelays = docRelayRepository.findByRcommentid(rcommentid);
+        for (DocRelay docRelay:docRelays){
+            deleteDocRelay(docRelay.getId(),longs);
+            longs.add(docRelay.getId());
+            docRelayRepository.delete(docRelay);
+        }
+        return longs;
+    }
+    private List<Long> deleteForumRelay(long rcommentid,List<Long> longs){
+        List<ForumRelay> forumRelays = forumRelayRepository.findByRcommentid(rcommentid);
+        for (ForumRelay forumRelay:forumRelays){
+            deleteForumRelay(forumRelay.getId(),longs);
+            longs.add(forumRelay.getId());
+            forumRelayRepository.delete(forumRelay);
+        }
+        return longs;
+    }
+    private List<Long> deleteVideoRelay(long rcommentid,List<Long> longs){
+        List<VideoRelay> videoRelays = videoRelayRepository.findByRcommentid(rcommentid);
+        for (VideoRelay videoRelay:videoRelays){
+            deleteVideoRelay(videoRelay.getId(),longs);
+            longs.add(videoRelay.getId());
+            videoRelayRepository.delete(videoRelay);
+        }
+        return longs;
+    }
+
+    //删除评论
     @Override
     public String deleteComment(String type,long docid, long commentid) {
         User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -173,6 +202,8 @@ public class CommentServiceImpl implements CommentService {
             if (userRepository.findOne(documentRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
                     userRepository.findOne(docCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username)){
                 docCommentRepository.delete(commentid);
+                docCUpvoteRepository.deleteAllByCommentid(commentid);
+                docRelayRepository.deleteAllByCommentid(commentid);
                 return "Y";
             }
             return "N";
@@ -180,6 +211,8 @@ public class CommentServiceImpl implements CommentService {
             if (userRepository.findOne(forumRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
                     userRepository.findOne(forumCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username)){
                 forumCommentRepository.delete(commentid);
+                forumCUpvoteRepository.deleteAllByCommentid(commentid);
+                forumRelayRepository.deleteAllByCommentid(commentid);
                 return "Y";
             }
             return "N";
@@ -187,6 +220,8 @@ public class CommentServiceImpl implements CommentService {
             if (userRepository.findOne(videoRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
                     userRepository.findOne(videoCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username)){
                 videoCommentRepository.delete(commentid);
+                videoCUpvoteRepository.deleteAllByCommentid(commentid);
+                videoRelayRepository.deleteAllByCommentid(commentid);
                 return "Y";
             }
             return "N";

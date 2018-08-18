@@ -11,4 +11,6 @@ public interface DocRelayRepository extends JpaRepository<DocRelay,Long> {
     List<DocRelay> findByCommentidAndRcommentidEquals(long id,long rid);
     List<DocRelay> findByCommentidAndRcommentid(long cid,long rid);
     List<DocRelay> findByCommentid(long cid);
+    List<DocRelay> findByRcommentid(long id);
+    void deleteAllByCommentid(long id);
 }
