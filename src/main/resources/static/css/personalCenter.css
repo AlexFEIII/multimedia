@@ -29,16 +29,14 @@
 }
 
 .contain_tou_photo a {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    overflow: hidden;
     display: block;
     margin-right: 35px;
 }
 
 .contain_tou_photo a img {
-    width: 100%;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
 }
 
 .contain_tou_photo span {
@@ -155,6 +153,20 @@
     padding-top: 25px;
 }
 
+/* 直播间设置 */
+/* 关注设置 */
+.all_content .Select_Six_Div,
+.all_content .Select_seven_Div {
+    display: none;
+    width: 80%;
+}
+
+.all_content .Select_seven_Div {
+    padding-top: 25px;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
 .all_content .Select_One_Div {
     justify-content: flex-start;
 }
@@ -218,14 +230,16 @@
 }
 
 .Video_list,
-.article_list{
+.article_list,
+.answer_list{
     width: 100%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
 }
 
-.Video_list{
+.Video_list,
+.answer_list{
     justify-content: flex-start;
 }
 
@@ -364,4 +378,682 @@
 
 .collect_answer  .recommed_topic {
     margin: 0;
+}
+
+/* 开播设置 */
+.SelectStudioSetting {
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .1);
+    margin-top: 30px;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.StudioVideo,
+.OnlineStudio,
+.OnlineStudioCover {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+}
+
+.OnlineStudioCover {
+    padding: 45px;
+}
+
+.StudioVideo div p {
+    color: #34352C;
+    font-size: 16px;
+    padding: 0 0 6px 0;
+}
+
+.StudioVideo div a {
+    color: #C1194E;
+    font-size: 20px;
+}
+
+.CutHr {
+    width: calc(100% - 60px);
+    margin: 0;
+    margin: 0 auto;
+    border: none;
+    border-bottom: 1px solid #e3e8ec;
+}
+
+.topKindVideo p,
+.MiddleTitle p,
+.CoverToPreviewOnline p {
+    font-size: 20px;
+    color: #34352C;
+    padding: 0 0 10px 0;
+}
+
+.topKindVideo a,
+.topKindVideo span,
+.MiddleTitle a,
+.MiddleTitle span {
+    color: #FF5983;
+    font-size: 12px;
+}
+
+.topKindVideo span {
+    color: #AAB8A3;
+    padding-left: 35px;
+}
+
+.inputAndSave {
+    display: flex;
+}
+
+.inputAndSave a {
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    color: #AAA;
+    transition: all .3s ease;
+}
+
+.MiddleTitle input {
+    border: none;
+}
+
+.MiddleTitle .FocusInputText {
+    border: 1px solid #DDD;
+    transition: all .3s ease;
+    padding: 5px 35px 5px 10px;
+    border-radius: 3px;
+    overflow: hidden;
+    width: 200px;
+    height: 20px;
+    font-size: 14px;
+}
+
+.FocusInputText:focus {
+    border: 1px solid #C1194E;
+}
+
+.InputWord {
+    position: relative;
+}
+
+.MiddleTitle span {
+    color: #AAA;
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+}
+
+.StarVideoOnline a {
+    padding: 6px 20px;
+    background: #C1194E;
+    color: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+    font-size: 14px;
+    transition: all .3s ease;
+}
+
+.StarVideoOnline a:hover {
+    background: #FF5983;
+}
+
+.CoverToPreviewOnline {
+    display: flex;
+    padding: 0 0 30px 0;
+}
+
+.CoverToPreviewOnline a {
+    padding: 10px 20px;
+    background: #363636;
+    color: #fff;
+    border-radius: 20px;
+    margin-left: 50px;
+    font-size: 12px;
+    box-shadow: 5px 5px 20px rgba(0, 0, 0, .5);
+    transition: all .3s linear;
+}
+
+.CoverToPreviewOnline a:hover {
+    background: #1b1b1b;
+    box-shadow: 8px 8px 10px rgba(0, 0, 0, .5);
+}
+
+/* 图片预览框 */
+.PreviewDivForCover {
+    width: 600px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #AAA;
+    font-size: 35px;
+    border: 2px solid #AAA;
+}
+
+.PreviewDivForCover .ImgCoverPreview {
+    width: 100%;
+    height: 100%;
+}
+
+/* 选择分类 */
+.SelectKindFixed {
+    position: fixed;
+    top: calc(50% + 20px);
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #fff;
+    box-shadow: 0 0 30px 10px rgba(0, 0, 0, .1);
+    width: 420px;
+    padding: 20px;
+    border-radius: 5px;
+    overflow: hidden;
+    opacity: 0;
+    transition: all .2s ease;
+    display: none;
+}
+
+.CancleBtn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    color: #999;
+    transform: rotate(0deg);
+    transition: all .3s ease;
+    font-size: 14px;
+}
+
+.CancleBtn:hover {
+    transform: rotate(180deg);
+}
+
+.KindVideoOnline p {
+    color: #FF5983;
+}
+
+.FourKindVideo {
+    padding: 20px 0 0 0;
+}
+
+.FourKindVideo ul {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 5px;
+}
+
+.FourKindVideo li {
+    flex: 1;
+    border-right: 1px solid #DDD;
+}
+
+.FourKindVideo li:last-child {
+    border: none;
+}
+
+.FourKindVideo a {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #999;
+    transition: all .3s ease;
+    font-size: 14px;
+}
+
+.FourKindVideo a:hover {
+    color: #FF5983;
+}
+
+/* 分割线 */
+.CutLineForDiv {
+    width: 100%;
+    height: 5px;
+    background-image: -webkit-radial-gradient(circle, transparent, transparent 3px, #FF5983 3px, #FF5983 5px, transparent 5px, transparent);
+    background-image: -moz-radial-gradient(circle, transparent, transparent 3px, #FF5983 3px, #FF5983 5px, transparent 5px, transparent);
+    background-image: radial-gradient(circle, transparent, transparent 3px, #FF5983 3px, #FF5983 5px, transparent 5px, transparent);
+    background-size: 10px 10px;
+    margin: 10px 0 15px 0;
+}
+
+.specificKindStle {
+    height: 150px;
+}
+
+.specificKindStle .Kind {
+    float: left;
+    padding: 0 12px;
+    height: 26px;
+    border-radius: 12px;
+    overflow: hidden;
+    line-height: 26px;
+    font-size: 12px;
+    display: block;
+    margin: 6px 0 0 10px;
+    color: #fff;
+    box-sizing: border-box;
+    background: #FF5983;
+    transition: all .3s ease;
+}
+
+.specificKindStle .Kind:hover {
+    background: #C1194E;
+}
+
+/* 清浮动 */
+.OneKindDiv:before,
+.OneKindDiv:after {
+    content: "";
+    display: table;
+}
+
+.OneKindDiv:after {
+    clear: both;
+}
+
+.kind-part {
+    display: none;
+}
+
+.kind-part div {
+    height: 120px;
+}
+
+.kind-part span {
+    float: right;
+}
+
+.kind-part span .iconfont {
+    cursor: pointer;
+}
+
+/* 关注列表 */
+.FocusList {
+    margin-left: 12%;
+    width: 280px;
+}
+
+.FocusList ul {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.FocusList li {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.FocusList a {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 90%;
+    padding: 10px 15px;
+    border-radius: 4px;
+    background: transparent;
+    transition: all .3s linear;
+}
+
+.FocusList a:hover {
+    background: #dbdada;
+}
+
+.FocusList a div {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    background: #a0a0a0;
+}
+
+.FocusList .iconfont {
+    color: #fff;
+    font-size: 16px;
+}
+
+.FocusList a span {
+    padding-left: 20px;
+    color: #333;
+    font-size: 15px;
+}
+
+.problemFocus,
+.AuthorFocus,
+.courseFocus,
+.IssueFocus,
+.liveFocus {
+    width: 60%;
+    display: none;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.IssueFocus {
+    justify-content: space-between;
+}
+
+.user-base-information {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.AuthorFocus .user-base-information:first-child {
+    padding-top: 0;
+}
+
+.contain-two-part {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.user-head-photo img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+}
+
+.user-name-focus-article {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 20px;
+}
+
+.user-name-focus-article a {
+    color: #333;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.base-message,
+.simple-introduce {
+    width: 100%;
+}
+
+.base-message span {
+    color: #969696;
+    font-size: 12px;
+}
+
+.base-message span:nth-of-type(2n) {
+    border-right: 1px solid #969696;
+    padding-right: 8px;
+}
+
+.base-message span:nth-of-type(2n+1) {
+    padding-left: 5px;
+}
+
+.base-message span:last-child {
+    border: none;
+    padding: 0;
+}
+
+.base-message span:first-child {
+    padding: 0;
+}
+
+.simple-introduce p {
+    color: #969696;
+    font-size: 12px;
+}
+
+.focus-btn a {
+    padding: 8px 15px;
+    background: #969696;
+    color: #fff;
+    border-radius: 20px;
+    font-size: 12px;
+    transition: all .3s ease;
+}
+
+.focus-btn .change-color {
+    background: #1b1b1b;
+}
+
+.focus-btn .iconfont {
+    font-size: 12px;
+    padding-right: 5px;
+}
+
+.Issue-main-content {
+    width: 382px;
+    background: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .2);
+    border-radius: 3px;
+    margin-bottom: 80px;
+    overflow: hidden;
+    padding: 20px;
+}
+
+.photp-title {
+    display: flex;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.photp-title img {
+    width: 70px;
+    height: 70px;
+    border-radius: 5px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .5);
+}
+
+.photp-title p {
+    padding-left: 50px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.problem-num,
+.Focus-person-num {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.problem-num span,
+.Focus-person-num span {
+    width: 100%
+}
+
+.introduce-for-issue {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.introduce-for-issue p {
+    text-indent: 28px;
+    font-size: 14px;
+    height: 57px;
+    overflow: hidden;
+}
+
+.main-host-institution {
+    padding: 10px 0;
+}
+
+.main-host-institution .iconfont,
+.main-host-institution span {
+    font-size: 15px;
+}
+
+.main-host-institution span:nth-of-type(1) {
+    padding: 0 10px 0 5px;
+}
+
+.problem-Focus-person {
+    display: flex;
+}
+
+.problem-Focus-person div {
+    width: 50%;
+    text-align: center;
+}
+
+.problem-Focus-person a {
+    display: flex;
+    flex-wrap: wrap;
+    color: #000;
+}
+
+.problem-Focus-person span:nth-of-type(2n) {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.problem-Focus-person span:nth-of-type(2n+1) {
+    font-size: 15px;
+}
+
+.focus-whether-not {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.focus-whether-not a {
+    display: block;
+    color: #fff;
+    background: #FF5983;
+    transition: all .3s ease;
+    padding: 8px 45px;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.focus-whether-not a:hover {
+    background: #C1194E;
+}
+
+.problem-content {
+    width: calc(100% - 30px);
+    padding: 15px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.stay-right {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 30px;
+}
+
+.problem-content a {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000;
+    transition: all .3s ease;
+}
+
+.problem-content .skip-page:hover {
+    color: #528870;
+}
+
+.problem-content span {
+    color: #7C8489;
+    font-size: 14px;
+}
+
+.all-live-content {
+    width: 100%;
+}
+
+.live-three-part {
+    width: 33.333333333333%;
+    float: left;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-bottom: 10px;
+}
+
+.live-message {
+    width: 250px;
+    padding: 25px;
+    background: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+    border-radius: 12px;
+}
+
+.photo-title-focus-btn {
+    display: flex;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.photo-title-focus-btn div {
+    padding-left: 25px;
+    display: flex;
+    align-content: space-around;
+    flex-wrap: wrap;
+}
+
+.photo-title-focus-btn div p {
+    width: 100%;
+    color: #333;
+    font-size: 14px;
+}
+
+.photo-title-focus-btn div a {
+    color: #999;
+    border: 1px solid #dfdfdf;
+    padding: 3px 10px;
+    font-size: 12px;
+    border-radius: 3px;
+    transition: all .3s ease;
+    background: transparent;
+}
+
+.photo-title-focus-btn div .change-color-background {
+    border: 1px solid transparent;
+    background: #FF5983;
+    color: #fff;
+}
+
+.img-a {
+    display: block;
+}
+
+.img-a img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, .5);
+}
+
+.live-room-status {
+    display: flex;
+    padding-top: 15px;
+    justify-content: center;
+}
+
+.live-room-status p {
+    color: #999;
+    font-size: 12px;
+    padding-right: 20px;
+}
+
+.live-room-status a {
+    color: #FF5983;
+    font-size: 12px;
 }

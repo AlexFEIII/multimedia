@@ -35,6 +35,9 @@ public class DocRecycler {
     private long sawnum;
     //类别
     private String type;
+    //forumCid
+    private long forumCid;
+
 //    //是否是互联网类别
 //    private boolean internet = false;
 //    //是否是法律
@@ -67,6 +70,19 @@ public class DocRecycler {
         this.type = type;
         this.date = date;
     }
+    public DocRecycler(String title,String summary,String content,String tpinyin,long userid,long upvotenum,long commentnum,long sawnum,long forumCid,String type,Date date){
+        this.title = title;
+        this.summary = summary;
+        this.content = content;
+        this.tpinyin = tpinyin;;
+        this.userid = userid;
+        this.upvotenum = upvotenum;
+        this.commentnum = commentnum;
+        this.sawnum = sawnum;
+        this.forumCid = forumCid;
+        this.type = type;
+        this.date = date;
+    }
 
     @Override
     public String toString() {
@@ -82,6 +98,7 @@ public class DocRecycler {
                 ", commentnum=" + commentnum +
                 ", sawnum=" + sawnum +
                 ", type='" + type + '\'' +
+                ", forumCid=" + forumCid +
                 ", date=" + date +
                 '}';
     }
@@ -172,6 +189,14 @@ public class DocRecycler {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public long getForumCid() {
+        return forumCid;
+    }
+
+    public void setForumCid(long forumCid) {
+        this.forumCid = forumCid;
     }
 
     public Date getDate() {

@@ -41,7 +41,9 @@ public class HistoryController {
      * 删除文章浏览记录
      */
     @DeleteMapping("/ddoc")
-    public void ddoc(){}
+    public void ddoc(){
+        historyService.ddoc();
+    }
 
     /**
      * 增加浏览问答历史
@@ -66,7 +68,7 @@ public class HistoryController {
      */
     @DeleteMapping("/dforum")
     public void dforum(){
-
+        historyService.dforum();
     }
 
     /**
@@ -88,7 +90,9 @@ public class HistoryController {
      * 删除视频浏览记录
      */
     @DeleteMapping("/dvideo")
-    public void dvideo(){}
+    public void dvideo(){
+        historyService.dvideo();
+    }
 
     /**
      * 增加搜索历史
@@ -108,5 +112,7 @@ public class HistoryController {
      * 删除搜索记录
      */
     @DeleteMapping("/dsearch")
-    public void dsearch(){}
+    public void dsearch(){
+        historyService.dsearch();
+    }
 }

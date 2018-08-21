@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import java.util.Date;
 
 /*
-* 论坛文章评论
+* 论坛文章问题
 * */
 @Entity
 public class ForumComment {

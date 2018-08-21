@@ -1,9 +1,8 @@
 package com.example.multimedia.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import org.hibernate.annotations.Cascade;
+
+import javax.persistence.*;
 import java.util.Date;
 
 /*
@@ -36,7 +35,8 @@ public class ForumRecycler {
     //阅读个数
     private long sawnum;
     //类别
-    private String type;
+    @OneToOne(cascade = {CascadeType.ALL})
+    private ForumKind type;
 //        //是否是互联网类别
 //        private boolean internet;
 //        //是否是法律
@@ -56,7 +56,7 @@ public class ForumRecycler {
 
     public ForumRecycler(){}
 
-    public ForumRecycler(String title,String summary,String content,String tpinyin,long userid,long upvotenum,long commentnum,long sawnum,String type,Date date){
+    public ForumRecycler(String title,String summary,String content,String tpinyin,long userid,long upvotenum,long commentnum,long sawnum,ForumKind type,Date date){
         this.title = title;
         this.summary = summary;
         this.content = content;
@@ -175,11 +175,11 @@ public class ForumRecycler {
         this.sawnum = sawnum;
     }
 
-    public String getType() {
+    public ForumKind getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ForumKind type) {
         this.type = type;
     }
 

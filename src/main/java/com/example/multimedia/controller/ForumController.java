@@ -1,6 +1,8 @@
 package com.example.multimedia.controller;
 
 import com.example.multimedia.domain.Forum;
+import com.example.multimedia.domain.returnMessage.FKind;
+import com.example.multimedia.domain.returnMessage.ForumKNum;
 import com.example.multimedia.domain.returnMessage.ForumUser;
 import com.example.multimedia.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +40,12 @@ public class ForumController {
     }
 
     /**
+     * 取得一篇问答内容
      * @param id
      * @return
      */
-    @GetMapping("/{id}")
-    public ForumUser getOneForum(@PathVariable long id){
+    @GetMapping(params = "id")
+    public ForumUser getOneForum(long id){
         return forumService.getOneForum(id);
     }
 
@@ -64,7 +67,7 @@ public class ForumController {
      * @return
      */
     @GetMapping("/mine")
-    public List<ForumUser> getMineForum(){
+    public List<Forum> getMineForum(){
         return forumService.getMineForum();
     }
 
@@ -74,7 +77,7 @@ public class ForumController {
      * @return
      */
     @GetMapping(value = "others",params = "id")
-    public List<ForumUser> getOthersForum(long id){
+    public List<Forum> getOthersForum(long id){
         return forumService.getOthersForum(id);
     }
 
@@ -101,10 +104,33 @@ public class ForumController {
     }
 
     /*
-    * 删除文章
+    * 删除问答
     * */
     @DeleteMapping("/delete/{id}")
     public String deleteForum(@PathVariable("id") long id){
         return forumService.deleteForum(id);
+    }
+
+    /**
+     * 增加问答类别
+     * @param kind
+     */
+    @PutMapping(value = "/addKind",params = {"kind"})
+    public void addKind(String kind,@RequestParam MultipartFile file){
+        forumService.addKind(kind,file);
+    }
+
+    /**
+     * 返回所有问答及其信息
+     * @return
+     */
+    @GetMapping("/allkind")
+    public List<ForumKNum> allKind(){
+        return forumService.allKind();
+    }
+
+    @GetMapping(value = "/kind",params = {"id","pagenum"})
+    public FKind getKind(int id,int pagenum){
+        return forumService.getKind(id,pagenum);
     }
 }

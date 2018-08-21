@@ -1,9 +1,6 @@
 package com.example.multimedia.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 /*
@@ -35,8 +32,11 @@ public class Forum {
     private long commentnum;
     //阅读个数
     private long sawnum;
+    //forum作者题词
+    private String problem;
     //类别
-    private String kind;
+    @OneToOne(cascade = {CascadeType.ALL})
+    private ForumKind kind;
 //    //是否是互联网类别
 //    private boolean internet;
 //    //是否是法律
@@ -56,7 +56,7 @@ public class Forum {
 
     public Forum(){}
 
-    public Forum(String title,String summary,String content,String tpinyin,long userid,String kind){
+    public Forum(String title,String summary,String content,String tpinyin,long userid,ForumKind kind){
         this.title = title;
         this.summary = summary;
         this.content = content;
@@ -80,7 +80,8 @@ public class Forum {
                 ", upvotenum=" + upvotenum +
                 ", commentnum=" + commentnum +
                 ", sawnum=" + sawnum +
-                ", kind='" + kind + '\'' +
+                ", problem='" + problem + '\'' +
+                ", kind=" + kind +
                 ", date=" + date +
                 '}';
     }
@@ -173,11 +174,19 @@ public class Forum {
         this.sawnum = sawnum;
     }
 
-    public String getKind() {
+    public String getProblem() {
+        return problem;
+    }
+
+    public void setProblem(String problem) {
+        this.problem = problem;
+    }
+
+    public ForumKind getKind() {
         return kind;
     }
 
-    public void setKind(String kind) {
+    public void setKind(ForumKind kind) {
         this.kind = kind;
     }
 

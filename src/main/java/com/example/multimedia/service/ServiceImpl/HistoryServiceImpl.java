@@ -49,6 +49,7 @@ public class HistoryServiceImpl implements HistoryService {
     //得到文章历史
     @Override
     public List<DocUserView> getDHistory(){
+        ddoc();
         MulUser mulUser = userRepository.findByUsername(userService.getUsername());
         List<DocUserView> docUserViews = new ArrayList<>();
         List<DocHistory> docHistories = docHistoryRepository.findByUserid(mulUser.getId());
@@ -76,6 +77,7 @@ public class HistoryServiceImpl implements HistoryService {
     //得到问答历史
     @Override
     public List<Forum> getFHistory(){
+        dforum();
         try{
             MulUser mulUser = userRepository.findByUsername(userService.getUsername());
             List<ForumHistory> forumHistories = forumHistoryRepository.findByUserid(mulUser.getId());
@@ -108,6 +110,7 @@ public class HistoryServiceImpl implements HistoryService {
     //得到视频历史
     @Override
     public List<Video> getVHistory(){
+        dvideo();
         MulUser mulUser = userRepository.findByUsername(userService.getUsername());
         List<VideoHistory> videoHistories = videoHistoryRepository.findByUserid(mulUser.getId());
         List<Video> videos = new ArrayList<>();

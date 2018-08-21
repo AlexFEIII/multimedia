@@ -438,7 +438,7 @@ $(document).ready(function () {
         },error:function () {
             console.log("加载页面时获取评论失败！")
         }
-    })
+    });
     //获取登陆信息
     $.ajax({
         url:"../user/isLogin",

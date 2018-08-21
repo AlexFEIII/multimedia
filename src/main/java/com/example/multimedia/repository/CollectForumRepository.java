@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CollectForumRepository extends JpaRepository<CollectForum,Long> {
     CollectForum findByUseridAndForumid(long userid,long forumid);
+    int countAllByForumid(long id);
 }

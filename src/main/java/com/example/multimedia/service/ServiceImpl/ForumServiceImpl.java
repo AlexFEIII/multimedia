@@ -1,14 +1,10 @@
 package com.example.multimedia.service.ServiceImpl;
 
-import com.example.multimedia.domain.Forum;
-import com.example.multimedia.domain.ForumRecycler;
-import com.example.multimedia.domain.MulUser;
-import com.example.multimedia.domain.Recycler;
+import com.example.multimedia.domain.*;
+import com.example.multimedia.domain.returnMessage.FKind;
+import com.example.multimedia.domain.returnMessage.ForumKNum;
 import com.example.multimedia.domain.returnMessage.ForumUser;
-import com.example.multimedia.repository.ForumRecyclerRepository;
-import com.example.multimedia.repository.ForumRepository;
-import com.example.multimedia.repository.RecyclerRepository;
-import com.example.multimedia.repository.UserRepository;
+import com.example.multimedia.repository.*;
 import com.example.multimedia.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,6 +37,10 @@ public class ForumServiceImpl implements ForumService {
     private CommentServiceImpl commentService;
     @Autowired
     private BaiduService baiduService;
+    @Autowired
+    private ForumKindRepository forumKindRepository;
+    @Autowired
+    private CollectForumRepository collectForumRepository;
 
     SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
     /*
@@ -48,14 +48,15 @@ public class ForumServiceImpl implements ForumService {
     * */
     @Override
     public List<ForumUser> getAllForum(int pageNum, int size, Sort.Direction direction, String key) {
-        if (!(key.equals("id") || key.equals("title") || key.equals("sawnum")))
-            key = "sawnum";
-        Pageable pageable = new PageRequest(pageNum,size,direction,key);
-        Page<Forum> page = forumRepository.findAll(pageable);
-        List<ForumUser> forumUsers = new ArrayList<>();
-        for (Forum forum:page)
-            forumUsers.add(new ForumUser(forum,userRepository.findOne(forum.getUserid())));
-        return forumUsers;
+//        if (!(key.equals("id") || key.equals("title") || key.equals("sawnum")))
+//            key = "sawnum";
+//        Pageable pageable = new PageRequest(pageNum,size,direction,key);
+//        Page<Forum> page = forumRepository.findAll(pageable);
+//        List<ForumUser> forumUsers = new ArrayList<>();
+//        for (Forum forum:page)
+//            forumUsers.add(new ForumUser(forum,userRepository.findOne(forum.getUserid())));
+//        return forumUsers;
+        return null;
     }
 
     //返回一篇论坛文章
@@ -63,31 +64,33 @@ public class ForumServiceImpl implements ForumService {
     public ForumUser getOneForum(long id){
         Forum forum = forumRepository.findOne(id);
         MulUser mulUser = userRepository.findOne(forum.getUserid());
-        return new ForumUser(forum,mulUser);
+        boolean isfollow = false;
+        try{
+            MulUser user = userRepository.findByUsername(userService.getUsername());
+            if (collectForumRepository.findByUseridAndForumid(user.getId(),id) != null){
+                isfollow = true;
+            }
+        }catch (Exception e){}
+        int colnum = collectForumRepository.countAllByForumid(id);
+        return new ForumUser(forum,mulUser,isfollow,forumRepository.countAllByKindEquals(forum.getKind()),colnum);
     }
 
     //返回我的问答
     @Override
-    public List<ForumUser> getMineForum() {
+    public List<Forum> getMineForum() {
         List<ForumUser> forumUsers = new ArrayList<>();
         MulUser mulUser = userRepository.findByUsername(userService.getUsername());
         List<Forum> forums = forumRepository.findByUseridOrderByDateAsc(mulUser.getId());
-        for (Forum forum:forums){
-            forumUsers.add(new ForumUser(forum,userRepository.findOne(forum.getUserid())));
-        }
-        return forumUsers;
+        return forums;
     }
 
     //返回别人的问答
     @Override
-    public List<ForumUser> getOthersForum(long userid){
+    public List<Forum> getOthersForum(long userid){
         List<ForumUser> forumUsers = new ArrayList<>();
         MulUser mulUser = userRepository.findOne(userid);
         List<Forum> forums = forumRepository.findByUseridOrderByDateAsc(mulUser.getId());
-        for (Forum forum:forums){
-            forumUsers.add(new ForumUser(forum,userRepository.findOne(forum.getUserid())));
-        }
-        return forumUsers;
+        return forums;
     }
 
     /*
@@ -97,6 +100,10 @@ public class ForumServiceImpl implements ForumService {
     public String addForum(String title, String summary, String content, MultipartFile image, String type) {
         if (!title.equals(sensitivewordFilter.turnWord(title))){
             return "T_SENSITIVE";
+        }
+        ForumKind forumKind = forumKindRepository.findByKindEquals(type);
+        if (forumKind == null){
+            return null;
         }
         MulUser mulUser = userRepository.findByUsername(userService.getUsername());
         try{
@@ -108,7 +115,7 @@ public class ForumServiceImpl implements ForumService {
         if (!summary.equals(sensitivewordFilter.turnWord(summary))) return "S_SENSITIVE";
         Pinyin pinyin = new Pinyin();
         title = commentService.deleteHTML(title);
-        Forum forum = new Forum(title,commentService.deleteHTML(summary),commentService.deleteHTML(content),pinyin.getStringPinYin(title),mulUser.getId(),type);
+        Forum forum = new Forum(title,commentService.deleteHTML(summary),commentService.deleteHTML(content),pinyin.getStringPinYin(title),mulUser.getId(),forumKind);
         if (image != null){
             String flag = userService.uploadImage(image);
             if (flag.equals("N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
@@ -120,9 +127,7 @@ public class ForumServiceImpl implements ForumService {
         return "Y";
     }
 
-    /*
-    * 修改文章
-    * */
+    //修改文章
     @Override
     public String changeForum(long forumid, String title, String summary, String content, MultipartFile image, String type) {
         Forum forum = forumRepository.findOne(forumid);
@@ -147,16 +152,15 @@ public class ForumServiceImpl implements ForumService {
                 }
                 forum.setImage(flag);
             }
-            if (type != null) forum.setKind(type);
+            ForumKind  forumKind = forumKindRepository.findByKindEquals(type);
+            if (forumKind != null) forum.setKind(forumKind);
             forumRepository.save(forum);
             return "Y";
         }
         return "N";
     }
 
-    /*
-    * 设置最佳评论
-    * */
+    //设置最佳评论
     @Override
     public String best(long forumid, long commentid) {
         Forum forum = forumRepository.findOne(forumid);
@@ -166,9 +170,7 @@ public class ForumServiceImpl implements ForumService {
         return "Y";
     }
 
-    /*
-    * 删除文章
-    * */
+    //删除文章
     @Override
     public String deleteForum(long id) {
         Forum forum = forumRepository.findOne(id);
@@ -184,6 +186,39 @@ public class ForumServiceImpl implements ForumService {
             return "Y";
         }
         return "N";
+    }
+
+    //修改问答类型
+    @Override
+    public void addKind(String kind,MultipartFile file){
+        try{
+            String role = userRepository.findByUsername(userService.getUsername()).getRole();
+            if (role.equals("ROLE_MANAGER") || role.equals("ROLE_SMANAGER"))
+
+                forumKindRepository.save(new ForumKind(kind,userService.uploadImage(file)));
+        }catch (Exception e){
+            return;
+        }
+    }
+
+    //返回某一类型的问答及其文章
+    @Override
+    public FKind getKind(int id,int pagenum) {
+        ForumKind forumKind = forumKindRepository.findOne(id);
+        Pageable pageable = new PageRequest(pagenum-1,8,new Sort(Sort.Direction.DESC,"id"));
+        Page<Forum> forums = forumRepository.findByKindEquals(forumKind,pageable);
+        return new FKind(forumKind,forums.getTotalPages(),forums);
+    }
+
+    //返回所有问答类型
+    @Override
+    public List<ForumKNum> allKind(){
+        List<ForumKNum> forumKNums = new ArrayList<>();
+        List<ForumKind> forumKinds = forumKindRepository.findAll();
+        for (ForumKind forumKind : forumKinds){
+            forumKNums.add(new ForumKNum(forumKind,forumRepository.countAllByKindEquals(forumKind)));
+        }
+        return forumKNums;
     }
 
     public boolean power(long id,Forum forum){

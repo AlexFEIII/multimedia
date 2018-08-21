@@ -9,7 +9,7 @@ $('.nav .same_a').on('click', function () {
     });
 });
 
-$(document).on("click", '.same_a,.user_list a,.second_list a', function () {
+$(document).on("click", '.same_a,.user_list a,.second_list a,.FocusList a', function () {
     $("body").getNiceScroll().resize();
 });
 //通过class绑定click事件，可以只点击一次就触发事件，否则需要点击两次
@@ -168,6 +168,282 @@ $('.second_list a').on('click', function () {
     $('.collect').eq(index).css({
         'display': 'flex',
     });
+});
+
+//开播设置
+$('.inputAndSave a').on('click', function () {
+    $(this).css('color', '#AAA');
+    //用jq的data方法保存数据，用于判断房间的标题名字是否是已经存在的
+    $('#FocusTextForID').data('FocusTextForID', $('#FocusTextForID').val());
+}); //点击保存
+function InputChange() {
+    var doing = false;
+    var doSomething = function (e) {
+        var WordChange = $('#FocusTextForID').val();
+        if (WordChange == '') {
+            $('.inputAndSave a').css('color', '#AAA');
+        } else {
+            //判断标题是否是已经存在的
+            if ($('#FocusTextForID').data('FocusTextForID') != WordChange) {
+                $('.inputAndSave a').css('color', '#FF5983');
+            } else {
+                $('.inputAndSave a').css('color', '#AAA');
+            }
+        }
+    }
+    //判断input的内容是否改变
+    document.getElementById('FocusTextForID').addEventListener('compositionstart', function (e) {
+        doing = true;
+    }, false);
+    document.getElementById('FocusTextForID').addEventListener('input', function (e) {
+        if (!doing) {
+            doSomething();
+        }
+    }, false);
+    document.getElementById('FocusTextForID').addEventListener('compositionend', function (e) {
+        doing = false;
+        doSomething();
+    }, false);
+    //实时判断input里面的内容是否有所改变
+}
+InputChange();
+// 直播的封面
+(window.onresize = function () {
+    var win_height = $(window).height();
+    var win_width = $(window).width();
+    if (win_width <= 768) {
+        $('.tailoring-content').css({
+            top: (win_height - $('.tailoring-content').outerHeight()) / 2,
+            left: 0,
+        });
+    } else {
+        $('.tailoring-content').css({
+            top: (win_height - $('.tailoring-content').outerHeight()) / 2,
+            left: (win_width - $('.tailoring-content').outerWidth()) / 2,
+        });
+    }
+})();
+//弹出图片裁剪框
+$('#replaceImg').on('click', function () {
+    $('.tailoring-container').toggle();
+});
+//图像上传
+function selectImg(file) {
+    if (!file.files || !file.files[0]) {
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function (evt) {
+        var replaceSrc = evt.target.result;
+        //更换cropper的图片
+        $('#tailoringImg').cropper('replace', replaceSrc, false); //默认false，适应高度，不失真
+    };
+    reader.readAsDataURL(file.files[0]);
+}
+//cropper图片裁剪
+$('#tailoringImg').cropper({
+    viewMode: 1,
+    aspectRatio: 2 / 1,
+    preview: '.previewImg', //预览视图
+    guides: false, //裁剪框的虚线(九宫格)
+    autoCropArea: 0.5, //0-1之间的数值，定义自动剪裁区域的大小，默认0.8
+    movable: false, //是否允许移动图片
+    dragCrop: true, //是否允许移除当前的剪裁框，并通过拖动来新建一个剪裁框区域
+    movable: true, //是否允许移动剪裁框
+    resizable: true, //是否允许改变裁剪框的大小
+    zoomable: false, //是否允许缩放图片大小
+    mouseWheelZoom: false, //是否允许通过鼠标滚轮来缩放图片
+    touchDragZoom: true, //是否允许通过触摸移动来缩放图片
+    rotatable: true, //是否允许旋转图片
+    crop: function (e) {
+        // 输出结果数据裁剪图像。
+    },
+});
+//旋转
+$('.cropper-rotate-btn').on('click', function () {
+    $('#tailoringImg').cropper('rotate', 45);
+});
+//复位
+$('.cropper-reset-btn').on('click', function () {
+    $('#tailoringImg').cropper('reset');
+});
+//换向
+var flagX = true;
+$('.cropper-scaleX-btn').on('click', function () {
+    if (flagX) {
+        $('#tailoringImg').cropper('scaleX', -1);
+        flagX = false;
+    } else {
+        $('#tailoringImg').cropper('scaleX', 1);
+        flagX = true;
+    }
+    flagX != flagX;
+});
+//裁剪后的处理
+$('#sureCut').on('click', function () {
+    if ($('#tailoringImg').attr('src') == null) {
+        return false;
+    } else {
+        var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
+        var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
+        $('.PreviewDivForCover span').remove();
+        $('.PreviewDivForCover').css('border', 'none');
+        $('#ImgCoverPreviewForID').addClass('ImgCoverPreview');
+        $('#ImgCoverPreviewForID').prop('src', base64url); //显示为图片的形式
+        //关闭裁剪框
+        closeTailor();
+    }
+});
+//关闭裁剪框
+function closeTailor() {
+    $('.tailoring-container').toggle();
+}
+
+// 4个主要的分类
+// 记录数据
+$('.SelectKindFixed').data('SelectKindFixed', '娱乐');
+var LastAForHappy = $('.FourKindVideo a').eq(0);
+var LastKindPart = $('.kind-part').eq(0);
+$('.FourKindVideo a').on('click', function () {
+    var index = $('.FourKindVideo a').index(this);
+    LastAForHappy.css('color', '');
+    LastKindPart.css('display', '');
+    LastAForHappy = $(this);
+    $('.SelectKindFixed').data('SelectKindFixed', $(this).html());
+    LastKindPart = $('.kind-part').eq(index);
+    $('.kind-part').eq(index).css('display', 'block');
+    $(this).css('color', '#FF5983');
+});
+// 点击选择分类
+$('.topKindVideo a').on('click', function () {
+    $('.SelectKindFixed').css('display', 'block');
+    setTimeout(function () {
+        $('.SelectKindFixed').css({
+            'top': '50%',
+            'opacity': '1'
+        });
+    }, 20);
+});
+$('.CancleBtn').on('click', function () {
+    $('.SelectKindFixed').css({
+        'display': '',
+        'top': '',
+        'opacity': ''
+    });
+});
+var LastKind = $('.Kind').eq(0);
+$('.Kind').on('click', function () {
+    $('.topKindVideo span').html($('.SelectKindFixed').data('SelectKindFixed') + '&nbsp;&nbsp;·&nbsp;&nbsp;' + $(this).html());
+    LastKind.css('background', '');
+    LastKind = $(this);
+    $(this).css('background', '#C1194E');
+    $('.SelectKindFixed').css({
+        'display': '',
+        'top': '',
+        'opacity': ''
+    });
+});
+
+// 关注的列表
+var oLdFocusA = $('.FocusList a').eq(0);
+var oLdFocusSame = $('.Focus-Same').eq(0);
+$('.FocusList a').on('click', function () {
+    var index = $('.FocusList a').index(this);
+    oLdFocusA.css({
+        'background': ''
+    });
+    oLdFocusSame.css('display', '');
+    oLdFocusSame = $('.Focus-Same').eq(index);
+    oLdFocusA = $(this);
+    $(this).css({
+        'background': '#dbdada'
+    });
+    $('.Focus-Same').eq(index).css('display', 'flex');
+});
+for (var i = 0; i < 5; i++) {
+    var userBaseInformation = $('<div class="user-base-information"><div class="contain-two-part"><div class="user-head-photo">' +
+        '<img src="../img/11.jpg"></div><div class="user-name-focus-article"><a href="javascript:;">wumingzhi111</a><div class="base-message">' +
+        '<span class="base-focus">关注</span><span class="base-num">39</span><span class="base-article">文章</span><span class="base-num">527</span>' +
+        '</div><div class="simple-introduce"><p>遇见更好的自己</p></div></div></div><div class="focus-btn"><a href="javascript:;" data-focusWhetherOrNot="1"><i class="iconfont">&#xe642;</i>' +
+        '<span>已关注</span></a></div></div>');
+    $('.AuthorFocus').append(userBaseInformation);
+}
+// 关注按钮
+$('.focus-btn a').on('click', function () {
+    if ($(this).attr('data-focusWhetherOrNot') == '1') {
+        $(this).attr('data-focusWhetherOrNot', '0');
+        $(this).find('.iconfont').html('&#xe604;');
+        $(this).find('span').html('关注');
+        $(this).addClass('change-color');
+    } else {
+        $(this).attr('data-focusWhetherOrNot', '1');
+        $(this).find('.iconfont').html('&#xe642;');
+        $(this).find('span').html('已关注');
+        $(this).removeClass('change-color');
+    }
+});
+for (var i = 0; i < 5; i++) {
+    var IssueMainContent = $('<div class="Issue-main-content"><div class="photp-title"><a href="topicContent.html" target="_blank"><img src="../img/newPeople.jpg"></a><p>职场新人须知</p>' +
+        '</div><div class="introduce-for-issue"><p>盛夏，骄阳和暴雨在天空轮番控场，捉摸不定，路人衣衫被淋透又晒干，有点像初入职场的你，在「毕业生」和' +
+        '「职场新人」角色切换中无所适从的样子。要如何才能快速脱掉身上的「学生气」？工作中人际关系怎么处理？提升工作效率有什么方法？本期圆桌，一起来聊聊初入' +
+        '职场会面临的种种疑惑。</p></div><div class="main-host-institution"><i class="iconfont">&#xe60c;</i><span>组织单位</span><span>知乎圆桌</span>' +
+        '</div><div class="problem-Focus-person"><div class="problem-num"><a href="topicContent.html" target="_blank"><span>问题</span><span>2</span>' +
+        '</div><div class="Focus-person-num"><a href="topicContent.html" target="_blank"><span>关注者</span><span>52</span></a></div></div>' +
+        '<div class="focus-whether-not"><a href="javascript:;" data-Whether="1">已关注</a></div></div>');
+    $('.IssueFocus').append(IssueMainContent);
+}
+$('.focus-whether-not a').on('click', function () {
+    if ($(this).attr('data-Whether') == '1') {
+        $(this).attr('data-Whether', '0');
+        $(this).css('background', '#C1194E');
+        $(this).html('关注议题');
+    } else {
+        $(this).attr('data-Whether', '1');
+        $(this).css('background', '');
+        $(this).html('已关注');
+    }
+});
+$('.introduce-for-issue p').each(function () {
+    var maxwidth = 78;
+    if ($(this).text().length > maxwidth) {
+        $(this).text($(this).text().substring(0, maxwidth));
+        $(this).html($(this).html() + "...");
+    };
+});
+for (var i = 0; i < 5; i++) {
+    var problemContent = $('<div class="problem-content"><a href="AnswerQuestion.html" target="_blank" class="skip-page">' +
+        '林丹用左手打球对他的成功到底有没有影响？</a><div class="time-answer-focus-num"><span>2018-07-21</span><span>&nbsp;·&nbsp;</span>' +
+        '<span>13个回答</span><span>&nbsp;·&nbsp;</span><span>60个关注</span></div><a href="javascript:;" class="stay-right">' +
+        '<i class="iconfont">&#xe622;</i></a></div>');
+    $('.problemFocus').append(problemContent);
+}
+$('.stay-right').on('click', function () {
+    var This = $(this);
+    layer.confirm('确定要取消关注吗?', {
+        btn: ['确定', '取消'], //按钮
+        title: '提示',
+    }, function (index) {
+        This.parent().remove();
+        layer.close(index);
+    });
+});
+for (var i = 0; i < 5; i++) {
+    var liveThreePart = $('<div class="live-three-part"><div class="live-message"><div class="photo-title-focus-btn">' +
+        '<a href="videoPage.html" target="_blank" class="img-a"><img src="../img/11.jpg"></a><div><p>养乐多了</p>' +
+        '<a href="javascript:;" class="btn-whether-focus" data-btn-focus="1">取消关注</a></div></div><div class="live-room-status"><p>直播间</p>' +
+        '<a href="videoPage.html" target="_blank" class="status">直播中</a></div></div></div>');
+    $('.all-live-content').append(liveThreePart);
+}
+$('.btn-whether-focus').on('click', function () {
+    if ($(this).attr('data-btn-focus') == '1') {
+        $(this).attr('data-btn-focus', '0');
+        $(this).addClass('change-color-background');
+        $(this).html('关注');
+    } else {
+        $(this).attr('data-btn-focus', '1');
+        $(this).removeClass('change-color-background');
+        $(this).html('取消关注');
+    }
 });
 
 var firstul = $(".first_ul");
@@ -444,6 +720,55 @@ firstul.children("li:eq(3)").click(function () {
         answer_list.append(get_more_three);
         hf = true;
     }
+});
+//显示收藏的视频
+firstul.children("li:eq(4)").click(function () {
+    if (cvf == false){
+        $.ajax({
+            url:"../col/mine?kind=video",
+            type:"get",
+            success:function (data) {
+                cvf = true;
+                console.log(data);
+                for (var i = 0;i < data.length;i ++){
+                    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].video.image+'"></a><span>'+data[i].video.title+'</span></div>');
+                    Select_One_Div.append(select_one);
+                }
+            },error:function (data) {
+                console.log("获取收藏视频失败！")
+            }
+        });
+    }
+});
+//显示收藏的文章
+$(".second_list").eq(1).click(function () {
+    if (!cdf){
+        $.ajax({
+            url:"../col/mine?kind=doc",
+            type:"get",
+            success:function (data) {
+                cdf = true;
+                console.log(data)
+            },error:function () {
+                console.log("获取收藏文章失败！")
+            }
+        })
+    }
+});
+//显示收藏的问答
+$(".second_list").eq(2).click(function () {
+    // if (!cff){
+    //     $.ajax({
+    //         url:"../col/mine?kind=forum",
+    //         type:"get",
+    //         success:function (data) {
+    //             cff = true;
+    //             console.log(data)
+    //         },error:function () {
+    //             console.log("获取收藏问答失败！")
+    //         }
+    //     })
+    // }
 });
 
 //登录成功执行的方法

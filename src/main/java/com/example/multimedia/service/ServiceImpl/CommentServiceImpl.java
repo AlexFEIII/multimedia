@@ -51,6 +51,8 @@ public class CommentServiceImpl implements CommentService {
     private ForumCUpvoteRepository forumCUpvoteRepository;
     @Autowired
     private VideoCUpvoteRepository videoCUpvoteRepository;
+    @Autowired
+    private CollectFCRepository collectFCRepository;
 
     SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
 
@@ -239,7 +241,7 @@ public class CommentServiceImpl implements CommentService {
         }catch (Exception e){
             isLogin = false;
         }
-        Pageable pageable = new PageRequest(pagenum-1,20,new Sort(Sort.Direction.DESC,"id"));
+        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.DESC,"id"));
         Page<DocComment> list = docCommentRepository.findByDocid(docid,pageable);
         for (DocComment docComment : list){
 //            List<DocRUser> result = new ArrayList<>();
@@ -290,17 +292,31 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<FCView> getForumComment(long docid, int pagenum) {
         List<FCView> fcViews = new ArrayList<>();
-        Pageable pageable = new PageRequest(pagenum-1,20,new Sort(Sort.Direction.DESC,"id"));
+        boolean isUp = false,isFollow = false,isLogin = true;
+        MulUser mulUser = null;
+        try{
+            mulUser = userRepository.findByUsername(userService.getUsername());
+        }catch (Exception e){
+            isLogin = false;
+        }
+        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.DESC,"id"));
         Page<ForumComment> list = forumCommentRepository.findByForumid(docid,pageable);
         for (ForumComment forumComment : list){
             List<ForumRUser> forumRelays = new ArrayList<>();
             List<ForumRelay> forumRelay = forumRelayRepository.findByCommentid(forumComment.getId());
-            for(int i = 0;i < forumRelay.size();i ++)
-                forumRelays.add(new ForumRUser(forumRelay.get(i),userRepository.findOne(forumRelay.get(i).getUserid())));
+            for(int i = 0;i < forumRelay.size();i ++){
+                MulUser user = userRepository.findOne(forumRelay.get(i).getUserid());
+                MulUser ruser = userRepository.findOne(forumRelay.get(i).getReplyid());
+                forumRelays.add(new ForumRUser(forumRelay.get(i),user.getNickname(),user.getId(),ruser.getNickname(),ruser.getId()));
+            }
+            if (isLogin){
+                if (forumCUpvoteRepository.findByCommentidAndUserid(forumComment.getId(),mulUser.getId()) != null) isUp = true;
+                if (collectFCRepository.findByCommentidAndUserid(forumComment.getId(),mulUser.getId()) != null) isFollow = true;
+            }
             if (forumRelays.size() == 0){
-                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumComment,userRepository.findOne(forumComment.getUserid())),null));
+                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumComment,userRepository.findOne(forumComment.getUserid())),null,isUp,isFollow));
             }else{
-                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumComment,userRepository.findOne(forumComment.getUserid())),forumRelays));
+                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumComment,userRepository.findOne(forumComment.getUserid())),forumRelays,isUp,isFollow));
             }
         }
         return fcViews;
@@ -309,7 +325,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<VCView> getVideoComment(long docid,int pagenum) {
         List<VCView> vcViews = new ArrayList<>();
-        Pageable pageable = new PageRequest(pagenum-1,20,new Sort(Sort.Direction.DESC,"id"));
+        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.DESC,"id"));
         Page<VideoComment> list = videoCommentRepository.findByVideoid(docid,pageable);
         for (VideoComment videoComment : list){
             List<VideoRUser> videoRelays = new ArrayList<>();

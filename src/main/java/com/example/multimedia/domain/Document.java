@@ -35,6 +35,8 @@ public class Document {
     private long sawnum = 0;
     //类别
     private String kind;
+    //如果是forum类别则记录对应的forum评论id
+    private long forumCid;
 //    //是否是互联网类别
 //    private boolean internet = false;
 //    //是否是法律
@@ -66,6 +68,17 @@ public class Document {
         this.date = new Date();
     }
 
+    public Document(String title,String summary,String content,String tpinyin,long userid,long forumCid,String kind){
+        this.title = title;
+        this.summary = summary;
+        this.content = content;
+        this.tpinyin = tpinyin;;
+        this.userid = userid;
+        this.kind = kind;
+        this.forumCid = forumCid;
+        this.date = new Date();
+    }
+
     @Override
     public String toString() {
         return "Document{" +
@@ -80,6 +93,7 @@ public class Document {
                 ", commentnum=" + commentnum +
                 ", sawnum=" + sawnum +
                 ", kind='" + kind + '\'' +
+                ", forumCid=" + forumCid +
                 ", date=" + date +
                 '}';
     }
@@ -170,6 +184,14 @@ public class Document {
 
     public void setKind(String kind) {
         this.kind = kind;
+    }
+
+    public long getForumCid() {
+        return forumCid;
+    }
+
+    public void setForumCid(long forumCid) {
+        this.forumCid = forumCid;
     }
 
     public Date getDate() {

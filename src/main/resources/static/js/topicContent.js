@@ -1,14 +1,99 @@
+var FORUMDATA;
+var USERDATA;
+var PAGE = 1;
+$(document).ready(function () {
+   $.ajax({
+        url:"../forum"+window.location.search,
+       type:"get",
+       async:false,
+       success:function (data) {
+           console.log(data);
+           FORUMDATA = data;
+           var image = "../img/14.png";
+           if (data.forum.image != null) image = data.forum.image;
+           $(".PeopleTitle h1").text(data.forum.title);
+           $(".imgContain img").attr("src",image);
+           $(".describe p").text(data.forum.content);
+           $(".leftFocus").children("span").eq(0).text(data.forum.sawnum);
+           $(".leftFocus").children("span").eq(3).text(data.colnum);
+           $(".topRightTopic").find("img").attr("src",data.forum.kind.image);
+           $(".owner").children("p").eq(0).text(data.forum.kind.kind);
+           $(".owner").children("p").eq(1).children("span").text(data.kindnum);
+       },error:function () {
+           console.log("获得议题信息失败！")
+       }
+   });
+    $.ajax({
+        url:"../user/isLogin",
+        type:"get",
+        async:false,
+        success:function (data) {
+            USERDATA = data;
+            console.log(data);
+            if (data != ""){
+                loginSuccess(data);
+            }
+        }
+    });
+
+    //加载第一页的问题
+    $.ajax({
+        url:"/getFComment/"+FORUMDATA.forum.id+"/1",
+        type:"get",
+        async:false,
+        success:function (data) {
+            console.log(data);
+            for (var i = 0;i < data.length;i ++){
+                var addComments = $('<li class="countLiNum"><div class="TitleA"><a href="javascript:;" class="TitleAfterA">不合法的身份和第三方第三方电脑</a></div>' +
+                    '<div class="SocialTool"><a href="javascript:;" class="GuanFocus"><i class="iconfont">&#xe6e0;</i><span>关注</span></a>' +
+                    '<a href="javascript:;" class="ZanA"><i class="iconfont">&#xe60a;</i><span>赞</span><span class="Zan">2</span></a>' +
+                    '<a href="javascript:;" class="commentsAndjoin"><i class="iconfont">&#xe66f;</i><span>参与讨论</span></a>' +
+                    '<a href="javascript:;" class="DeleteProblemASpecial"><i class="iconfont">&#xe622;</i><span>删除问题</span></a></div></li>');
+                $('.OneList li:first').after(addComments);
+            }
+            if (data != ""){
+                $('.GuanFocus').on('click', function () {
+                    layer.msg("请先登录！");
+                });
+                $('.ZanA').on('click',function () {
+                    layer.msg("请先登录！");
+                });
+                $('.commentsAndjoin').on('click',function () {
+                    layer.msg("请先登录！");
+                });
+                $('.DeleteProblemASpecial').on('click',function () {
+                    layer.msg("请先登录！");
+                })
+            }
+        },error:function () {
+            console.log("加载页面时获取评论失败！")
+        }
+    });
+});
+
+function loginSuccess(data) {
+    $(".layui-layer-close").click();
+    $(".last_li").empty();
+    var image = "../img/14.png";
+    if (data.headimage != null) image = data.headimage;
+    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
+
+    $('.RealFocus').on('click', function () {
+        if ($(this).html() == '取消关注') {
+            $(this).html('关注');
+            $(this).removeClass('rightFocusHover');
+        } else {
+            $(this).html('取消关注');
+            $(this).addClass('rightFocusHover');
+        }
+    });
+}
+
 var H1People = $('.PeopleTitle h1').html();
 $('.TitleA p').html('欢迎你参加' + H1People + '议题');
 
 $('.RealFocus').on('click', function () {
-    if ($(this).html() == '取消关注') {
-        $(this).html('关注');
-        $(this).removeClass('rightFocusHover');
-    } else {
-        $(this).html('取消关注');
-        $(this).addClass('rightFocusHover');
-    }
+    layer.msg("请先登录！")
 });
 
 //限制描述的字数
@@ -17,7 +102,7 @@ $(".describe p").each(function () {
     if ($(this).text().length > maxwidth) {
         $(this).text($(this).text().substring(0, maxwidth));
         $(this).html($(this).html() + "...");
-    };
+    }
 });
 
 
@@ -36,7 +121,7 @@ $('.AndJoin').on('click', function () {
 });
 
 $('.FirstAndJoin').on('click', function () {
-    getNewFirstEditor($(this).parent().parent());
+    getNewFirstEditor($(this).parent());
 });
 
 function getNewFirstEditor(n) {
@@ -45,14 +130,14 @@ function getNewFirstEditor(n) {
         '<div id="NewUser_edit" class="EditorNew" style="width:100%;height:200px;display: flex;justify-content: center;' +
         'align-content: center;flex-wrap:wrap;background:#fff;"></div></div></div>');
     CodeSame($('.NewGoodEditor'));
-    n.parent().parent().prepend(NewGoodEditor);
+    n.parent().after(NewGoodEditor);
     setTimeout(function () {
         $('.NewGoodEditor').css({
             opacity: '1',
-            top: '0',
+            top: '0'
         });
         $('.NewGoodEditor .cancel_A').css({
-            display: 'flex',
+            display: 'flex'
         });
         $('.NewGoodEditor .publish_A').html('<i class="iconfont">&#xe815;</i>发送');
     }, 10);
@@ -80,7 +165,7 @@ function getNewFirstEditor(n) {
             '<a href="javascript:;" class="ZanA"><i class="iconfont">&#xe60a;</i><span>赞</span><span class="Zan">2</span></a>' +
             '<a href="javascript:;" class="commentsAndjoin"><i class="iconfont">&#xe66f;</i><span>参与讨论</span></a>' +
             '<a href="javascript:;" class="DeleteProblemASpecial"><i class="iconfont">&#xe622;</i><span>删除问题</span></a></div></li>');
-        if (ContentNew == '') {
+        if (ContentNew == '<p><br></p>') {
             alert('请您写一点内容再发送，当前状态不可发送');
         } else {
             $('.OneList li:first').after(addComments);
