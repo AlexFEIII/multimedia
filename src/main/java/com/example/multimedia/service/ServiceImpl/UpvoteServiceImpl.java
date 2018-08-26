@@ -51,7 +51,7 @@ public class UpvoteServiceImpl implements UpvoteService {
                 document.setUpvotenum(document.getUpvotenum()-1);
             }
             documentRepository.save(document);
-        }else if (type.equals("forum")){
+        } else if (type.equals("forum")){
             Forum forum = forumRepository.findOne(objid);
             Forumupvote forumUpvote = forumUpvoteRepository.findByForumidAndUserid(objid,userid);
             if (forumUpvote == null){
@@ -80,17 +80,17 @@ public class UpvoteServiceImpl implements UpvoteService {
             }
             docCommentRepository.save(docComment);
         }else if (type.equals("FComment")){
-            ForumComment forumComment = forumCommentRepository.findOne(objid);
+            ForumProblem forumProblem = forumCommentRepository.findOne(objid);
             ForumCUpvote forumCUpvote = forumCUpvoteRepository.findByCommentidAndUserid(objid,userid);
             if (forumCUpvote == null){
                 forumCUpvoteRepository.save(new ForumCUpvote(userid,objid));
-                forumComment.setUpvotenum(forumComment.getUpvotenum()+1);
+                forumProblem.setUpvotenum(forumProblem.getUpvotenum()+1);
             }
             else{
                 forumCUpvoteRepository.delete(forumCUpvote);
-                forumComment.setUpvotenum(forumComment.getUpvotenum()-1);
+                forumProblem.setUpvotenum(forumProblem.getUpvotenum()-1);
             }
-            forumCommentRepository.save(forumComment);
+            forumCommentRepository.save(forumProblem);
         }else if (type.equals("VComment")) {
             VideoCUpvote videoCUpvote = videoCUpvoteRepository.findByCommentidAndUserid(objid,userid);
             if (videoCUpvote == null)

@@ -240,6 +240,8 @@ function cancel() {
         });
     });
 }
+
+//name:被回复的用户昵称，href：被回复的用户链接  rcommentid 被回复的评论id reid被回复的用户id
 function getNewEditor(n,type,href,name,rcommentid,reid) {
     var NewGoodEditor = $('<div class="NewGoodEditor"><div class="NewEditor">' +
         '<div id="Newtoolbar" class="NewToolbar" style="width:100%;background: #fff;border-bottom: 1px solid #DDD;"></div>' +
@@ -266,6 +268,8 @@ function getNewEditor(n,type,href,name,rcommentid,reid) {
     NewEditor.customConfig.zIndex = 0;
     NewEditor.create();
     cancel();
+
+    improveAreduceZIndex();
 
     //解决火狐不能自动去除占位符的问题
     var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
@@ -328,8 +332,26 @@ function getNewEditor(n,type,href,name,rcommentid,reid) {
                 btn: ['确定', '取消'], //按钮
                 title: '提示'
             }, function (index) {
-                This.parent().remove();
-                layer.close(index);
+                $.ajax({
+                    url:"../deleteR?type=doc&docid="+DOCDATA.document.id+"&commentid="+This.parent().parent().parent().children(".ComID").text()+"&rcommentid="+This.parent().children(".ReID").text(),
+                    type:"delete",
+                    success:function (data) {
+                        console.log(data);
+                        var list = This.parent().parent().find(".ReID");
+                        console.log(list);
+                        for (var i = 0;i < data.length;i ++){
+                            for(var j = 0;j < list.length;j ++){
+                                if (list[j].innerText == data[i]){
+                                    list.eq(j).parent().remove();
+                                    break;
+                                }
+                            }
+                        }
+                        layer.close(index);
+                    },error:function () {
+                        console.log("删除回复出错！")
+                    }
+                });
             });
         }); //删除评论
         $('.ADDCommit').on('click', function () {
@@ -337,6 +359,39 @@ function getNewEditor(n,type,href,name,rcommentid,reid) {
         });
     });
 }
+
+// 检测一个页面中是否存在一个元素
+(function ($) {
+    $.fn.exist = function () {
+        if ($(this).length >= 1) {
+            return true;
+        }
+        return false;
+    };
+})(jQuery);
+
+// 提高和减低一个元素的层级
+function improveAreduceZIndex() {
+    $('.hoverSameA5,.hoverSameA17').on('click', function () {
+        var timer = null;
+        timer = setInterval(function () {
+            if ($('.cover_big').exist()) {
+                $('.ContentShare').css('z-index', 'initial');
+                $('.title').css('z-index', 'initial');
+                $('.toTop').css('z-index', '-1');
+                $('.toolbar').css('z-index', '-1');
+            } else {
+                $('.ContentShare').css('z-index', '');
+                $('.title').css('z-index', '');
+                $('.toTop').css('z-index', '');
+                $('.toolbar').css('z-index', '');
+                clearInterval(timer);
+            }
+        }, 0);
+    });
+}
+improveAreduceZIndex();
+
 function CodeSame(n) {
   $('.NewGoodEditor').css({
     opacity: '',

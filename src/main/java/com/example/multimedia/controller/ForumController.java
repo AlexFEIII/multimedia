@@ -94,6 +94,17 @@ public class ForumController {
         return forumService.changeForum(documentid,title,summary,content,image,type);
     }
 
+    /**
+     * 增加问答问题
+     * @param forumid 议题的id
+     * @param title 问题的题目
+     * @return "ILLEGAL"非法。“Y”正常
+     */
+    @PutMapping(value = "addPro",params = {"forumid","title"})
+    public String addPro(long forumid,String title){
+        return forumService.addPro(forumid,title);
+    }
+
     /*
     * 设置最佳评论
     * */

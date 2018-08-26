@@ -14,6 +14,7 @@ public class ForumUser {
     public ForumUser(Forum forum,MulUser mulUser,boolean isFollow,long kindnum,int colnum){
         this.forum = forum;
         this.mulUser = mulUser;
+        this.isFollow = isFollow;
         this.kindnum = kindnum;
         this.colnum = colnum;
     }

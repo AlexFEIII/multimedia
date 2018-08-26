@@ -28,11 +28,11 @@ public class CollectController {
 
     /**
      * 文章专题收藏
-     * @param kind
+     * @param type
      */
-    @PutMapping(value = "/docK",params = "kind")
-    public void changeDocK(String kind){
-        collectService.changeDocK(kind);
+    @PutMapping(value = "/docK",params = "type")
+    public void changeDocK(String type){
+        collectService.changeDocK(type);
     }
 
     /**
@@ -42,6 +42,11 @@ public class CollectController {
     @PutMapping(value = "/forum",params = "forumid")
     public void changeForumC(long forumid){
         collectService.changeForumC(forumid);
+    }
+
+    @PutMapping(value = "/forumC",params = {"forumid","cid"})
+    public void changeForumCC(long forumid,long cid){
+        collectService.changeForumCC(forumid,cid);
     }
 
     /**

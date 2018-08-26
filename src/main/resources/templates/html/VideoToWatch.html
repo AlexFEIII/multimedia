@@ -8,12 +8,11 @@
     <link rel="icon" href="http://p9ba3amn1.bkt.clouddn.com/title_logo.ico" type="image/x-icon">
     <link rel="shortcut icon" href="http://p9ba3amn1.bkt.clouddn.com/title_logo.ico" type="image/x-icon">
     <title>问道</title>
-    <link rel="stylesheet" href="../css/cropper.min.css">
-    <link rel="stylesheet" href="../css/ImgCropping.css">
     <link rel="stylesheet" href="../font/iconfont.css">
     <link rel="stylesheet" href="../css/same.css">
-    <link rel="stylesheet" href="../css/specialColumn.css">
-    <link rel="stylesheet" href="../css/AnswerQuestion.css">
+    <link rel="stylesheet" href="../css/WangEditor.css">
+    <link rel="stylesheet" href="../DPlayer/DPlayer.min.css">
+    <link rel="stylesheet" href="../css/VideoToWatch.css">
 </head>
 
 <body>
@@ -77,30 +76,57 @@
                 </ul>
             </div>
         </div>
-        <div class="specialColumns">
-            <div class="topImgColumns">
-                <div class="leftColumns">
-                    <h1 class="leftColumnsH1"></h1>
-                    <p class="wordP">简介</p>
-                    <p class="OneFirstFocus">无人关注</p>
-                    <p class="TwoCollectionArticle">至今没有收集到文章</p>
-                    <a href="javascript:;" class="FocusQuestion">关注问题</a>
-                    <a href="preset.html" target="_blank">写回答</a>
-                    <a href="javascript:;" id="replaceImg" class="editorCover">编辑封面</a>
-                    <a href="javascript:;" id="editor-word">编辑简介</a>
+        <div class="videoToWatchMain">
+            <div class="top-video-danmuList">
+                <div class="video-content">
+                    <div id="video-page-play-interface"></div>
                 </div>
-                <div class="rightColumns">
-                    <a href="javascript:;">
-                        <img id="finalImg" src="../img/dog.jpg">
-                    </a>
+                <div class="danmu-list-content">
+                    <div class="danmu-list-packUp-unfold">
+                        <div class="danmu_list_set">
+                            <a href="javascript:;">
+                                <span>弹幕列表</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="danmu-list-main-content">
+                        <div class="top-danmu-message-for-time-content-sendTime">
+                            <span>
+                                <span>时间</span>
+                                <span>弹幕内容(0)</span>
+                            </span>
+                            <span>发送时间</span>
+                        </div>
+                        <div class="all-danmu-message"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- 波浪线 -->
-        <div class="moveDou"></div>
-        <div class="outerContainer">
-            <div class="insertContainer">
-                <div class="articleContainer"></div>
+        <div class="comments-main-content">
+            <div class="left-comments-contents-all">
+                <div class="comments">
+                    <div class="CanEdit">
+                        <div class="commentsArea">
+                            <a href="javascript:;" class="PhotoImg">
+                                <img src="../img/11.jpg">
+                            </a>
+                            <div class="NewEditor">
+                                <div id="top_list" class="toolbar" style="width:100%;background: #fff;border-bottom: 1px solid #DDD;"></div>
+                                <div id="bottom_content" class="user_edit" style="width:100%;height:200px;display: flex;justify-content: center;align-content: center;flex-wrap:wrap;background:#fff;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="commentsDetail">
+                    <div class="containContent">
+                        <p class="commentsNum">
+                            <span>0</span>
+                            条评论
+                        </p>
+                        <ul class="commentsList">
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="copyright">
@@ -112,49 +138,15 @@
             </a>
         </div>
     </div>
-    <!-- 截图的功能 -->
-    <div style="display: none" class="tailoring-container">
-        <div class="black-cloth" onclick="closeTailor(this)"></div>
-        <div class="tailoring-content">
-            <div class="tailoring-content-one">
-                <label title="上传图片" for="chooseImg" class="l-btn choose-btn">
-                    <input type="file" accept="image/jpg,image/jpeg,image/png" name="file" id="chooseImg" class="hidden" onchange="selectImg(this)"> 选择图片
-                </label>
-                <div class="close-tailoring" onclick="closeTailor(this)">
-                    <i class="iconfont">&#xe61a;</i>
-                </div>
-            </div>
-            <div class="tailoring-content-two">
-                <div class="tailoring-box-parcel">
-                    <img id="tailoringImg">
-                </div>
-                <div class="preview-box-parcel">
-                    <p>图片预览：</p>
-                    <div class="square previewImg"></div>
-                </div>
-            </div>
-            <div class="tailoring-content-three">
-                <button class="l-btn cropper-reset-btn">复位</button>
-                <button class="l-btn cropper-rotate-btn">旋转</button>
-                <button class="l-btn cropper-scaleX-btn">换向</button>
-                <button class="l-btn sureCut" id="sureCut">确定</button>
-            </div>
-        </div>
-    </div>
-    <!-- 编辑文字 -->
-    <div class="editor-question-word">
-        <textarea id="editor-question-word-textarea"></textarea>
-        <div>
-            <a href="javascript:;" class="confirm-btn">确定</a>
-        </div>
-    </div>
-    <iframe src="particles.html" id="particles"></iframe>
     <script src="../js/jquery.min.js"></script>
     <script src="../layui/layer.js"></script>
     <script src="../js/jquery.nicescroll.min.js"></script>
+    <script src="../DPlayer/flv.min.js"></script>
+    <script src="../DPlayer/hls.js"></script>
+    <script src="../DPlayer/DPlayer.min.js"></script>
     <script src="../js/same.js"></script>
-    <script src="../js/cropper.min.js"></script>
-    <script src="../js/AnswerQuestion.js"></script>
+    <script src="../wangEditor/wangEditor.min.js"></script>
+    <script src="../js/VideoToWatch.js"></script>
 </body>
 
 </html>

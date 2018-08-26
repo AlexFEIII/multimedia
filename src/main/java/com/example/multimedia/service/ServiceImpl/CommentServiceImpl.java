@@ -5,7 +5,6 @@ import com.example.multimedia.domain.returnMessage.*;
 import com.example.multimedia.repository.*;
 import com.example.multimedia.service.CommentService;
 import com.example.multimedia.service.UserService;
-import org.elasticsearch.common.recycler.Recycler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,11 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.Collection;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -61,6 +58,7 @@ public class CommentServiceImpl implements CommentService {
     * */
     @Override
     public Map<Long,String> comment(String type, long objid, String content) {
+        if (content.equals("")) return null;
         long userid = userRepository.findByUsername(userService.getUsername()).getId();
         long ruserid = docCommentRepository.findOne(objid).getUserid();
         content = sensitivewordFilter.turnWord(content);
@@ -69,10 +67,6 @@ public class CommentServiceImpl implements CommentService {
             DocComment docComment = new DocComment(deleteHTML(content),objid,userid,ruserid);
             docCommentRepository.save(docComment);
             id = docComment.getId();
-        }else if (type.equals("forum")){
-            ForumComment forumComment = new ForumComment(deleteHTML(content),objid,userid,ruserid);
-            forumCommentRepository.save(forumComment);
-            id = forumComment.getId();
         }else if (type.equals("video")){
             VideoComment videoComment = new VideoComment(deleteHTML(content),objid,userid,ruserid);
             videoCommentRepository.save(videoComment);
@@ -81,10 +75,6 @@ public class CommentServiceImpl implements CommentService {
             DocRelay docRelay = new DocRelay(deleteHTML(content),objid,userid,ruserid);
             docRelayRepository.save(docRelay);
             id = docRelay.getId();
-        }else if (type.equals("forumR")){
-            ForumRelay forumRelay = new ForumRelay(deleteHTML(content),objid,userid,ruserid);
-            forumRelayRepository.save(forumRelay);
-            id = forumRelay.getId();
         }else if (type.equals("videoR")){
             VideoRelay videoRelay = new VideoRelay(deleteHTML(content),objid,userid,ruserid);
             videoRelayRepository.save(videoRelay);
@@ -102,19 +92,27 @@ public class CommentServiceImpl implements CommentService {
     * */
     @Override
     public Map<Long,String> replyR(String type,String content,long objid,long rcommentid){
+        if (content.equals("")) return null;
         long userid = userRepository.findByUsername(userService.getUsername()).getId();
-        long ruserid = docRelayRepository.findOne(rcommentid).getUserid();
         content = sensitivewordFilter.turnWord(content);
         long id = 0;
         if (type.equals("docRR")){
+            long ruserid = docRelayRepository.findOne(rcommentid).getUserid();
             DocRelay docRelay = new DocRelay(deleteHTML(content),objid,rcommentid,userid,ruserid);
             docRelayRepository.save(docRelay);
             id = docRelay.getId();
         }else if (type.equals("forumRR")){
+            long ruserid;
+            if (rcommentid != 0){
+                ruserid = forumRelayRepository.findOne(rcommentid).getUserid();
+            }else{
+                ruserid = forumCommentRepository.findOne(objid).getUserid();
+            }
             ForumRelay forumRelay = new ForumRelay(deleteHTML(content),objid,rcommentid,userid,ruserid);
             forumRelayRepository.save(forumRelay);
             id = forumRelay.getId();
         }else if (type.equals("videoRR")){
+            long ruserid = videoRelayRepository.findOne(rcommentid).getUserid();
             VideoRelay videoRelay = new VideoRelay(deleteHTML(content),objid,rcommentid,userid,ruserid);
             videoRelayRepository.save(videoRelay);
             id = videoRelay.getId();
@@ -151,7 +149,7 @@ public class CommentServiceImpl implements CommentService {
                     forumRelayRepository.delete(rcommentid);
                     return deleteForumRelay(rcommentid,longs);
                 }
-            }else {
+            }else if(type.equals("video")){
                 if (userRepository.findOne(videoRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
                         userRepository.findOne(videoCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username) ||
                         userRepository.findOne(videoRelayRepository.findOne(rcommentid).getUserid()).getUsername().equals(username)){
@@ -292,31 +290,33 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<FCView> getForumComment(long docid, int pagenum) {
         List<FCView> fcViews = new ArrayList<>();
-        boolean isUp = false,isFollow = false,isLogin = true;
+        boolean isLogin = true;
         MulUser mulUser = null;
         try{
             mulUser = userRepository.findByUsername(userService.getUsername());
         }catch (Exception e){
             isLogin = false;
         }
-        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.DESC,"id"));
-        Page<ForumComment> list = forumCommentRepository.findByForumid(docid,pageable);
-        for (ForumComment forumComment : list){
+        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.ASC,"id"));
+        Page<ForumProblem> list = forumCommentRepository.findByForumid(docid,pageable);
+        for (ForumProblem forumProblem : list){
+            boolean isUp = false,isFollow = false;
             List<ForumRUser> forumRelays = new ArrayList<>();
-            List<ForumRelay> forumRelay = forumRelayRepository.findByCommentid(forumComment.getId());
+            List<ForumRelay> forumRelay = forumRelayRepository.findByCommentidOrderByIdDesc(forumProblem.getId());
             for(int i = 0;i < forumRelay.size();i ++){
                 MulUser user = userRepository.findOne(forumRelay.get(i).getUserid());
                 MulUser ruser = userRepository.findOne(forumRelay.get(i).getReplyid());
                 forumRelays.add(new ForumRUser(forumRelay.get(i),user.getNickname(),user.getId(),ruser.getNickname(),ruser.getId()));
             }
             if (isLogin){
-                if (forumCUpvoteRepository.findByCommentidAndUserid(forumComment.getId(),mulUser.getId()) != null) isUp = true;
-                if (collectFCRepository.findByCommentidAndUserid(forumComment.getId(),mulUser.getId()) != null) isFollow = true;
+
+                if (forumCUpvoteRepository.findByCommentidAndUserid(forumProblem.getId(),mulUser.getId()) != null) isUp = true;
+                if (collectFCRepository.findByCommentidAndUserid(forumProblem.getId(),mulUser.getId()) != null) isFollow = true;
             }
             if (forumRelays.size() == 0){
-                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumComment,userRepository.findOne(forumComment.getUserid())),null,isUp,isFollow));
+                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumProblem,userRepository.findOne(forumProblem.getUserid())),null,isUp,isFollow));
             }else{
-                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumComment,userRepository.findOne(forumComment.getUserid())),forumRelays,isUp,isFollow));
+                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumProblem,userRepository.findOne(forumProblem.getUserid())),forumRelays,isUp,isFollow));
             }
         }
         return fcViews;
@@ -339,6 +339,19 @@ public class CommentServiceImpl implements CommentService {
             }
         }
         return vcViews;
+    }
+
+    //返回议题 问题的回复
+    @Override
+    public List<ForumRUser> getForumCRelay(long proid) {
+        MulUser user = userRepository.findByUsername(userService.getUsername());
+        MulUser ruser = userRepository.findOne(forumCommentRepository.findOne(proid).getUserid());
+        List<ForumRUser> forumRUsers = new ArrayList<>();
+        List<ForumRelay> forumRelays = forumRelayRepository.findByCommentidOrderByIdDesc(proid);
+        for (ForumRelay forumRelay : forumRelays){
+            forumRUsers.add(new ForumRUser(forumRelay,user.getNickname(),user.getId(),ruser.getNickname(),ruser.getId()));
+        }
+        return forumRUsers;
     }
 
     //进行输入的心情中处理文本除需要的img html元素以外的删除。

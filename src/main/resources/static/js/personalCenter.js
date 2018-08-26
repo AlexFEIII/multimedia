@@ -9,7 +9,7 @@ $('.nav .same_a').on('click', function () {
     });
 });
 
-$(document).on("click", '.same_a,.user_list a,.second_list a,.FocusList a', function () {
+$(document).on("click", '.same_a,.user_list a,.FocusList a,.layui-layer-btn0', function () {
     $("body").getNiceScroll().resize();
 });
 //通过class绑定click事件，可以只点击一次就触发事件，否则需要点击两次
@@ -24,13 +24,8 @@ $('.nav .same_a').on('click', function () {
         display: 'none',
     });
     oLd_div = $('.all_content .Select').eq(index);
-    $('.all_content .Select')
-        .eq(index)
-        .css({
-            display: 'flex',
-        });
-    $('.lastLong').css({
-        'display': 'none',
+    $('.all_content .Select').eq(index).css({
+        display: 'flex'
     });
 });
 
@@ -417,7 +412,16 @@ for (var i = 0; i < 5; i++) {
         '<i class="iconfont">&#xe622;</i></a></div>');
     $('.problemFocus').append(problemContent);
 }
-$('.stay-right').on('click', function () {
+
+// cancel-focus-btn
+for (var i = 0; i < 5; i++) {
+    var courseMainContent = $('<div class="course-main-content"><img src="../img/11.jpg"><div class="title-introduce-article-focus-num">' +
+        '<a href="javascript:;">自由财务评论</a><p>霞乃云魂魄 蜂是花精神</p><span>共</span><span>43</span><span>篇文章</span><span>·</span>' +
+        '<span>8432人关注</span></div><a href="javascript:;" class="cancel-focus-btn"><i class="iconfont">&#xe622;</i></a></div>');
+    $('.courseFocus').append(courseMainContent);
+}
+
+$('.stay-right,.cancel-focus-btn').on('click', function () {
     var This = $(this);
     layer.confirm('确定要取消关注吗?', {
         btn: ['确定', '取消'], //按钮
@@ -429,9 +433,9 @@ $('.stay-right').on('click', function () {
 });
 for (var i = 0; i < 5; i++) {
     var liveThreePart = $('<div class="live-three-part"><div class="live-message"><div class="photo-title-focus-btn">' +
-        '<a href="videoPage.html" target="_blank" class="img-a"><img src="../img/11.jpg"></a><div><p>养乐多了</p>' +
+        '<a href="livePage.html" target="_blank" class="img-a"><img src="../img/11.jpg"></a><div><p>养乐多了</p>' +
         '<a href="javascript:;" class="btn-whether-focus" data-btn-focus="1">取消关注</a></div></div><div class="live-room-status"><p>直播间</p>' +
-        '<a href="videoPage.html" target="_blank" class="status">直播中</a></div></div></div>');
+        '<a href="livePage.html" target="_blank" class="status">直播中</a></div></div></div>');
     $('.all-live-content').append(liveThreePart);
 }
 $('.btn-whether-focus').on('click', function () {
@@ -444,6 +448,31 @@ $('.btn-whether-focus').on('click', function () {
         $(this).removeClass('change-color-background');
         $(this).html('取消关注');
     }
+});
+
+// 关注视频
+var videoFocus = $('.videoFocus');
+for (var i = 0; i < 12; i++) {
+    var videoFocusOne = $('<div class="same_module"><a href="javascript:;"><img src="../img/15.jpg"><i class="Delect-Video iconfont">&#xe624;</i></a><span>梨视频</span></div>');
+    videoFocus.append(videoFocusOne);
+}
+
+// 移过视频的效果
+$('.same_module a').hover(function () {
+    $(this).addClass("a_hover a_hover_a Delect-show");
+}, function () {
+    $(this).removeClass("a_hover a_hover_a Delect-show");
+});
+// 删除按钮
+$('.Delect-Video').on('click', function () {
+    var This = $(this);
+    layer.confirm('确定要删除此视频吗?', {
+        btn: ['确定', '取消'], //按钮
+        title: '提示',
+    }, function (index) {
+        This.parent().parent().remove();
+        layer.close(index);
+    });
 });
 
 var firstul = $(".first_ul");
@@ -478,7 +507,7 @@ firstul.children("li:eq(0)").click(function () {
             success:function (data) {
                 vf = true;
                 for (var i = 0;i < data.length;i ++){
-                    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].video.image+'"></a><span>'+data[i].video.title+'</span></div>');
+                    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].video.image+'"><i class="Delect-Video iconfont">&#xe624;</i></a><span>'+data[i].video.title+'</span></div>');
                     Select_One_Div.append(select_one);
                 }
             },error:function (data) {
@@ -534,7 +563,7 @@ function getMineDoc(type,num) {
                 var image = "";
                 if (username == null) username = data[i].mulUser.username;
                 if (data[i].document.image != null) image = '<img src="'+data[i].document.image+'"/>';
-                var AddDiv = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data[i].document.id+'" target="_blank" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>')
+                var AddDiv = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data[i].document.id+'" target="_blank" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'<div class="Delect-article"><i class="iconfont">&#xe622;</i></div></a></div>')
                 SelectDiv.eq(num).append(AddDiv);
             }
             return true;
@@ -551,10 +580,11 @@ firstul.children("li:eq(2)").click(function () {
             type:"get",
             success:function (data) {
                 ff = true;
+                console.log(data);
                 for (var i = 0;i < data.length;i ++){
                     var image = "../img/14.png";
-                    if (data[i].forum.image != null) image = data[i].forum.image;
-                    var five_block = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue"></span></div></div>');
+                    if (data[i].image != null) image = data[i].image;
+                    var five_block = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src="'+image+'"><span>'+data[i].title+'</span></a><span class="issue">该议题被浏览'+data[i].sawnum+'次</span><div class="Delect-question"><i class="iconfont Del-this">&#xe622;</i><br><i class="iconfont enter-this">&#xe650;</i></div></div></div>');
                     $('.Select_Three_Div .recommed_topic').append(five_block);
                 }
             },error:function (data) {
@@ -574,7 +604,7 @@ firstul.children("li:eq(3)").click(function () {
                 var num = 15,count = data.length;
                 if (count < 15) num = count;
                 for (var i = 0;i < num;i ++){
-                    var v_list = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"></a><span>'+data[i].title+'</span></div>');
+                    var v_list = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"><i class="Delect-Video iconfont">&#xe624;</i></a><span>'+data[i].title+'</span></div>');
                     $("#VideoBox").append(v_list);
                 }
                 if (count > 15){
@@ -592,7 +622,7 @@ firstul.children("li:eq(3)").click(function () {
                             var n = page*15-1;
                             if (data.length-1 < n) n=data.length-1;
                             for (var i = (page-1)*15;i <= n;i ++){
-                                var v_list = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"></a><span>'+data[i].title+'</span></div>');
+                                var v_list = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"><i class="Delect-Video iconfont">&#xe624;</i></a><span>'+data[i].title+'</span></div>');
                                 $("#VideoBox").append(v_list);
                             }
                         }
@@ -625,7 +655,7 @@ firstul.children("li:eq(3)").click(function () {
                     var image = "";
                     if (username == null) username = data[i].mulUser.username;
                     if (data[i].document.image != null) image = '<img src="'+data[i].document.image+'"/>';
-                    var a_list = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data[i].document.id+'" target="_blank" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>');
+                    var a_list = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data[i].document.id+'" target="_blank" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'<div class="Delect-article"><i class="iconfont">&#xe622;</i></div></a></div>');
                     select_Btn.append(a_list);
                 }
                 article_list.append(select_Btn);
@@ -644,7 +674,7 @@ firstul.children("li:eq(3)").click(function () {
                             var n = page*8-1;
                             if (data.length-1 < n) n=data.length-1;
                             for (var i = (page-1)*8;i <= n;i ++){
-                                var a_list = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data[i].document.id+'" target="_blank" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>');
+                                var a_list = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data[i].document.id+'" target="_blank" class="under_line">'+data[i].document.title+'</a><p class="draw_text">'+data[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'<div class="Delect-article"><i class="iconfont">&#xe622;</i></div></a></div>');
                                 select_Btn.append(a_list);
                             }
                         }
@@ -676,7 +706,7 @@ firstul.children("li:eq(3)").click(function () {
                 for (var i = 0;i < num;i ++){
                     image = "../img/14.png";
                     if (data[i].forum.image != null) image = data[i].forum.image;
-                    var w_list = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span></div></div>');
+                    var w_list = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src="'+image+'"><span>'+data[i].forum.title+'</span></a><span class="issue">该议题被浏览 '+data[i].forum.sawnum+' 次</span><div class="Delect-question"><i class="iconfont Del-this">&#xe622;</i><br><i class="iconfont enter-this">&#xe650;</i></div></div></div>');
                     answer_list.append(w_list);
                 }
                 if (data.length > 18) {
@@ -721,42 +751,42 @@ firstul.children("li:eq(3)").click(function () {
         hf = true;
     }
 });
-//显示收藏的视频
-firstul.children("li:eq(4)").click(function () {
-    if (cvf == false){
-        $.ajax({
-            url:"../col/mine?kind=video",
-            type:"get",
-            success:function (data) {
-                cvf = true;
-                console.log(data);
-                for (var i = 0;i < data.length;i ++){
-                    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].video.image+'"></a><span>'+data[i].video.title+'</span></div>');
-                    Select_One_Div.append(select_one);
-                }
-            },error:function (data) {
-                console.log("获取收藏视频失败！")
-            }
-        });
-    }
-});
-//显示收藏的文章
-$(".second_list").eq(1).click(function () {
-    if (!cdf){
-        $.ajax({
-            url:"../col/mine?kind=doc",
-            type:"get",
-            success:function (data) {
-                cdf = true;
-                console.log(data)
-            },error:function () {
-                console.log("获取收藏文章失败！")
-            }
-        })
-    }
-});
-//显示收藏的问答
-$(".second_list").eq(2).click(function () {
+// //显示收藏的视频
+// firstul.children("li:eq(4)").click(function () {
+//     if (cvf == false){
+//         $.ajax({
+//             url:"../col/mine?kind=video",
+//             type:"get",
+//             success:function (data) {
+//                 cvf = true;
+//                 console.log(data);
+//                 for (var i = 0;i < data.length;i ++){
+//                     var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].video.image+'"></a><span>'+data[i].video.title+'</span></div>');
+//                     Select_One_Div.append(select_one);
+//                 }
+//             },error:function (data) {
+//                 console.log("获取收藏视频失败！")
+//             }
+//         });
+//     }
+// });
+// //显示收藏的文章
+// $(".second_list").eq(1).click(function () {
+//     if (!cdf){
+//         $.ajax({
+//             url:"../col/mine?kind=doc",
+//             type:"get",
+//             success:function (data) {
+//                 cdf = true;
+//                 console.log(data)
+//             },error:function () {
+//                 console.log("获取收藏文章失败！")
+//             }
+//         })
+//     }
+// });
+// //显示收藏的问答
+// $(".second_list").eq(2).click(function () {
     // if (!cff){
     //     $.ajax({
     //         url:"../col/mine?kind=forum",
@@ -769,7 +799,7 @@ $(".second_list").eq(2).click(function () {
     //         }
     //     })
     // }
-});
+// });
 
 //登录成功执行的方法
 function loginSuccess(data) {
@@ -790,3 +820,35 @@ function loginSuccess(data) {
     touphoto.children("div").children("p:eq(0)").text(address);
     touphoto.children("div").children("p:eq(1)").text(personality);
 }
+
+// 删除文章
+$('.Delect-article').on('click', function () {
+    var This = $(this);
+    layer.confirm('确定要删除此文章吗?', {
+        btn: ['确定', '取消'], //按钮
+        title: '提示',
+    }, function (index) {
+        This.parent().parent().remove();
+        layer.close(index);
+    });
+});
+
+$('.ShadowBoxConatiner').hover(function () {
+    $(this).find('.Delect-question').css('opacity', '1');
+}, function () {
+    $(this).find('.Delect-question').css('opacity', '');
+});
+$('.Del-this').on('click', function () {
+    var This = $(this);
+    layer.confirm('确定要删除此问答吗?', {
+        btn: ['确定', '取消'], //按钮
+        title: '提示',
+    }, function (index) {
+        This.parent().parent().parent().remove();
+        layer.close(index);
+    });
+});
+// 进入问答
+// $('.enter-this').on('click', function () {
+// });
+

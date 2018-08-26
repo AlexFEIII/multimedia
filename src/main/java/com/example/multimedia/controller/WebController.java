@@ -128,8 +128,8 @@ public class WebController {
         return "html/AnswerQuestion";
     }
 
-    @GetMapping("/html/videoPage.html")
+    @GetMapping("/html/VideoToWatch.html")
     public String videoPage(){
-        return "html/videoPage";
+        return "html/VideoToWatch";
     }
 }

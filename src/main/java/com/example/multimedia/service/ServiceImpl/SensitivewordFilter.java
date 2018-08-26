@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 public class SensitivewordFilter {
-    private boolean flag = false;
+    private boolean mainflag = false;
     private HashMap sensitiveWordMap;
     private File file = new File("src/main/resources/static/SensitiveWord.txt");
 
@@ -14,7 +14,7 @@ public class SensitivewordFilter {
      */
     public String turnWord(String sensitiveStr){
         try {
-            if (flag == false) getKeyWord();
+            if (mainflag == false) getKeyWord();
         }catch (Exception e){
             //ignore
         }
@@ -86,6 +86,9 @@ public class SensitivewordFilter {
      * @version 1.0
      */
     public int checkSensitiveWord(String txt,int beginIndex){
+        try{
+            if (mainflag == false) getKeyWord();
+        }catch (Exception e){}
         boolean  flag = false;    //敏感词结束标识位：用于敏感词只有1位的情况
         int matchFlag = 0;     //匹配表示数默认为0
         char word = 0;
@@ -148,6 +151,6 @@ public class SensitivewordFilter {
                 if (i == key.length() -1) nowMap.put("isEnd","1");
             }
         }
-        flag = true;
+        mainflag = true;
     }
 }

@@ -41,6 +41,8 @@ public class ForumServiceImpl implements ForumService {
     private ForumKindRepository forumKindRepository;
     @Autowired
     private CollectForumRepository collectForumRepository;
+    @Autowired
+    private ForumProblemRepo forumProblemRepo;
 
     SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
     /*
@@ -70,7 +72,7 @@ public class ForumServiceImpl implements ForumService {
             if (collectForumRepository.findByUseridAndForumid(user.getId(),id) != null){
                 isfollow = true;
             }
-        }catch (Exception e){}
+        }catch (Exception e){ }
         int colnum = collectForumRepository.countAllByForumid(id);
         return new ForumUser(forum,mulUser,isfollow,forumRepository.countAllByKindEquals(forum.getKind()),colnum);
     }
@@ -158,6 +160,20 @@ public class ForumServiceImpl implements ForumService {
             return "Y";
         }
         return "N";
+    }
+
+    //增加议题问题（标题）
+    @Override
+    public String addPro(long forumid, String title) {
+        //检测是否含有非法字符
+        if (sensitivewordFilter.checkSensitiveWord(title,0) > 0){
+            return "ILLEGAL";
+        }
+        MulUser user = userRepository.findByUsername(userService.getUsername());
+        MulUser ruser = userRepository.findOne(forumRepository.findOne(forumid).getUserid());
+        ForumProblem forumProblem = new ForumProblem(title,forumid,user.getId(),ruser.getId());
+        forumProblemRepo.save(forumProblem);
+        return forumProblem.getId().toString();
     }
 
     //设置最佳评论

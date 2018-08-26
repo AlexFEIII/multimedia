@@ -26,6 +26,8 @@ public class CollectServiceImpl implements CollectService {
     private CollectUserRepository collectUserRepository;
     @Autowired
     private CollectDKindRepository collectDKindRepository;
+    @Autowired
+    private CollectFCRepository collectFCRepository;
 
     //改变文章收藏
     @Override
@@ -60,6 +62,18 @@ public class CollectServiceImpl implements CollectService {
             collectForumRepository.delete(collectForum);
         }else{
             collectForumRepository.save(new CollectForum(mulUser.getId(),forumid));
+        }
+    }
+
+    //改变议题问题（评论）收藏
+    @Override
+    public void changeForumCC(long forumid,long cid) {
+        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        CollectFComment collectFComment = collectFCRepository.findByCommentidAndUserid(cid,mulUser.getId());
+        if (collectFComment != null){
+            collectFCRepository.delete(collectFComment);
+        }else{
+            collectFCRepository.save(new CollectFComment(forumid,cid,mulUser.getId()));
         }
     }
 

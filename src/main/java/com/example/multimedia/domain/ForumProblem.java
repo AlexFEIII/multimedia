@@ -9,15 +9,17 @@ import java.util.Date;
 * 论坛文章问题
 * */
 @Entity
-public class ForumComment {
+public class ForumProblem {
     @Id
     @GeneratedValue
     private Long id;
     //论坛文章id
     private long forumid;
-    //评论内容
+    //问题题目
+    private String title;
+    //问题内容
     private String content;
-    //评论的用户id
+    //提出问题的用户id
     private long userid;
     //被评论的用户id
     private long replyid;
@@ -26,9 +28,16 @@ public class ForumComment {
     //时间
     private Date date;
 
-    public ForumComment(){}
-
-    public ForumComment(String content,long forumid,long userid,long replyid){
+    public ForumProblem(){}
+    public ForumProblem(String title,long forumid,long userid,long replyid){
+        this.title = title;
+        this.forumid = forumid;
+        this.userid = userid;
+        this.replyid = replyid;
+        this.date = new Date();
+    }
+    public ForumProblem(String title,String content, long forumid, long userid, long replyid){
+        this.title = title;
         this.content = content;
         this.forumid = forumid;
         this.userid = userid;
@@ -38,9 +47,10 @@ public class ForumComment {
 
     @Override
     public String toString() {
-        return "ForumComment{" +
+        return "ForumProblem{" +
                 "id=" + id +
                 ", forumid=" + forumid +
+                ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", userid=" + userid +
                 ", replyid=" + replyid +
@@ -63,6 +73,14 @@ public class ForumComment {
 
     public void setForumid(long forumid) {
         this.forumid = forumid;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getContent() {

@@ -5,11 +5,11 @@ $(document).ready(function () {
         success: function (data) {
             console.log(data);
             $(".LogoImg img").attr("src",data.forumKind.image);
-            for (var i = 0; i < data.forumUsers.length; i++) {
+            for (var i = 0; i < data.forums.content.length; i++) {
                 var image = '<img src="../img/14.png">';
-                if (data.forumUsers[i].forum.image != null) image =  '<img src="'+data.forumUsers[i].forum.image+'">';
+                if (data.forums.content[i].image != null) image =  '<img src="'+data.forums.content[i].image+'">';
                 var five_block = $(
-                    '<div class="recommedOuter"><div class="InRecommed"><a href="/html/topicContent.html?id='+data.forumUsers[i].forum.id+'">'+image+'<span>'+data.forumUsers[i].forum.title+'</span></a><span class="issue">该议题被浏览'+data.forumUsers[i].forum.sawnum+'次</span></div><img src="../img/skin.png"></div>'
+                    '<div class="recommedOuter"><div class="InRecommed"><a href="/html/topicContent.html?id='+data.forums.content[i].id+'">'+image+'<span>'+data.forums.content[i].title+'</span></a><span class="issue">该议题被浏览'+data.forums.content[i].sawnum+'次</span></div><img src="../img/skin.png"></div>'
                 );
                 $('.recommed_topic').append(five_block);
             }
@@ -27,11 +27,11 @@ $(document).ready(function () {
                             url: "../forum/kind" + window.location.search + "&pagenum="+page,
                             type: "get",
                             success: function (data) {
-                                for (var i = 0; i < data.forumUsers.length; i++) {
+                                for (var i = 0; i < data.forums.content.length; i++) {
                                     var image = '<img src="../img/14.png">';
-                                    if (data.forumUsers[i].forum.image != null) image =  '<img src="'+data.forumUsers[i].forum.image+'">';
+                                    if (data.forums.content[i].image != null) image =  '<img src="'+data.forums.content[i].image+'">';
                                     var five_block = $(
-                                        '<div class="recommedOuter"><div class="InRecommed"><a href="/html/topicContent.html?id='+data.forumUsers[i].forum.id+'">'+image+'<span>'+data.forumUsers[i].forum.title+'</span></a><span class="issue">该议题被浏览'+data.forumUsers[i].forum.sawnum+'次</span></div><img src="../img/skin.png"></div>'
+                                        '<div class="recommedOuter"><div class="InRecommed"><a href="/html/topicContent.html?id='+data.forums.content[i].id+'">'+image+'<span>'+data.forums.content[i].title+'</span></a><span class="issue">该议题被浏览'+data.forums.content[i].sawnum+'次</span></div><img src="../img/skin.png"></div>'
                                     );
                                     $('.recommed_topic').append(five_block);
                                 }

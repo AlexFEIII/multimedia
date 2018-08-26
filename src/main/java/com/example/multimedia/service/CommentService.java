@@ -26,4 +26,7 @@ public interface CommentService {
     List<DCView> getDocComment(long docid, int pagenum);
     List<FCView> getForumComment(long docid, int pageNum);
     List<VCView> getVideoComment(long docid, int pageNum);
+
+    //返回议题问题的回复
+    List<ForumRUser> getForumCRelay(long proid);
 }

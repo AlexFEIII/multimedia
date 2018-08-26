@@ -12,7 +12,7 @@ function CutWordColumns(n, num) {
         if ($(this).text().length > maxwidth) {
             $(this).text($(this).text().substring(0, maxwidth));
             $(this).html($(this).html() + "...");
-        };
+        }
     });
 }
 
@@ -90,7 +90,7 @@ function loginSuccess(data) {
     $(".rightColumns").attr("src",image);
     $(".leftColumns a").off("click");
     $('.leftColumns a').on('click', function () {
-        if ($(this).style.color == "") {
+        if ($(this)[0].style.background == "") {
             $(this).html('已关注');
             $(this).css({
                 'background': '#C1194E'
@@ -101,5 +101,13 @@ function loginSuccess(data) {
                 'background': ''
             });
         }
+        $.ajax({
+            url:"../col/docK?"+window.location.search,
+            type:"put",
+            success:function () {
+            },error:function () {
+                console.log("文章类型关注出错！")
+            }
+        })
     });
 }

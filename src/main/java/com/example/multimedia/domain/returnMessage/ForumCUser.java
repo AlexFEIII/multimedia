@@ -1,34 +1,33 @@
 package com.example.multimedia.domain.returnMessage;
 
-import com.example.multimedia.domain.Forum;
-import com.example.multimedia.domain.ForumComment;
+import com.example.multimedia.domain.ForumProblem;
 import com.example.multimedia.domain.MulUser;
 
 //论坛文章评论 + 用户
 public class ForumCUser {
-    private ForumComment forumComment;
+    private ForumProblem forumProblem;
     private MulUser mulUser;
 
     public ForumCUser(){}
-    public ForumCUser(ForumComment forumComment,MulUser mulUser){
-        this.forumComment = forumComment;
+    public ForumCUser(ForumProblem forumProblem, MulUser mulUser){
+        this.forumProblem = forumProblem;
         this.mulUser = mulUser;
     }
 
     @Override
     public String toString() {
         return "ForumCUser{" +
-                "forumComment=" + forumComment +
+                "forumProblem=" + forumProblem +
                 ", mulUser=" + mulUser +
                 '}';
     }
 
-    public ForumComment getForumComment() {
-        return forumComment;
+    public ForumProblem getForumProblem() {
+        return forumProblem;
     }
 
-    public void setForumComment(ForumComment forumComment) {
-        this.forumComment = forumComment;
+    public void setForumProblem(ForumProblem forumProblem) {
+        this.forumProblem = forumProblem;
     }
 
     public MulUser getMulUser() {

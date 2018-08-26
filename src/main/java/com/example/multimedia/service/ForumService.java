@@ -35,6 +35,9 @@ public interface ForumService {
      * */
     String changeForum(long forumid,String title, String summary, String content, MultipartFile image, String type);
 
+    //增加议题问题
+    String addPro(long forumid,String title);
+
     /*
     * 设置最佳评论
     * */

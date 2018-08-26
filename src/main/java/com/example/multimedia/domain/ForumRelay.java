@@ -15,9 +15,9 @@ public class ForumRelay {
     private Long id;
     //评论内容
     private String content;
-    //回复的评论 id
+    //回复的问题 id
     private long commentid;
-    //回复的回复id
+    //回复的回复id（如果是0则表示回复问题）
     private long rcommentid;
     //评论的用户id
     private long userid;

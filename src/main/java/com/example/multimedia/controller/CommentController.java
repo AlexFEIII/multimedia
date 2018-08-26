@@ -85,6 +85,12 @@ public class CommentController {
     public List<FCView> getFComment(@PathVariable long docid,@PathVariable int pagenum){
         return commentService.getForumComment(docid,pagenum);
     }
+
+    @GetMapping("getFCRelay/{proid}")
+    public List<ForumRUser> getFCRelay(@PathVariable long proid){
+        return commentService.getForumCRelay(proid);
+    }
+
     /**
      * @param pagenum 获取评论页数（第一页为1）
      * @return 返回一个Map
