@@ -21,7 +21,7 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private DocCommentRepository docCommentRepository;
     @Autowired
-    private ForumCommentRepository forumCommentRepository;
+    private ForumProblemRepository forumProblemRepository;
     @Autowired
     private VideoCommentRepository videoCommentRepository;
     @Autowired
@@ -50,6 +50,8 @@ public class CommentServiceImpl implements CommentService {
     private VideoCUpvoteRepository videoCUpvoteRepository;
     @Autowired
     private CollectFCRepository collectFCRepository;
+    @Autowired
+    private ForumCommentRepository forumCommentRepository;
 
     SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
 
@@ -106,7 +108,7 @@ public class CommentServiceImpl implements CommentService {
             if (rcommentid != 0){
                 ruserid = forumRelayRepository.findOne(rcommentid).getUserid();
             }else{
-                ruserid = forumCommentRepository.findOne(objid).getUserid();
+                ruserid = forumProblemRepository.findOne(objid).getUserid();
             }
             ForumRelay forumRelay = new ForumRelay(deleteHTML(content),objid,rcommentid,userid,ruserid);
             forumRelayRepository.save(forumRelay);
@@ -144,7 +146,7 @@ public class CommentServiceImpl implements CommentService {
                 }
             }else if (type.equals("forum")){
                 if (userRepository.findOne(forumRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
-                        userRepository.findOne(forumCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username) ||
+                        userRepository.findOne(forumProblemRepository.findOne(commentid).getUserid()).getUsername().equals(username) ||
                         userRepository.findOne(forumRelayRepository.findOne(rcommentid).getUserid()).getUsername().equals(username)){
                     forumRelayRepository.delete(rcommentid);
                     return deleteForumRelay(rcommentid,longs);
@@ -209,8 +211,8 @@ public class CommentServiceImpl implements CommentService {
             return "N";
         }else if (type.equals("forum")){
             if (userRepository.findOne(forumRepository.findOne(docid).getUserid()).getUsername().equals(username) ||
-                    userRepository.findOne(forumCommentRepository.findOne(commentid).getUserid()).getUsername().equals(username)){
-                forumCommentRepository.delete(commentid);
+                    userRepository.findOne(forumProblemRepository.findOne(commentid).getUserid()).getUsername().equals(username)){
+                forumProblemRepository.delete(commentid);
                 forumCUpvoteRepository.deleteAllByCommentid(commentid);
                 forumRelayRepository.deleteAllByCommentid(commentid);
                 return "Y";
@@ -288,7 +290,7 @@ public class CommentServiceImpl implements CommentService {
 //    }
 
     @Override
-    public List<FCView> getForumComment(long docid, int pagenum) {
+    public List<FCView> getForumPro(long docid, int pagenum) {
         List<FCView> fcViews = new ArrayList<>();
         boolean isLogin = true;
         MulUser mulUser = null;
@@ -298,7 +300,7 @@ public class CommentServiceImpl implements CommentService {
             isLogin = false;
         }
         Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.ASC,"id"));
-        Page<ForumProblem> list = forumCommentRepository.findByForumid(docid,pageable);
+        Page<ForumProblem> list = forumProblemRepository.findByForumid(docid,pageable);
         for (ForumProblem forumProblem : list){
             boolean isUp = false,isFollow = false;
             List<ForumRUser> forumRelays = new ArrayList<>();
@@ -345,13 +347,25 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<ForumRUser> getForumCRelay(long proid) {
         MulUser user = userRepository.findByUsername(userService.getUsername());
-        MulUser ruser = userRepository.findOne(forumCommentRepository.findOne(proid).getUserid());
+        MulUser ruser = userRepository.findOne(forumProblemRepository.findOne(proid).getUserid());
         List<ForumRUser> forumRUsers = new ArrayList<>();
         List<ForumRelay> forumRelays = forumRelayRepository.findByCommentidOrderByIdDesc(proid);
         for (ForumRelay forumRelay : forumRelays){
             forumRUsers.add(new ForumRUser(forumRelay,user.getNickname(),user.getId(),ruser.getNickname(),ruser.getId()));
         }
         return forumRUsers;
+    }
+
+    //返回议题 评论及其回复
+    @Override
+    public List<ForumComView> getForumComment(long forumid, int pagenum) {
+        List<ForumComView> list = new ArrayList<>();
+        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.DESC,"id"));
+        Page<ForumComment> forumComments = forumCommentRepository.findByForumid(forumid,pageable);
+        for(ForumComment forumComment : forumComments){
+            list.add(new ForumComView(userRepository.findOne(forumComment.getUserid()).getNickname(),forumComment.getUserid(),userRepository.findOne(forumComment.getRelayid()).getNickname(),forumComment.getRelayid(),forumComment));
+        }
+        return list;
     }
 
     //进行输入的心情中处理文本除需要的img html元素以外的删除。

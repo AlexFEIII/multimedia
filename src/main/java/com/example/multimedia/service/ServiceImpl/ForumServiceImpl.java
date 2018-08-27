@@ -18,7 +18,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ForumServiceImpl implements ForumService {
@@ -42,7 +44,9 @@ public class ForumServiceImpl implements ForumService {
     @Autowired
     private CollectForumRepository collectForumRepository;
     @Autowired
-    private ForumProblemRepo forumProblemRepo;
+    private ForumProblemRepository forumProblemRepository;
+    @Autowired
+    private ForumCommentRepository forumCommentRepository;
 
     SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
     /*
@@ -172,8 +176,32 @@ public class ForumServiceImpl implements ForumService {
         MulUser user = userRepository.findByUsername(userService.getUsername());
         MulUser ruser = userRepository.findOne(forumRepository.findOne(forumid).getUserid());
         ForumProblem forumProblem = new ForumProblem(title,forumid,user.getId(),ruser.getId());
-        forumProblemRepo.save(forumProblem);
+        forumProblemRepository.save(forumProblem);
         return forumProblem.getId().toString();
+    }
+
+    //增加议题评论
+    @Override
+    public Map<Long,String> addComment(long forumid, long rcommentid, String content) {
+        System.out.println("forumid: "+forumid+"  Content: "+content+"  rcommentid: "+rcommentid);
+        if (content.equals("")) return null;
+        try{
+            MulUser user = userRepository.findByUsername(userService.getUsername());
+            MulUser ruser;
+            if (rcommentid == 0){
+                ruser = userRepository.findOne(forumRepository.findOne(forumid).getUserid());
+            }else {
+                ruser = userRepository.findOne(forumCommentRepository.findOne(rcommentid).getUserid());
+            }
+            String sContent = sensitivewordFilter.turnWord(content);
+            ForumComment forumComment = new ForumComment(commentService.deleteHTML(sContent),user.getId(),ruser.getId(),rcommentid,forumid);
+            forumCommentRepository.save(forumComment);
+            Map<Long,String> map = new HashMap<>();
+            map.put(forumComment.getId(),sContent);
+            return map;
+        }catch (Exception e){
+            return null;
+        }
     }
 
     //设置最佳评论

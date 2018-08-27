@@ -32,7 +32,7 @@ public class UpvoteServiceImpl implements UpvoteService {
     @Autowired
     private DocCommentRepository docCommentRepository;
     @Autowired
-    private ForumCommentRepository forumCommentRepository;
+    private ForumProblemRepository forumProblemRepository;
     /*
     * 点赞功能
     * */
@@ -80,7 +80,7 @@ public class UpvoteServiceImpl implements UpvoteService {
             }
             docCommentRepository.save(docComment);
         }else if (type.equals("FComment")){
-            ForumProblem forumProblem = forumCommentRepository.findOne(objid);
+            ForumProblem forumProblem = forumProblemRepository.findOne(objid);
             ForumCUpvote forumCUpvote = forumCUpvoteRepository.findByCommentidAndUserid(objid,userid);
             if (forumCUpvote == null){
                 forumCUpvoteRepository.save(new ForumCUpvote(userid,objid));
@@ -90,7 +90,7 @@ public class UpvoteServiceImpl implements UpvoteService {
                 forumCUpvoteRepository.delete(forumCUpvote);
                 forumProblem.setUpvotenum(forumProblem.getUpvotenum()-1);
             }
-            forumCommentRepository.save(forumProblem);
+            forumProblemRepository.save(forumProblem);
         }else if (type.equals("VComment")) {
             VideoCUpvote videoCUpvote = videoCUpvoteRepository.findByCommentidAndUserid(objid,userid);
             if (videoCUpvote == null)

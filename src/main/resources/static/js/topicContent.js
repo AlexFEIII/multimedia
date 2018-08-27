@@ -32,7 +32,7 @@ $(document).ready(function () {
            $(".topRightTopic").find("img").attr("src",data.forum.kind.image);
            $(".owner").children("p").eq(0).text(data.forum.kind.kind);
            $(".owner").children("p").eq(1).children("span").text(data.kindnum);
-           
+           $(".TitleA").children("p").text("欢迎你参加 "+data.forum.title+" 议题");
            if (USERDATA != ""){
                if (data.follow){
                    $('.RealFocus').text('取消关注');
@@ -70,7 +70,7 @@ $(document).ready(function () {
 
    //加载第一页的问题
     $.ajax({
-        url:"/getFComment/"+FORUMDATA.forum.id+"/1",
+        url:"/getFPro/"+FORUMDATA.forum.id+"/1",
         type:"get",
         async:false,
         success:function (data) {
@@ -279,7 +279,7 @@ function loginSuccess(data) {
     $(".AndJoin").off("click");
     $('.AndJoin').on('click', function () {
         statistic_data();
-        getNewEditor($(this).parent(), 1);
+        getNewEditor($(this), 1,"","","",0);
     });
 
     $(".FirstAndJoin").off("click");
@@ -289,6 +289,82 @@ function loginSuccess(data) {
         getNewFirstEditor($(this).parent());
     });
 }
+
+//点击评论显示第一页评论
+$(".TwoMiddle").click(function () {
+    if ($(this).attr("isLoad") == 0){
+        $.ajax({
+            url:"../getFComment/"+FORUMDATA.forum.id+"/1",
+            type:"get",
+            success:function (data) {
+                console.log(data);
+                for (var i = 0;i < data.length;i ++){
+                    var rUserInfo = "";
+                    var DRTime = new Date(data[i].forumComment.date);
+                    if (data[i].forumComment.rcommentid != 0){
+                        rUserInfo = '：回复<a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+data[i].rid+'">@'+data[i].ruser+'</a>';
+                    }
+                    var DelButton = "";
+                    if (USERDATA.nickname == data[i].nickname){
+                        DelButton = '<a href="javascript:;" class="DEl">删除</a>'
+                    }
+                    $(".replaceLi").after('<div class="insertComment"><span style="display: none" class="ReID">'+data[i].forumComment.id+'</span><span class="twoUser"><a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+data[i].id+'">'+data[i].nickname+'</a>'+rUserInfo+'</span><p class="TwoSecond">'+data[i].forumComment.content+'</p><div><span class="oneSpanTWO">'+DRTime.getFullYear()+'/'+DRTime.getMonth()+'/'+DRTime.getDate()+'</span><span class="TwoSpanTWO">'+DRTime.getHours()+':'+DRTime.getMinutes()+':'+DRTime.getMilliseconds()+'</span></div><div><a href="javascript:;" class="ADDCommit">评论</a>'+DelButton+'</div></div>');
+                }
+                $('body').getNiceScroll().resize();
+                if (USERDATA == ""){
+                    $('.TwoList .ADDCommit').unbind('click').on('click', function () {
+                        layer.msg("请先登录！")
+                    });
+                    $('.TwoList .DEl').unbind('click').on('click', function () {
+                        layer.msg("请先登录！")
+                    })
+                } else{
+                    $('.TwoList .ADDCommit').unbind('click').on('click', function () {
+                        var That = $(this);
+                        statistic_data();
+                        getNewEditor($(this), 1,That.parent().parent().children(".twoUser").children("a").eq(0).href,That.parent().parent().children(".twoUser").children("a").eq(0).text(),"",That.parent().parent().children(".ReID").text());
+                    });
+                    $('.TwoList .DEl').unbind('click').on('click', function () {
+                        var There = $(this);
+                        layer.confirm('确定要删除此评论吗?', {
+                            btn: ['确定', '取消'], //按钮
+                            title: '提示'
+                        }, function (index) {
+                            layer.close(index);
+                            var Len = $('.TwoList .insertComment').length;
+                            if (Len > 0) {
+                                $('.TwoMiddle span').html('' + Len + '条评论');
+                            } else {
+                                $('.TwoMiddle span').html('添加评论');
+                            }
+                            // $.ajax({
+                            //     url:"../deleteR?type=forum&docid="+FORUMDATA.forum.id+"&commentid="+There.parent().parent().parent().find(".ProID").text()+"&rcommentid="+There.parent().parent().children(".ReID").text(),
+                            //     type:"delete",
+                            //     success:function (data) {
+                            //         There.parent().parent().remove();
+                            //         var list = $(".ReID");
+                            //         for (var i = 0;i < data.length;i ++){
+                            //             console.log(i);
+                            //             for(var j = 0;j < list.length;j ++){
+                            //                 if (list[j].innerText == data[i]){
+                            //                     list.eq(j).parent().remove();
+                            //                     break;
+                            //                 }
+                            //             }
+                            //         }
+                            //     },error:function () {                                            }
+                            // })
+                        });
+                    });
+                }
+
+                $(this).attr("isLoad",1)
+            },error:function () {
+                console.log("获取议题评论失败！")
+            }
+        })
+    }
+});
 
 var H1People = $('.PeopleTitle h1').html();
 $('.TitleA p').html('欢迎你参加' + H1People + '议题');
@@ -512,11 +588,12 @@ function getNewEditor(n, m,href,name,rcommentid,reid) {
         '<div id="NewUser_edit" class="EditorNew" style="width:100%;height:200px;display: flex;justify-content: center;' +
         'align-content: center;flex-wrap:wrap;background:#fff;"></div></div></div>');
     CodeSame($('.NewGoodEditor'));
-    if (m) {
-        n.parent().parent().find('.replaceLi').after(NewGoodEditor);
-    } else {
+    if (m){
+        n.parent().parent().after(NewGoodEditor);
+    } else{
         n.parent().after(NewGoodEditor);
     }
+
     setTimeout(function () {
         $('.NewGoodEditor').css({
             opacity: '1',
@@ -555,104 +632,139 @@ function getNewEditor(n, m,href,name,rcommentid,reid) {
         var Minute = Now.getMinutes();
         var Second = Now.getSeconds();
         var ContentNew = $('.NewGoodEditor .w-e-text').html().replace(/<(?!img).*?>/g, "");
-        console.log(ContentNew);
         if (ContentNew == '') {
             layer.msg('请您写一点内容再发送，当前状态不可发送');
         } else {
-            $.ajax({
-                url:"../reCom",
-                type:"post",
-                data:{"type":"forumRR","objid":rcommentid,"content":ContentNew,"rcommentid":reid},
-                success:function (data) {
-                    if (data != ""){
-                        for(var i in data){
-                            var rUserInfo = "";
-                            console.log("reid : "+reid);
-                            if (reid != 0){
-                                rUserInfo = '：回复<a style="color: #2D93CA;display: inline;" target="_blank" href="'+href+'">@'+name+'</a> ';
+            if (m){
+                $.ajax({
+                    url:"../forum/addCom?forumid="+FORUMDATA.forum.id+"&rcommentid="+reid+"&content="+ContentNew,
+                    type:"put",
+                    success:function (data) {
+                        console.log("data: "+data);
+                        if (data != ""){
+                            for(var i in data){
+                                console.log("data: "+data);
+                                var rUserInfo = "";
+                                console.log("reid : "+reid);
+                                if (reid != 0){
+                                    rUserInfo = '：回复<a style="color: #2D93CA;display: inline;" target="_blank" href="'+href+'">@'+name+'</a> ';
+                                }
+                                $('.TwoList').append('<div class="insertComment"><span style="display: none" class="ReID">'+i+'</span><span class="twoUser"><a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+USERDATA.id+'">'+USERDATA.nickname+'</a>'+rUserInfo+'</span><p class="TwoSecond">'+data[i]+'</p><div><span class="oneSpanTWO">'+Year+'/'+Month+'/'+Day+'</span><span class="TwoSpanTWO">'+Hour+':'+Minute+':'+Second+'</span></div><div><a href="javascript:;" class="ADDCommit">评论</a><a href="javascript:;" class="DEl">删除</a></div></div>');
+                                $('body').getNiceScroll().resize();
+                                $('.TwoList .ADDCommit').unbind('click').on('click', function () {
+                                    var That = $(this);
+                                    statistic_data();
+                                    getNewEditor($(this), 1,That.parent().parent().children(".twoUser").children("a").eq(0).href,That.parent().parent().children(".twoUser").children("a").eq(0).text(),"",That.parent().parent().children(".ReID").text());
+                                });
+                                $('.TwoList .DEl').unbind('click').on('click', function () {
+                                    var There = $(this);
+                                    layer.confirm('确定要删除此评论吗?', {
+                                        btn: ['确定', '取消'], //按钮
+                                        title: '提示'
+                                    }, function (index) {
+                                        layer.close(index);
+                                        var Len = $('.TwoList .insertComment').length;
+                                        if (Len > 0) {
+                                            $('.TwoMiddle span').html('' + Len + '条评论');
+                                        } else {
+                                            $('.TwoMiddle span').html('添加评论');
+                                        }
+                                        // $.ajax({
+                                        //     url:"../deleteR?type=forum&docid="+FORUMDATA.forum.id+"&commentid="+There.parent().parent().parent().find(".ProID").text()+"&rcommentid="+There.parent().parent().children(".ReID").text(),
+                                        //     type:"delete",
+                                        //     success:function (data) {
+                                        //         There.parent().parent().remove();
+                                        //         var list = $(".ReID");
+                                        //         for (var i = 0;i < data.length;i ++){
+                                        //             console.log(i);
+                                        //             for(var j = 0;j < list.length;j ++){
+                                        //                 if (list[j].innerText == data[i]){
+                                        //                     list.eq(j).parent().remove();
+                                        //                     break;
+                                        //                 }
+                                        //             }
+                                        //         }
+                                        //     },error:function () {                                            }
+                                        // })
+                                    });
+                                });
                             }
-                            $('.NewGoodEditor').parent().append('<div class="insertComment"><span style="display: none" class="ReID">'+i+'</span><span class="twoUser"><a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+USERDATA.id+'">'+USERDATA.nickname+'</a>'+rUserInfo+'</span><p class="TwoSecond">'+data[i]+'</p><div><span class="oneSpanTWO">'+Year+'/'+Month+'/'+Day+'</span><span class="TwoSpanTWO">'+Hour+':'+Minute+':'+Second+'</span></div><div><a href="javascript:;" class="ADDCommit">评论</a><a href="javascript:;" class="DEl">删除</a></div></div>');
-                            $(this).parent().parent().parent().parent().find('.insertComment:first .TwoSecond').html(ContentNew);
-                            $(this).parent().parent().parent().parent().find('.insertComment:first .oneSpanTWO').html('' + Year + '/' + Month + '/' + Day + '');
-                            $(this).parent().parent().parent().parent().find('.insertComment:first .TwoSpanTWO').html('' + addZero(Hour) + ':' + addZero(Minute) + ':' + addZero(Second) + '');
                         }
-                        $('body').getNiceScroll().resize();
-                        $('.OneList .ADDCommit').unbind('click').on('click', function () {
-                            var That = $(this);
-                            getNewEditor($(this).parent(), 0,That.parent().parent().children(".twoUser").children("a").eq(0).href,That.parent().parent().children(".twoUser").children("a").eq(0).text(),That.parent().parent().parent().find(".ProID").text(),That.parent().parent().children(".ReID").text());
-                            $(this).parent().parent().parent().find('.publish_A').on('click', function () {
-                                if (That.parent().parent().parent().find('.comments-not-or-yes').html() == '还没有讨论') {
-                                    That.parent().parent().parent().find('.comments-not-or-yes').html('1条讨论');
-                                } else {
-                                    var Len = That.parent().parent().parent().find('.insertComment').length;
-                                    That.parent().parent().parent().find('.comments-not-or-yes').html('' + Len + '条讨论');
+                    },error:function () {
+                        console.log("议题评论回复出错！")
+                    }
+                })
+            } else{
+                $.ajax({
+                    url:"../reCom",
+                    type:"post",
+                    data:{"type":"forumRR","objid":rcommentid,"content":ContentNew,"rcommentid":reid},
+                    success:function (data) {
+                        if (data != ""){
+                            for(var i in data){
+                                var rUserInfo = "";
+                                console.log("reid : "+reid);
+                                if (reid != 0){
+                                    rUserInfo = '：回复<a style="color: #2D93CA;display: inline;" target="_blank" href="'+href+'">@'+name+'</a> ';
                                 }
+                                $('.NewGoodEditor').parent().append('<div class="insertComment"><span style="display: none" class="ReID">'+i+'</span><span class="twoUser"><a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+USERDATA.id+'">'+USERDATA.nickname+'</a>'+rUserInfo+'</span><p class="TwoSecond">'+data[i]+'</p><div><span class="oneSpanTWO">'+Year+'/'+Month+'/'+Day+'</span><span class="TwoSpanTWO">'+Hour+':'+Minute+':'+Second+'</span></div><div><a href="javascript:;" class="ADDCommit">评论</a><a href="javascript:;" class="DEl">删除</a></div></div>');
+                            }
+                            $('body').getNiceScroll().resize();
+                            $('.OneList .ADDCommit').unbind('click').on('click', function () {
+                                var That = $(this);
+                                getNewEditor($(this).parent(), 0,That.parent().parent().children(".twoUser").children("a").eq(0).href,That.parent().parent().children(".twoUser").children("a").eq(0).text(),That.parent().parent().parent().find(".ProID").text(),That.parent().parent().children(".ReID").text());
+                                $(this).parent().parent().parent().find('.publish_A').on('click', function () {
+                                    if (That.parent().parent().parent().find('.comments-not-or-yes').html() == '还没有讨论') {
+                                        That.parent().parent().parent().find('.comments-not-or-yes').html('1条讨论');
+                                    } else {
+                                        var Len = That.parent().parent().parent().find('.insertComment').length;
+                                        That.parent().parent().parent().find('.comments-not-or-yes').html('' + Len + '条讨论');
+                                    }
+                                });
                             });
-                        });
-                        $('.OneList .DEl').unbind('click').on('click', function () {
-                            var There = $(this);
-                            layer.confirm('确定要删除此评论吗?', {
-                                btn: ['确定', '取消'], //按钮
-                                title: '提示'
-                            }, function (index) {
-                                var Len = There.parent().parent().parent().find('.insertComment').length - 1;
-                                if (Len > 0) {
-                                    There.parent().parent().parent().find('.comments-not-or-yes').html('' + Len + '条讨论');
-                                } else {
-                                    There.parent().parent().parent().find('.comments-not-or-yes').html('还没有讨论');
-                                }
-                                layer.close(index);
-                                console.log($(this));
-                                $.ajax({
-                                    url:"../deleteR?type=forum&docid="+FORUMDATA.forum.id+"&commentid="+There.parent().parent().parent().find(".ProID").text()+"&rcommentid="+There.parent().parent().children(".ReID").text(),
-                                    type:"delete",
-                                    success:function (data) {
-                                        There.parent().parent().remove();
-                                        var list = $(".ReID");
-                                        for (var i = 0;i < data.length;i ++){
-                                            console.log(i);
-                                            for(var j = 0;j < list.length;j ++){
-                                                if (list[j].innerText == data[i]){
-                                                    list.eq(j).parent().remove();
-                                                    break;
+                            $('.OneList .DEl').unbind('click').on('click', function () {
+                                var There = $(this);
+                                layer.confirm('确定要删除此评论吗?', {
+                                    btn: ['确定', '取消'], //按钮
+                                    title: '提示'
+                                }, function (index) {
+                                    var Len = There.parent().parent().parent().find('.insertComment').length - 1;
+                                    if (Len > 0) {
+                                        There.parent().parent().parent().find('.comments-not-or-yes').html('' + Len + '条讨论');
+                                    } else {
+                                        There.parent().parent().parent().find('.comments-not-or-yes').html('还没有讨论');
+                                    }
+                                    layer.close(index);
+                                    console.log($(this));
+                                    $.ajax({
+                                        url:"../deleteR?type=forum&docid="+FORUMDATA.forum.id+"&commentid="+There.parent().parent().parent().find(".ProID").text()+"&rcommentid="+There.parent().parent().children(".ReID").text(),
+                                        type:"delete",
+                                        success:function (data) {
+                                            There.parent().parent().remove();
+                                            var list = $(".ReID");
+                                            for (var i = 0;i < data.length;i ++){
+                                                console.log(i);
+                                                for(var j = 0;j < list.length;j ++){
+                                                    if (list[j].innerText == data[i]){
+                                                        list.eq(j).parent().remove();
+                                                        break;
+                                                    }
                                                 }
                                             }
-                                        }
-                                    },error:function () {                                            }
-                                })
+                                        },error:function () {}
+                                    })
+                                });
                             });
-                        });
+                        }
                     }
-                }
-            })
+                })
+            }
        }
 
         $('.NewGoodEditor .w-e-text').html('<p><br></p>');
 
         cancel();
 
-        //删除评论
-        $('.TwoList .DEl').unbind('click').on('click', function () {
-            var This = $(this);
-            layer.confirm('确定要删除此评论吗?', {
-                btn: ['确定', '取消'], //按钮
-                title: '提示',
-            }, function (index) {
-                This.parent().parent().remove();
-                var Len = $('.TwoList .insertComment').length;
-                if (Len > 0) {
-                    $('.TwoMiddle span').html('' + Len + '条评论');
-                } else {
-                    $('.TwoMiddle span').html('添加评论');
-                }
-                layer.close(index);
-            });
-        });
-
-        $('.TwoList .ADDCommit').unbind('click').on('click', function () {
-            statistic_data();
-            getNewEditor($(this).parent(), 1);
-        });
     });
 }
 

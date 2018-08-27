@@ -78,12 +78,13 @@ public class CommentController {
     }
 
     /**
-     * @param pagenum 获取评论页数（第一页为1）
+     * 返回议题的问题
+     * @param pagenum 获取问题页数（第一页为1）
      * @return 返回一个Map
      * */
-    @GetMapping("/getFComment/{docid}/{pagenum}")
-    public List<FCView> getFComment(@PathVariable long docid,@PathVariable int pagenum){
-        return commentService.getForumComment(docid,pagenum);
+    @GetMapping("/getFPro/{docid}/{pagenum}")
+    public List<FCView> getFPro(@PathVariable long docid,@PathVariable int pagenum){
+        return commentService.getForumPro(docid,pagenum);
     }
 
     @GetMapping("getFCRelay/{proid}")
@@ -98,5 +99,10 @@ public class CommentController {
     @GetMapping("/getVComment/{docid}/{pagenum}")
     public List<VCView> getVComment(@PathVariable long docid,@PathVariable int pagenum){
         return commentService.getVideoComment(docid,pagenum);
+    }
+
+    @GetMapping("getFComment/{forumid}/{pagenum}")
+    public List<ForumComView> getFComment(@PathVariable long forumid,@PathVariable int pagenum){
+        return commentService.getForumComment(forumid,pagenum);
     }
 }

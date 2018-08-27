@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ForumService {
     /*
@@ -37,6 +38,9 @@ public interface ForumService {
 
     //增加议题问题
     String addPro(long forumid,String title);
+
+    //增加议题评论
+    Map<Long,String> addComment(long forumid, long rcommentid, String content);
 
     /*
     * 设置最佳评论

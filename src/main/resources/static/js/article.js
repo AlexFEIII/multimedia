@@ -11,8 +11,7 @@ var ListLan = $('.circle').attr('list-title');
 //删除按钮不显示
 $('.DEl').css("display","none");
 
-$('.timeBar').hover(
-  function () {
+$('.timeBar').hover(function () {
     $('.bottom_message').append(alertTitle);
     $('.alertSpan').html(DataTitle);
     setTimeout(function () {
@@ -31,8 +30,7 @@ $('.timeBar').hover(
   }
 );
 
-$('.circle').hover(
-  function () {
+$('.circle').hover(function () {
     $('.ContentShare').append(alertTitle);
     $('.alertSpan').html(ListLan);
     setTimeout(function () {

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/forum")
 @RestController
@@ -103,6 +104,18 @@ public class ForumController {
     @PutMapping(value = "addPro",params = {"forumid","title"})
     public String addPro(long forumid,String title){
         return forumService.addPro(forumid,title);
+    }
+
+    /**
+     * 增加问答评论
+     * @param forumid 议题id
+     * @param rcommentid 被回复的评论id（如果是评论则为0）
+     * @param content 回复内容
+     * @return
+     */
+    @PutMapping(value = "addCom",params = {"forumid","rcommentid","content"})
+    public Map<Long,String> addCom(long forumid, long rcommentid, String content){
+        return forumService.addComment(forumid,rcommentid,content);
     }
 
     /*

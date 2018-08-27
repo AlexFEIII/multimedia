@@ -24,9 +24,11 @@ public interface CommentService {
     * 返回评论
     * */
     List<DCView> getDocComment(long docid, int pagenum);
-    List<FCView> getForumComment(long docid, int pageNum);
+    List<FCView> getForumPro(long docid, int pageNum);
     List<VCView> getVideoComment(long docid, int pageNum);
 
     //返回议题问题的回复
     List<ForumRUser> getForumCRelay(long proid);
+    //返回议题评论及其回复
+    List<ForumComView> getForumComment(long forumid,int pagenum);
 }
