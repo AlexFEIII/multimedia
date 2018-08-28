@@ -1,3 +1,37 @@
+var USERDATA = "";
+$(document).ready(function () {
+    $.ajax({
+        url:"../user/isLogin",
+        type:"get",
+        success:function (data) {
+            console.log(data);
+            if (data != ""){
+                USERDATA = data;
+                loginSuccess(data);
+            }
+        }
+    });
+
+    $.ajax({
+        url:"../getOnePro"+window.location.search,
+        type:"get",
+        success:function (data) {
+            console.log(data)
+        },error:function () {
+            console.log("获取问题具体信息失败！")
+        }
+    })
+});
+
+function loginSuccess(data) {
+    $(".layui-layer-close").click();
+    $(".last_li").empty();
+    var image = "../img/14.png";
+    if (data.headimage != null) image = data.headimage;
+    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
+    $(".MuchSameSpan img").attr("src",image);
+}
+
 var onOff = true;
 $('.leftColumns .FocusQuestion').on('click', function () {
     if (onOff) {
@@ -167,6 +201,11 @@ $('#sureCut').on('click', function () {
         $('#finalImg').prop('src', base64url); //显示为图片的形式
         //关闭裁剪框
         closeTailor();
+        var animatedLoading = $('<div class="Load-animated"><div class="spinner spinnerTwo"><span></span></div></div>');
+        $('.rightColumns a').append(animatedLoading);
+        setTimeout(function () {
+            animatedLoading.remove();
+        }, 2000);
     }
 });
 

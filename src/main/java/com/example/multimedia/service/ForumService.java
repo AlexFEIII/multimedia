@@ -42,6 +42,9 @@ public interface ForumService {
     //增加议题评论
     Map<Long,String> addComment(long forumid, long rcommentid, String content);
 
+    //删除议题评论
+    List<Long> deleteComment(long formid,long commentid);
+
     /*
     * 设置最佳评论
     * */

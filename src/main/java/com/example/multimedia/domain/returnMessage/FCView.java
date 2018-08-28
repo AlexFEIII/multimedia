@@ -5,29 +5,20 @@ import java.util.Map;
 
 public class FCView {
     private int totalPage;
+    private long count;
     private boolean isUp;
     private boolean isFollow;
     private ForumCUser forumCUser;
     private List<ForumRUser> forumRUsers;
 
     public FCView(){}
-    public FCView(int totalPage,ForumCUser forumCUser, List<ForumRUser> forumRUsers,boolean isUp,boolean isFollow){
+    public FCView(int totalPage,long count,ForumCUser forumCUser, List<ForumRUser> forumRUsers,boolean isUp,boolean isFollow){
         this.totalPage = totalPage;
+        this.count = count;
         this.forumCUser = forumCUser;
         this.forumRUsers = forumRUsers;
         this.isUp = isUp;
         this.isFollow = isFollow;
-    }
-
-    @Override
-    public String toString() {
-        return "FCView{" +
-                "totalPage=" + totalPage +
-                ", isUp=" + isUp +
-                ", isFollow=" + isFollow +
-                ", forumCUser=" + forumCUser +
-                ", forumRUsers=" + forumRUsers +
-                '}';
     }
 
     public int getTotalPage() {
@@ -36,6 +27,14 @@ public class FCView {
 
     public void setTotalPage(int totalPage) {
         this.totalPage = totalPage;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
     }
 
     public boolean isUp() {

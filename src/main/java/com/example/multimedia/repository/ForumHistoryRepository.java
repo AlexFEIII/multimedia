@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface ForumHistoryRepository extends JpaRepository<ForumHistory,Long> {
     List<ForumHistory> findByUseridAndDateBefore(long id, Date date);
-    List<ForumHistory> findByUserid(long id);
+    List<ForumHistory> findByUseridOrderByIdDesc(long id);
+    List<ForumHistory> findByUseridAndForumid(long uid,long fid);
 }

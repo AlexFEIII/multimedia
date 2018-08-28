@@ -6,6 +6,7 @@ import com.example.multimedia.domain.returnMessage.ForumKNum;
 import com.example.multimedia.domain.returnMessage.ForumUser;
 import com.example.multimedia.repository.*;
 import com.example.multimedia.service.ForumService;
+import com.example.multimedia.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,6 +49,9 @@ public class ForumServiceImpl implements ForumService {
     @Autowired
     private ForumCommentRepository forumCommentRepository;
 
+    @Autowired
+    private HistoryService historyService;
+
     SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
     /*
     * 返回所有论坛文章
@@ -76,8 +80,10 @@ public class ForumServiceImpl implements ForumService {
             if (collectForumRepository.findByUseridAndForumid(user.getId(),id) != null){
                 isfollow = true;
             }
+            historyService.fhistory(id);
         }catch (Exception e){ }
         int colnum = collectForumRepository.countAllByForumid(id);
+
         return new ForumUser(forum,mulUser,isfollow,forumRepository.countAllByKindEquals(forum.getKind()),colnum);
     }
 
@@ -202,6 +208,46 @@ public class ForumServiceImpl implements ForumService {
         }catch (Exception e){
             return null;
         }
+    }
+
+    //删除议题评论
+    @Override
+    public List<Long> deleteComment(long formid,long commentid) {
+        List<Long> longs = new ArrayList<>();
+        try{
+            User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = userDetails.getUsername();
+            boolean canDelete = false;
+            ForumComment forumComment = forumCommentRepository.findById(commentid);
+            //如果文章是自己的可以删除||如果评论是自己的，可以删除||如果被回复的用户是自己，可以删除
+            if (userRepository.findOne(forumRepository.findOne(formid).getUserid()).getUsername().equals(username) ||
+                    userRepository.findOne(forumComment.getUserid()).getUsername().equals(username)){
+                canDelete = true;
+            }
+            if (!canDelete && forumComment.getRcommentid() != 0){
+                if (userRepository.findOne(forumCommentRepository.findOne(forumComment.getRcommentid()).getUserid()).getUsername().equals(username)){
+                    canDelete = true;
+                }
+            }
+            if (canDelete){
+                forumCommentRepository.delete(commentid);
+                longs.add(commentid);
+                deleteForumRelay(commentid,longs);
+                return longs;
+            }
+        }catch (Exception e){
+            //ignore
+        }
+        return null;
+    }
+    private List<Long> deleteForumRelay(long rcommentid,List<Long> longs){
+        List<ForumComment> forumComments = forumCommentRepository.findByRcommentid(rcommentid);
+        for (ForumComment forumComment:forumComments){
+            deleteForumRelay(forumComment.getId(),longs);
+            longs.add(forumComment.getId());
+            forumCommentRepository.delete(forumComment);
+        }
+        return longs;
     }
 
     //设置最佳评论

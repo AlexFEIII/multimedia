@@ -193,7 +193,7 @@ public class CommentServiceImpl implements CommentService {
         return longs;
     }
 
-    //删除评论
+    //删除文章评论，议题问题
     @Override
     public String deleteComment(String type,long docid, long commentid) {
         User userDetails = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -299,7 +299,7 @@ public class CommentServiceImpl implements CommentService {
         }catch (Exception e){
             isLogin = false;
         }
-        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.ASC,"id"));
+        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.DESC,"id"));
         Page<ForumProblem> list = forumProblemRepository.findByForumid(docid,pageable);
         for (ForumProblem forumProblem : list){
             boolean isUp = false,isFollow = false;
@@ -316,9 +316,9 @@ public class CommentServiceImpl implements CommentService {
                 if (collectFCRepository.findByCommentidAndUserid(forumProblem.getId(),mulUser.getId()) != null) isFollow = true;
             }
             if (forumRelays.size() == 0){
-                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumProblem,userRepository.findOne(forumProblem.getUserid())),null,isUp,isFollow));
+                fcViews.add(new FCView(list.getTotalPages(),list.getTotalElements(),new ForumCUser(forumProblem,userRepository.findOne(forumProblem.getUserid())),null,isUp,isFollow));
             }else{
-                fcViews.add(new FCView(list.getTotalPages(),new ForumCUser(forumProblem,userRepository.findOne(forumProblem.getUserid())),forumRelays,isUp,isFollow));
+                fcViews.add(new FCView(list.getTotalPages(),list.getTotalElements(),new ForumCUser(forumProblem,userRepository.findOne(forumProblem.getUserid())),forumRelays,isUp,isFollow));
             }
         }
         return fcViews;
@@ -360,10 +360,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public List<ForumComView> getForumComment(long forumid, int pagenum) {
         List<ForumComView> list = new ArrayList<>();
-        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.DESC,"id"));
+        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.ASC,"id"));
         Page<ForumComment> forumComments = forumCommentRepository.findByForumid(forumid,pageable);
         for(ForumComment forumComment : forumComments){
-            list.add(new ForumComView(userRepository.findOne(forumComment.getUserid()).getNickname(),forumComment.getUserid(),userRepository.findOne(forumComment.getRelayid()).getNickname(),forumComment.getRelayid(),forumComment));
+            list.add(new ForumComView(userRepository.findOne(forumComment.getUserid()).getNickname(),forumComment.getUserid(),userRepository.findOne(forumComment.getRelayid()).getNickname(),forumComment.getRelayid(),forumComment,forumComments.getTotalPages(),forumComments.getTotalElements()));
         }
         return list;
     }

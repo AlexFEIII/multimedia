@@ -118,6 +118,17 @@ public class ForumController {
         return forumService.addComment(forumid,rcommentid,content);
     }
 
+    /**
+     * 删除评论
+     * @param forumid
+     * @param commentid
+     * @return
+     */
+    @DeleteMapping(value = "delCom",params = {"forumid","commentid"})
+    public List<Long> delCom(long forumid,long commentid){
+        return forumService.deleteComment(forumid,commentid);
+    }
+
     /*
     * 设置最佳评论
     * */

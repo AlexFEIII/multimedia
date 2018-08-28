@@ -38,12 +38,10 @@ public class HistoryServiceImpl implements HistoryService {
     //增加文章历史
     @Override
     public void dhistory(long docid) {
-        try{
-            MulUser mulUser = userRepository.findByUsername(userService.getUsername());
-            docHistoryRepository.save(new DocHistory(mulUser.getId(),docid));
-        }catch (Exception e){
-            //ignore
-        }
+        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        System.out.println(docHistoryRepository.findByUseridAndDocid(mulUser.getId(),docid));
+        docHistoryRepository.delete(docHistoryRepository.findByUseridAndDocid(mulUser.getId(),docid));
+        docHistoryRepository.save(new DocHistory(mulUser.getId(),docid));
     }
 
     //得到文章历史
@@ -52,7 +50,7 @@ public class HistoryServiceImpl implements HistoryService {
         ddoc();
         MulUser mulUser = userRepository.findByUsername(userService.getUsername());
         List<DocUserView> docUserViews = new ArrayList<>();
-        List<DocHistory> docHistories = docHistoryRepository.findByUserid(mulUser.getId());
+        List<DocHistory> docHistories = docHistoryRepository.findByUseridOrderByIdDesc(mulUser.getId());
         for (DocHistory docHistory : docHistories) docUserViews.add(new DocUserView(documentRepository.findOne(docHistory.getDocid()),userRepository.findOne(docHistory.getUserid())));
         return docUserViews;
     }
@@ -66,12 +64,9 @@ public class HistoryServiceImpl implements HistoryService {
     //增加问答历史
     @Override
     public void fhistory(long forumid) {
-        try{
-            MulUser mulUser = userRepository.findByUsername(userService.getUsername());
-            docHistoryRepository.save(new DocHistory(mulUser.getId(),forumid));
-        }catch (Exception e){
-            //ignore
-        }
+        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        forumHistoryRepository.delete(forumHistoryRepository.findByUseridAndForumid(mulUser.getId(),forumid));
+        forumHistoryRepository.save(new ForumHistory(mulUser.getId(),forumid));
     }
 
     //得到问答历史
@@ -80,7 +75,7 @@ public class HistoryServiceImpl implements HistoryService {
         dforum();
         try{
             MulUser mulUser = userRepository.findByUsername(userService.getUsername());
-            List<ForumHistory> forumHistories = forumHistoryRepository.findByUserid(mulUser.getId());
+            List<ForumHistory> forumHistories = forumHistoryRepository.findByUseridOrderByIdDesc(mulUser.getId());
             List<Forum> forums = new ArrayList<>();
             for (ForumHistory forumHistory:forumHistories) forums.add(forumRepository.findOne(forumHistory.getForumid()));
             return forums;

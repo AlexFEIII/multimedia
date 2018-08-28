@@ -1,5 +1,5 @@
 //视频播放
-const dp = new DPlayer({
+var dp = new DPlayer({
     container: document.getElementById('video-page-play-interface'),
     screenshot: true, //截图
     volume: 1,
@@ -18,9 +18,18 @@ var VideoInterface = document.getElementById('VideoInterface');
 VideoInterface.oncanplay = function () { //当视频加载完成时
     var videoContent = $('.video-content').outerHeight();
     $('.danmu-list-content').css({
-        'height': videoContent,
+        'height': videoContent
     });
-}
+};
+
+//当页面变化时盖度随之改变
+$(window).resize(function () {
+    var videoContent = $('.video-content').outerHeight();
+    $('.danmu-list-content').css({
+        'height': videoContent
+    });
+});
+
 
 //编辑滚动条
 $(function () {
@@ -332,9 +341,19 @@ socialShare('.social-share', {
 });
 
 $('#QRcode-weixin').qrcode({
-    width: 100,
-    height: 100,
-    text: UrlAddress,
+    width: 150,
+    height: 150,
+    text: UrlAddress
+});
+
+$('.focus-btn a').on('click', function () {
+    if ($(this).html() == '关注') {
+        $(this).html('取消关注');
+        $(this).css('background', '#FF5983');
+    } else if ($(this).html() == '取消关注') {
+        $(this).html('关注');
+        $(this).css('background', '');
+    }
 });
 
 $(document).on('click', '.toolBar_Btn a,.publish_A,.layui-layer-btn0,.ADDCommit,.DEl,.cancel_A', function () {

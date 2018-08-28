@@ -7,14 +7,19 @@ public class ForumComView {
     private long id;
     private String ruser;
     private long rid;
+    private int totalPage;
+    private long count;
     private ForumComment forumComment;
+
     public ForumComView(){}
-    public ForumComView(String nickname,long id,String ruser,long rid,ForumComment forumComment){
+    public ForumComView(String nickname,long id,String ruser,long rid,ForumComment forumComment,int totalPage,long count){
         this.nickname = nickname;
         this.id = id;
         this.ruser = ruser;
         this.rid = rid;
         this.forumComment = forumComment;
+        this.totalPage = totalPage;
+        this.count = count;
     }
 
     public String getNickname() {
@@ -47,6 +52,22 @@ public class ForumComView {
 
     public void setRid(long rid) {
         this.rid = rid;
+    }
+
+    public int getTotalPage() {
+        return totalPage;
+    }
+
+    public void setTotalPage(int totalPage) {
+        this.totalPage = totalPage;
+    }
+
+    public long getCount() {
+        return count;
+    }
+
+    public void setCount(long count) {
+        this.count = count;
     }
 
     public ForumComment getForumComment() {

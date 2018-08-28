@@ -287,6 +287,11 @@ $('#sureCut').on('click', function () {
         $('#ImgCoverPreviewForID').prop('src', base64url); //显示为图片的形式
         //关闭裁剪框
         closeTailor();
+        var animatedLoading = $('<div class="Load-animated"><div class="spinner spinnerTwo"><span></span></div></div>');
+        $('.PreviewDivForCover').append(animatedLoading);
+        setTimeout(function () {
+            animatedLoading.remove();
+        }, 2000);
     }
 });
 //关闭裁剪框
@@ -295,8 +300,7 @@ function closeTailor() {
 }
 
 // 4个主要的分类
-// 记录数据
-$('.SelectKindFixed').data('SelectKindFixed', '娱乐');
+// 现已取消show
 var LastAForHappy = $('.FourKindVideo a').eq(0);
 var LastKindPart = $('.kind-part').eq(0);
 $('.FourKindVideo a').on('click', function () {
@@ -304,7 +308,6 @@ $('.FourKindVideo a').on('click', function () {
     LastAForHappy.css('color', '');
     LastKindPart.css('display', '');
     LastAForHappy = $(this);
-    $('.SelectKindFixed').data('SelectKindFixed', $(this).html());
     LastKindPart = $('.kind-part').eq(index);
     $('.kind-part').eq(index).css('display', 'block');
     $(this).css('color', '#FF5983');
@@ -328,7 +331,7 @@ $('.CancleBtn').on('click', function () {
 });
 var LastKind = $('.Kind').eq(0);
 $('.Kind').on('click', function () {
-    $('.topKindVideo span').html($('.SelectKindFixed').data('SelectKindFixed') + '&nbsp;&nbsp;·&nbsp;&nbsp;' + $(this).html());
+    $('.topKindVideo span').html($(this).html());
     LastKind.css('background', '');
     LastKind = $(this);
     $(this).css('background', '#C1194E');
@@ -403,7 +406,7 @@ $('.introduce-for-issue p').each(function () {
     if ($(this).text().length > maxwidth) {
         $(this).text($(this).text().substring(0, maxwidth));
         $(this).html($(this).html() + "...");
-    };
+    }
 });
 for (var i = 0; i < 5; i++) {
     var problemContent = $('<div class="problem-content"><a href="AnswerQuestion.html" target="_blank" class="skip-page">' +
@@ -584,7 +587,7 @@ firstul.children("li:eq(2)").click(function () {
                 for (var i = 0;i < data.length;i ++){
                     var image = "../img/14.png";
                     if (data[i].image != null) image = data[i].image;
-                    var five_block = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="javascript:;"><img src="'+image+'"><span>'+data[i].title+'</span></a><span class="issue">该议题被浏览'+data[i].sawnum+'次</span><div class="Delect-question"><i class="iconfont Del-this">&#xe622;</i><br><i class="iconfont enter-this">&#xe650;</i></div></div></div>');
+                    var five_block = $('<div class="issueOutContainer"><div class="ShadowBoxConatiner"><a href="topicContent.html?id="'+data[i].id+'><img src="'+image+'"><span>'+data[i].title+'</span></a><span class="issue">该议题被浏览'+data[i].sawnum+'次</span><div class="Delect-question"><i class="iconfont Del-this">&#xe622;</i><br><i class="iconfont enter-this">&#xe650;</i></div></div></div>');
                     $('.Select_Three_Div .recommed_topic').append(five_block);
                 }
             },error:function (data) {

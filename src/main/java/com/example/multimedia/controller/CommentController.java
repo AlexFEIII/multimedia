@@ -87,6 +87,21 @@ public class CommentController {
         return commentService.getForumPro(docid,pagenum);
     }
 
+    /**
+     * 返回一个议题问题的具体内容
+     * @param id
+     * @return
+     */
+    @GetMapping(value = "getOnePro",params = "id")
+    public ForumProblem getOnePro(long id){
+        return null;
+    }
+
+    /**
+     * 返回评论回复
+     * @param proid
+     * @return
+     */
     @GetMapping("getFCRelay/{proid}")
     public List<ForumRUser> getFCRelay(@PathVariable long proid){
         return commentService.getForumCRelay(proid);
@@ -101,6 +116,12 @@ public class CommentController {
         return commentService.getVideoComment(docid,pagenum);
     }
 
+    /**
+     * 取得议题评论
+     * @param forumid
+     * @param pagenum
+     * @return
+     */
     @GetMapping("getFComment/{forumid}/{pagenum}")
     public List<ForumComView> getFComment(@PathVariable long forumid,@PathVariable int pagenum){
         return commentService.getForumComment(forumid,pagenum);

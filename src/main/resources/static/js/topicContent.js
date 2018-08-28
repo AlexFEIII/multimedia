@@ -1,6 +1,7 @@
 var FORUMDATA;
 var USERDATA;
-var PAGE = 1;
+var PROPAGE = 1;
+var COMPAGE = 1;
 $(document).ready(function () {
     $.ajax({
         url:"../user/isLogin",
@@ -75,199 +76,281 @@ $(document).ready(function () {
         async:false,
         success:function (data) {
             console.log(data);
-            for (var i = 0;i < data.length;i ++){
-                var addComments = $('<li class="countLiNum"><div class="TitleA"><span style="display: none" class="ProID">'+data[i].forumCUser.forumProblem.id+'</span><a href="javascript:;" class="TitleAfterA">'+data[i].forumCUser.forumProblem.title+'</a></div>' +
-                    '<div class="SocialTool"><a href="javascript:;" class="GuanFocus"><i class="iconfont">&#xe6e0;</i><span>关注</span></a>' +
-                    '<a href="javascript:;" class="ZanA"><i class="iconfont">&#xe60a;</i><span>赞</span><span class="Zan">'+data[i].forumCUser.forumProblem.upvotenum+'</span></a>' +
-                    '<a href="javascript:;" class="commentsAndjoin" packUp="1" isLoad="0"><i class="iconfont">&#xe66f;</i><span>参与讨论</span></a>' +
-                    '<div class="comments-not-or-yes">还没有讨论</div><div class="Load-animated"><div class="spinner spinnerTwo"><span></span></div></div></div></li>');
-                $('.OneList li:first').after(addComments);
-
-                if (data[i].follow) {
-                    $('.GuanFocus').first().html('<i class="iconfont">&#xe76a;</i> <span>取消关注</span>');
-                    add($('.GuanFocus').first());
-                }
-                if (data[i].up){
-                    add($('.ZanA').first());
-                }
-            }
-            if (USERDATA == ""){
-                $('.GuanFocus').on('click', function () {
-                    layer.msg("请先登录！");
-                });
-                $('.ZanA').on('click',function () {
-                    layer.msg("请先登录！");
-                });
-                $('.commentsAndjoin').on('click',function () {
-                    layer.msg("请先登录！");
-                });
+            if (data!="") {
+                $(".OneMiddle a").html("<span></span>个问题");
+                $(".OneMiddle span").text(data[0].count);
             }else{
-                //关注
-                $(".GuanFocus").off("click");
-                $('.GuanFocus').on('click', function () {
-                    if (!$(this).children("span").hasClass('HoverA')) {
-                        $(this).html('<i class="iconfont">&#xe76a;</i> <span>取消关注</span>');
-                        add($(this));
-                    } else {
-                        $(this).html('<i class="iconfont">&#xe6e0;</i> <span>关注</span>')
-                        remove($(this));
-                    }
-                    $.ajax({
-                        url:"../col/forumC?forumid="+FORUMDATA.forum.id+"&cid="+$(this).parent().parent().find(".ProID").text(),
-                        type:"put",
-                        success:function (data) {
-                        },error:function () {
-                            console.log("问题关注出错！")
-                        }
-                    })
-                });
-
-                //点赞
-                $(".ZanA").off("click");
-                $('.ZanA').on('click', function () {
-                    console.log("num: "+$(this).find('.Zan').text());
-                    var ZAN = $(this).find(".Zan");
-                    if (!ZAN.hasClass('HoverA')) {
-                        add($(this));
-                        var Num = parseInt(ZAN.text());
-                        if (ZAN.text() == '') {
-                            ZAN.text('1');
-                        } else {
-                            ZAN.text(Num + 1);
-                        }
-                    } else {
-                        remove($(this));
-                        var Num = parseInt(ZAN.text());
-                        if (ZAN.text() == '1') {
-                            ZAN.text('');
-                        } else {
-                            ZAN.text(Num - 1);
-                        }
-                    }
-                    $.ajax({
-                        url:"../upvote?type=FComment&objid="+$(this).parent().parent().find(".ProID").text(),
-                        type:"put",
-                        success:function () {
-                        },error:function () {
-                            console.log("文章点赞出错！")
-                        }
-                    });
-                });
-
-                // 参与讨论
-                $('.commentsAndjoin').off("click");
-                $('.commentsAndjoin').on('click', function () {
-                    var This = $(this);
-                    if (This.attr("isLoad") == 0){
-                        $(this).parent().find('.Load-animated').css('display', 'flex');
-                        $.ajax({
-                            url:"../getFCRelay/"+$(this).parent().parent().find(".ProID").text(),
-                            type:"get",
-                            success:function (data) {
-                                console.log(data);
-                                if (data.length == 0) $(this).parent().find('.comments-not-or-yes').css('display', 'block');
-                                This.parent().find('.Load-animated').css('display', '');
-                                for (var i = 0;i < data.length;i ++){
-                                    var rUserInfo = "";
-                                    var DRTime = new Date(data[i].forumRelay.date);
-                                    if (data[i].forumRelay.rcommentid != 0){
-                                        rUserInfo = '：回复<a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+data[i].rid+'">@'+data[i].rname+'</a>';
-                                    }
-                                    var DelButton = "";
-                                    if (USERDATA.nickname == data[i].nickname){
-                                        DelButton = '<a href="javascript:;" class="DEl">删除</a>'
-                                    }
-                                    $('.NewGoodEditor').after('<div class="insertComment"><span style="display: none" class="ReID">'+data[i].forumRelay.id+'</span><span class="twoUser"><a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+data[i].id+'">'+data[i].nickname+'</a>'+rUserInfo+'</span><p class="TwoSecond">'+data[i].forumRelay.content+'</p><div><span class="oneSpanTWO">'+DRTime.getFullYear()+'/'+DRTime.getMonth()+'/'+DRTime.getDate()+'</span><span class="TwoSpanTWO">'+DRTime.getHours()+':'+DRTime.getMinutes()+':'+DRTime.getMilliseconds()+'</span></div><div><a href="javascript:;" class="ADDCommit">评论</a>'+DelButton+'</div></div>');
-                                }
-                                $('body').getNiceScroll().resize();
-                                $('.OneList .ADDCommit').unbind('click').on('click', function () {
-                                    var That = $(this);
-                                    getNewEditor($(this).parent(), 0,That.parent().parent().children(".twoUser").children("a").eq(0).href,That.parent().parent().children(".twoUser").children("a").eq(0).text(),That.parent().parent().parent().find(".ProID").text(),That.parent().parent().children(".ReID").text());
-                                    $(this).parent().parent().parent().find('.publish_A').on('click', function () {
-                                        if (That.parent().parent().parent().find('.comments-not-or-yes').html() == '还没有讨论') {
-                                            That.parent().parent().parent().find('.comments-not-or-yes').html('1条讨论');
-                                        } else {
-                                            var Len = That.parent().parent().parent().find('.insertComment').length;
-                                            That.parent().parent().parent().find('.comments-not-or-yes').html('' + Len + '条讨论');
-                                        }
-                                    });
-                                });
-                                $('.OneList .DEl').unbind('click').on('click', function () {
-                                    var There = $(this);
-                                    layer.confirm('确定要删除此评论吗?', {
-                                        btn: ['确定', '取消'], //按钮
-                                        title: '提示'
-                                    }, function (index) {
-                                        var Len = There.parent().parent().parent().find('.insertComment').length - 1;
-                                        if (Len > 0) {
-                                            There.parent().parent().parent().find('.comments-not-or-yes').html('' + Len + '条讨论');
-                                        } else {
-                                            There.parent().parent().parent().find('.comments-not-or-yes').html('还没有讨论');
-                                        }
-                                        layer.close(index);
-                                        console.log($(this));
-                                        $.ajax({
-                                            url:"../deleteR?type=forum&docid="+FORUMDATA.forum.id+"&commentid="+There.parent().parent().parent().find(".ProID").text()+"&rcommentid="+There.parent().parent().children(".ReID").text(),
-                                            type:"delete",
-                                            success:function (data) {
-                                                There.parent().parent().remove();
-                                                var list = $(".ReID");
-                                                for (var i = 0;i < data.length;i ++){
-                                                    console.log(i);
-                                                    for(var j = 0;j < list.length;j ++){
-                                                        if (list[j].innerText == data[i]){
-                                                            list.eq(j).parent().remove();
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                            },error:function () {                                            }
-                                        })
-                                    });
-                                });
-                                This.attr("isLoad",1)
-                            }
-                        });
-                    }
-
-                    if ($(this).attr('packUp') == '1') {
-                        statistic_data();
-                        $(this).attr('packUp', '0');
-                        $(this).find('span').html('收起讨论');
-                        getNewEditor($(this), 0,"","",This.parent().parent().find(".ProID").text(),0);
-                        $(this).parent().parent().data('statistic_data', '1');
-                        This.parent().parent().find('.insertComment').css('display', 'flex');
-                        $('body').getNiceScroll().resize();
-                        $(this).parent().parent().find('.publish_A').on('click', function () {
-                            if (This.parent().parent().find('.comments-not-or-yes').html() == '还没有讨论') {
-                                This.parent().parent().find('.comments-not-or-yes').html('1条讨论');
-                            } else {
-                                var Len = This.parent().parent().find('.insertComment').length;
-                                This.parent().parent().find('.comments-not-or-yes').html('' + Len + '条讨论');
-                            }
-                        });
-                    } else {
-                        $(this).attr('packUp', '1');
-                        if ($(this).parent().parent().find('.comments-not-or-yes').html() == '还没有讨论') {
-                            $(this).find('span').html('参与讨论');
-                        } else {
-                            $(this).find('span').html($(this).parent().parent().find('.comments-not-or-yes').html());
-                        }
-                        $(this).parent().find('.comments-not-or-yes').css('display', '');
-                        $(this).parent().parent().find('.insertComment').css('display', 'none');
-                        CodeSame($('.NewGoodEditor'));
-                    }
-                });
-
+                $(".OneMiddle a").html("<span>添加问题</span>");
             }
+            showPro(data);
         },error:function () {
             console.log("加载页面时获取评论失败！")
         }
     });
 
-
+    //判断加载更多是否是在可视范围内。
+    var PROFLAG = false,COMFLAG = false;
+    $(window).scroll(function (event) {
+        var WINTOP = $(window).scrollTop();
+        if (PROFLAG == false && $(".OneList").css("display")!="none" && ($(".OneList .loading-more").offset().top+150) < WINTOP+window.screen.height){
+            PROFLAG = true;
+            $.ajax({
+                url:"/getFPro/"+FORUMDATA.forum.id+"/"+PROPAGE,
+                type:"get",
+                async:false,
+                success:function (data) {
+                    console.log(data);
+                    showPro(data);
+                    if (!(data == "" || data[0].totalPage < PROPAGE)) {
+                       PROFLAG = false;
+                    }
+                },error:function () {
+                    console.log("加载页面时获取评论失败！")
+                }
+            });
+        }else if(COMFLAG == false && $(".TwoList").css("display")!="none" && ($("#TwoList-loading-more").offset().top+150) < WINTOP+window.screen.height){
+            COMFLAG = true;
+            $.ajax({
+                url:"../getFComment/"+FORUMDATA.forum.id+"/"+COMPAGE,
+                type:"get",
+                success:function (data) {
+                    console.log(data);
+                    showCom(data);
+                    if (!(data == "" || data[0].totalPage < COMPAGE)) {
+                        COMFLAG = false;
+                    }
+                },error:function () {
+                    console.log("加载页面时获取评论失败！")
+                }
+            });
+        }
+    })
 });
 
+//显示问题用的方法
+function showPro(data) {
+    if (data == "" || data[0].totalPage < PROPAGE ){
+        $(".OneList").children(".loading-more").remove();
+    }else{
+        PROPAGE ++;
+        if (PROPAGE > data[0].totalPage)  $(".OneList").children(".loading-more").remove();
+        for (var i = 0;i < data.length;i ++){
+            var DELPro = "";
+            if (USERDATA != "" && USERDATA.id == FORUMDATA.mulUser.id) DELPro = '<a href="javascript:;" class="DeleteProblemASpecial"><i class="iconfont">&#xe622;</i><span>删除问题</span></a>'
+            var addComments = $('<li class="countLiNum"><div class="TitleA"><span style="display: none" class="ProID">'+data[i].forumCUser.forumProblem.id+'</span><a href="AnswerQuestion.html?id='+data[i].forumCUser.forumProblem.id+'" target="_blank" class="TitleAfterA">'+data[i].forumCUser.forumProblem.title+'</a></div>' +
+                '<div class="SocialTool"><a href="javascript:;" class="GuanFocus"><i class="iconfont">&#xe6e0;</i><span>关注</span></a>' +
+                '<a href="javascript:;" class="ZanA"><i class="iconfont">&#xe60a;</i><span>赞</span><span class="Zan">'+data[i].forumCUser.forumProblem.upvotenum+'</span></a>' +
+                '<a href="javascript:;" class="commentsAndjoin" packUp="1" isLoad="0"><i class="iconfont">&#xe66f;</i><span>参与讨论</span></a>' +
+                DELPro+'<div class="comments-not-or-yes">还没有讨论</div><div class="Load-animated"><div class="spinner spinnerTwo"><span></span></div></div></div></li>');
+            $('.OneList li:last').after(addComments);
+
+            if (data[i].follow) {
+                $('.GuanFocus').last().html('<i class="iconfont">&#xe76a;</i> <span>取消关注</span>');
+                add($('.GuanFocus').last());
+            }
+            if (data[i].up){
+                add($('.ZanA').last());
+            }
+        }
+        $('body').getNiceScroll().resize();
+        // 删除问题
+        $('.DeleteProblemASpecial').unbind('click').on('click', function () {
+            var This = $(this);
+            layer.confirm('确定要删除此评论吗?', {
+                btn: ['确定', '取消'], //按钮
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+                $.ajax({
+                    url:"../deleteC?type=forum&docid="+FORUMDATA.forum.id+"&commentid="+This.parent().parent().find(".ProID").text(),
+                    type:"delete",
+                    success:function (data) {
+                        This.parent().parent().remove();
+                        var Len = parseInt($('.OneMiddle span').text());
+                        if (Len-1 > 0) {
+                            $('.OneMiddle span').html((Len-1) + '个问题');
+                        } else {
+                            $('.OneMiddle span').html('添加问题');
+                        }
+                    },error:function () {
+                    }
+                })
+            });
+        }); //删除评论
+        if (USERDATA == ""){
+            $('.GuanFocus').on('click', function () {
+                layer.msg("请先登录！");
+            });
+            $('.ZanA').on('click',function () {
+                layer.msg("请先登录！");
+            });
+            $('.commentsAndjoin').on('click',function () {
+                layer.msg("请先登录！");
+            });
+        }else{
+            //关注
+            $(".GuanFocus").off("click");
+            $('.GuanFocus').on('click', function () {
+                if (!$(this).children("span").hasClass('HoverA')) {
+                    $(this).html('<i class="iconfont">&#xe76a;</i> <span>取消关注</span>');
+                    add($(this));
+                } else {
+                    $(this).html('<i class="iconfont">&#xe6e0;</i> <span>关注</span>')
+                    remove($(this));
+                }
+                $.ajax({
+                    url:"../col/forumC?forumid="+FORUMDATA.forum.id+"&cid="+$(this).parent().parent().find(".ProID").text(),
+                    type:"put",
+                    success:function (data) {
+                    },error:function () {
+                        console.log("问题关注出错！")
+                    }
+                })
+            });
+
+            //点赞
+            $(".ZanA").off("click");
+            $('.ZanA').on('click', function () {
+                console.log("num: "+$(this).find('.Zan').text());
+                var ZAN = $(this).find(".Zan");
+                if (!ZAN.hasClass('HoverA')) {
+                    add($(this));
+                    var Num = parseInt(ZAN.text());
+                    if (ZAN.text() == '') {
+                        ZAN.text('1');
+                    } else {
+                        ZAN.text(Num + 1);
+                    }
+                } else {
+                    remove($(this));
+                    var Num = parseInt(ZAN.text());
+                    if (ZAN.text() == '1') {
+                        ZAN.text('');
+                    } else {
+                        ZAN.text(Num - 1);
+                    }
+                }
+                $.ajax({
+                    url:"../upvote?type=FComment&objid="+$(this).parent().parent().find(".ProID").text(),
+                    type:"put",
+                    success:function () {
+                    },error:function () {
+                        console.log("文章点赞出错！")
+                    }
+                });
+            });
+
+            // 参与讨论
+            $('.commentsAndjoin').off("click");
+            $('.commentsAndjoin').on('click', function () {
+                var This = $(this);
+                if (This.attr("isLoad") == 0){
+                    $(this).parent().find('.Load-animated').css('display', 'flex');
+                    $.ajax({
+                        url:"../getFCRelay/"+$(this).parent().parent().find(".ProID").text(),
+                        type:"get",
+                        success:function (data) {
+                            console.log(data);
+                            if (data.length == 0) $(this).parent().find('.comments-not-or-yes').css('display', 'block');
+                            This.parent().find('.Load-animated').css('display', '');
+                            for (var i = 0;i < data.length;i ++){
+                                var rUserInfo = "";
+                                var DRTime = new Date(data[i].forumRelay.date);
+                                if (data[i].forumRelay.rcommentid != 0){
+                                    rUserInfo = '：回复<a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+data[i].rid+'">@'+data[i].rname+'</a>';
+                                }
+                                var DelButton = "";
+                                if (USERDATA.nickname == data[i].nickname){
+                                    DelButton = '<a href="javascript:;" class="DEl">删除</a>'
+                                }
+                                $('.NewGoodEditor').after('<div class="insertComment"><span style="display: none" class="ReID">'+data[i].forumRelay.id+'</span><span class="twoUser"><a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+data[i].id+'">'+data[i].nickname+'</a>'+rUserInfo+'</span><p class="TwoSecond">'+data[i].forumRelay.content+'</p><div><span class="oneSpanTWO">'+DRTime.getFullYear()+'/'+DRTime.getMonth()+'/'+DRTime.getDate()+'</span><span class="TwoSpanTWO">'+DRTime.getHours()+':'+DRTime.getMinutes()+':'+DRTime.getMilliseconds()+'</span></div><div><a href="javascript:;" class="ADDCommit">评论</a>'+DelButton+'</div></div>');
+                            }
+                            $('body').getNiceScroll().resize();
+                            $('.OneList .ADDCommit').unbind('click').on('click', function () {
+                                var That = $(this);
+                                getNewEditor($(this).parent(), 0,That.parent().parent().children(".twoUser").children("a").eq(0).href,That.parent().parent().children(".twoUser").children("a").eq(0).text(),That.parent().parent().parent().find(".ProID").text(),That.parent().parent().children(".ReID").text());
+                                $(this).parent().parent().parent().find('.publish_A').on('click', function () {
+                                    if (That.parent().parent().parent().find('.comments-not-or-yes').html() == '还没有讨论') {
+                                        That.parent().parent().parent().find('.comments-not-or-yes').html('1条讨论');
+                                    } else {
+                                        var Len = That.parent().parent().parent().find('.insertComment').length;
+                                        That.parent().parent().parent().find('.comments-not-or-yes').html('' + Len + '条讨论');
+                                    }
+                                });
+                            });
+                            $('.OneList .DEl').unbind('click').on('click', function () {
+                                var There = $(this);
+                                layer.confirm('确定要删除此评论吗?', {
+                                    btn: ['确定', '取消'], //按钮
+                                    title: '提示'
+                                }, function (index) {
+                                    var Len = There.parent().parent().parent().find('.insertComment').length - 1;
+                                    if (Len > 0) {
+                                        There.parent().parent().parent().find('.comments-not-or-yes').html('' + Len + '条讨论');
+                                    } else {
+                                        There.parent().parent().parent().find('.comments-not-or-yes').html('还没有讨论');
+                                    }
+                                    layer.close(index);
+                                    console.log($(this));
+                                    $.ajax({
+                                        url:"../deleteR?type=forum&docid="+FORUMDATA.forum.id+"&commentid="+There.parent().parent().parent().find(".ProID").text()+"&rcommentid="+There.parent().parent().children(".ReID").text(),
+                                        type:"delete",
+                                        success:function (data) {
+                                            There.parent().parent().remove();
+                                            var list = $(".ReID");
+                                            for (var i = 0;i < data.length;i ++){
+                                                console.log(i);
+                                                for(var j = 0;j < list.length;j ++){
+                                                    if (list[j].innerText == data[i]){
+                                                        list.eq(j).parent().remove();
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        },error:function () {                                            }
+                                    })
+                                });
+                            });
+                            This.attr("isLoad",1)
+                        }
+                    });
+                }
+
+                if ($(this).attr('packUp') == '1') {
+                    statistic_data();
+                    $(this).attr('packUp', '0');
+                    $(this).find('span').html('收起讨论');
+                    getNewEditor($(this), 0,"","",This.parent().parent().find(".ProID").text(),0);
+                    $(this).parent().parent().data('statistic_data', '1');
+                    This.parent().parent().find('.insertComment').css('display', 'flex');
+                    $('body').getNiceScroll().resize();
+                    $(this).parent().parent().find('.publish_A').on('click', function () {
+                        if (This.parent().parent().find('.comments-not-or-yes').html() == '还没有讨论') {
+                            This.parent().parent().find('.comments-not-or-yes').html('1条讨论');
+                        } else {
+                            var Len = This.parent().parent().find('.insertComment').length;
+                            This.parent().parent().find('.comments-not-or-yes').html('' + Len + '条讨论');
+                        }
+                    });
+                } else {
+                    $(this).attr('packUp', '1');
+                    if ($(this).parent().parent().find('.comments-not-or-yes').html() == '还没有讨论') {
+                        $(this).find('span').html('参与讨论');
+                    } else {
+                        $(this).find('span').html($(this).parent().parent().find('.comments-not-or-yes').html());
+                    }
+                    $(this).parent().find('.comments-not-or-yes').css('display', '');
+                    $(this).parent().parent().find('.insertComment').css('display', 'none');
+                    CodeSame($('.NewGoodEditor'));
+                }
+            });
+
+        }
+
+    }
+
+}
+//登录成功执行的方法
 function loginSuccess(data) {
     $(".layui-layer-close").click();
     $(".last_li").empty();
@@ -292,79 +375,96 @@ function loginSuccess(data) {
 
 //点击评论显示第一页评论
 $(".TwoMiddle").click(function () {
-    if ($(this).attr("isLoad") == 0){
+    var This = $(this);
+    if ($(this).attr("isload") == 0){
         $.ajax({
             url:"../getFComment/"+FORUMDATA.forum.id+"/1",
             type:"get",
             success:function (data) {
                 console.log(data);
-                for (var i = 0;i < data.length;i ++){
-                    var rUserInfo = "";
-                    var DRTime = new Date(data[i].forumComment.date);
-                    if (data[i].forumComment.rcommentid != 0){
-                        rUserInfo = '：回复<a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+data[i].rid+'">@'+data[i].ruser+'</a>';
-                    }
-                    var DelButton = "";
-                    if (USERDATA.nickname == data[i].nickname){
-                        DelButton = '<a href="javascript:;" class="DEl">删除</a>'
-                    }
-                    $(".replaceLi").after('<div class="insertComment"><span style="display: none" class="ReID">'+data[i].forumComment.id+'</span><span class="twoUser"><a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id='+data[i].id+'">'+data[i].nickname+'</a>'+rUserInfo+'</span><p class="TwoSecond">'+data[i].forumComment.content+'</p><div><span class="oneSpanTWO">'+DRTime.getFullYear()+'/'+DRTime.getMonth()+'/'+DRTime.getDate()+'</span><span class="TwoSpanTWO">'+DRTime.getHours()+':'+DRTime.getMinutes()+':'+DRTime.getMilliseconds()+'</span></div><div><a href="javascript:;" class="ADDCommit">评论</a>'+DelButton+'</div></div>');
+                if (data != ""){
+                    $(".TwoMiddle a").html("<span></span>个评论");
+                    $(".TwoMiddle span").text(data[0].count)
+                }else{
+                    $(".TwoMiddle a").html("<span>添加评论</span>");
                 }
-                $('body').getNiceScroll().resize();
-                if (USERDATA == ""){
-                    $('.TwoList .ADDCommit').unbind('click').on('click', function () {
-                        layer.msg("请先登录！")
-                    });
-                    $('.TwoList .DEl').unbind('click').on('click', function () {
-                        layer.msg("请先登录！")
-                    })
-                } else{
-                    $('.TwoList .ADDCommit').unbind('click').on('click', function () {
-                        var That = $(this);
-                        statistic_data();
-                        getNewEditor($(this), 1,That.parent().parent().children(".twoUser").children("a").eq(0).href,That.parent().parent().children(".twoUser").children("a").eq(0).text(),"",That.parent().parent().children(".ReID").text());
-                    });
-                    $('.TwoList .DEl').unbind('click').on('click', function () {
-                        var There = $(this);
-                        layer.confirm('确定要删除此评论吗?', {
-                            btn: ['确定', '取消'], //按钮
-                            title: '提示'
-                        }, function (index) {
-                            layer.close(index);
-                            var Len = $('.TwoList .insertComment').length;
-                            if (Len > 0) {
-                                $('.TwoMiddle span').html('' + Len + '条评论');
-                            } else {
-                                $('.TwoMiddle span').html('添加评论');
-                            }
-                            // $.ajax({
-                            //     url:"../deleteR?type=forum&docid="+FORUMDATA.forum.id+"&commentid="+There.parent().parent().parent().find(".ProID").text()+"&rcommentid="+There.parent().parent().children(".ReID").text(),
-                            //     type:"delete",
-                            //     success:function (data) {
-                            //         There.parent().parent().remove();
-                            //         var list = $(".ReID");
-                            //         for (var i = 0;i < data.length;i ++){
-                            //             console.log(i);
-                            //             for(var j = 0;j < list.length;j ++){
-                            //                 if (list[j].innerText == data[i]){
-                            //                     list.eq(j).parent().remove();
-                            //                     break;
-                            //                 }
-                            //             }
-                            //         }
-                            //     },error:function () {                                            }
-                            // })
-                        });
-                    });
-                }
-
-                $(this).attr("isLoad",1)
+                showCom(data);
+                This.attr("isload",1)
             },error:function () {
                 console.log("获取议题评论失败！")
             }
         })
     }
 });
+
+//显示评论的方法
+function showCom(data) {
+    if (data == "" || data[0].totalPage < COMPAGE ){
+        $(".OneList").children(".loading-more").remove();
+    }else {
+        COMPAGE++;
+        if (COMPAGE > data[0].totalPage) $(".TwoList").children(".loading-more").remove();
+        for (var i = 0; i < data.length; i++) {
+            var rUserInfo = "";
+            var DRTime = new Date(data[i].forumComment.date);
+            if (data[i].forumComment.rcommentid != 0) {
+                rUserInfo = '：回复<a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id=' + data[i].rid + '">@' + data[i].ruser + '</a>';
+            }
+            var DelButton = "";
+            if (USERDATA.nickname == data[i].nickname) {
+                DelButton = '<a href="javascript:;" class="DEl">删除</a>'
+            }
+            $(".TwoList .loading-more").before('<div class="insertComment"><span style="display: none" class="ReID">' + data[i].forumComment.id + '</span><span class="twoUser"><a style="color: #2D93CA;display: inline;" target="_blank" href="OthersCenter.html?id=' + data[i].id + '">' + data[i].nickname + '</a>' + rUserInfo + '</span><p class="TwoSecond">' + data[i].forumComment.content + '</p><div><span class="oneSpanTWO">' + DRTime.getFullYear() + '/' + DRTime.getMonth() + '/' + DRTime.getDate() + '</span><span class="TwoSpanTWO">' + DRTime.getHours() + ':' + DRTime.getMinutes() + ':' + DRTime.getMilliseconds() + '</span></div><div><a href="javascript:;" class="ADDCommit">评论</a>' + DelButton + '</div></div>');
+        }
+        $('body').getNiceScroll().resize();
+        if (USERDATA == "") {
+            $('.TwoList .ADDCommit').unbind('click').on('click', function () {
+                layer.msg("请先登录！")
+            });
+            $('.TwoList .DEl').unbind('click').on('click', function () {
+                layer.msg("请先登录！")
+            })
+        } else {
+            $('.TwoList .ADDCommit').unbind('click').on('click', function () {
+                var That = $(this);
+                statistic_data();
+                getNewEditor($(this), 1, That.parent().parent().children(".twoUser").children("a").eq(0).href, That.parent().parent().children(".twoUser").children("a").eq(0).text(), "", That.parent().parent().children(".ReID").text());
+            });
+            $('.TwoList .DEl').unbind('click').on('click', function () {
+                var There = $(this);
+                layer.confirm('确定要删除此评论吗?', {
+                    btn: ['确定', '取消'], //按钮
+                    title: '提示'
+                }, function (index) {
+                    layer.close(index);
+                    var Len = parseInt($('.TwoMiddle span').text());
+                    if (Len-1 > 0) {
+                        $('.TwoMiddle span').html((Len-1) + '个评论');
+                    } else {
+                        $('.TwoMiddle span').html('添加评论');
+                    }
+                    $.ajax({
+                        url:"../forum/delCom?forumid="+FORUMDATA.forum.id+"&commentid="+There.parent().parent().children(".ReID").text(),
+                        type:"delete",
+                        success:function (data) {
+                            There.parent().parent().remove();
+                            var list = $(".ReID");
+                            for (var i = 0;i < data.length;i ++){
+                                console.log(i);
+                                for(var j = 0;j < list.length;j ++){
+                                    if (list[j].innerText == data[i]){
+                                        list.eq(j).parent().remove();
+                                        break;
+                                    }
+                                }
+                            }
+                        },error:function () {}
+                    })
+                });
+            });
+        }
+    }
+}
 
 var H1People = $('.PeopleTitle h1').html();
 $('.TitleA p').html('欢迎你参加' + H1People + '议题');
@@ -458,11 +558,11 @@ function getNewFirstEditor(n) {
     $('.NewGoodEditor .publish_A').on('click', function () {
         var ContentNew = $('.NewGoodEditor .w-e-text').html().replace(/<(?!img).*?>/g, "");
         console.log(ContentNew);
-        var addComments = $('<li class="countLiNum"><div class="TitleA"><span style="display: none" class="ProID"></span><a href="javascript:;" class="TitleAfterA">不合法的身份和第三方第三方电脑</a></div>' +
+        var addComments = $('<li class="countLiNum"><div class="TitleA"><span style="display: none" class="ProID"></span><a href="javascript:;" target="_blank" class="TitleAfterA">不合法的身份和第三方第三方电脑</a></div>' +
             '<div class="SocialTool"><a href="javascript:;" class="GuanFocus"><i class="iconfont">&#xe6e0;</i><span>关注</span></a>' +
             '<a href="javascript:;" class="ZanA"><i class="iconfont">&#xe60a;</i><span>赞</span><span class="Zan">0</span></a>' +
             '<a href="javascript:;" class="commentsAndjoin" packUp="1"  isLoad="0"><i class="iconfont">&#xe66f;</i><span>参与讨论</span></a>' +
-            '<div class="comments-not-or-yes">还没有讨论</div><div class="Load-animated"><div class="spinner spinnerTwo"><span></span></div></div></div></li>');
+            '<a href="javascript:;" class="DeleteProblemASpecial"><i class="iconfont">&#xe622;</i><span>删除问题</span></a><div class="comments-not-or-yes">还没有讨论</div><div class="Load-animated"><div class="spinner spinnerTwo"><span></span></div></div></div></li>');
         if (ContentNew == '') {
             alert('请您写一点内容再发送，当前状态不可发送');
         } else {
@@ -474,10 +574,39 @@ function getNewFirstEditor(n) {
                     if (data == "ILLEGAL") {
                         layer.msg("问题含有非法、敏感内容！")
                     }else{
+                        if ($('.OneMiddle span').text() == "添加问题") {
+                            $('.OneMiddle span').text('1');
+                        } else {
+                            $('.OneMiddle span').text(parseInt($('.OneMiddle span').text())+1);
+                        }
                         $('.OneList li:first').after(addComments);
                         $('.OneList li').eq(1).find('.TitleAfterA').html(ContentNew);
                         $('.OneList li').eq(1).find('.ProID').html(data);
-
+                        $('.OneList li').eq(1).find('.TitleAfterA').attr("href","AnswerQuestion.html?id="+data);
+                        // 删除问题
+                        $('.DeleteProblemASpecial').unbind('click').on('click', function () {
+                            var This = $(this);
+                            layer.confirm('确定要删除此评论吗?', {
+                                btn: ['确定', '取消'], //按钮
+                                title: '提示'
+                            }, function (index) {
+                                layer.close(index);
+                                $.ajax({
+                                    url:"../deleteC?type=forum&docid="+FORUMDATA.forum.id+"&commentid="+This.parent().parent().find(".ProID").text(),
+                                    type:"delete",
+                                    success:function (data) {
+                                        This.parent().parent().remove();
+                                        var Len = parseInt($('.OneMiddle span').text());
+                                        if (Len-1 > 0) {
+                                            $('.OneMiddle span').html(Len-1);
+                                        } else {
+                                            $('.OneMiddle a').html('<span>添加问题</span>');
+                                        }
+                                    },error:function () {
+                                    }
+                                })
+                            });
+                        }); //删除评论
                         //关注
                         $(".GuanFocus").off("click");
                         $('.GuanFocus').on('click', function () {
@@ -643,6 +772,11 @@ function getNewEditor(n, m,href,name,rcommentid,reid) {
                         console.log("data: "+data);
                         if (data != ""){
                             for(var i in data){
+                                if ($('.TwoMiddle span').text() == '添加评论') {
+                                    $('.TwoMiddle span').text(1);
+                                } else {
+                                    $('.TwoMiddle span').text(parseInt($('.TwoMiddle span').text())+1);
+                                }
                                 console.log("data: "+data);
                                 var rUserInfo = "";
                                 console.log("reid : "+reid);
@@ -663,29 +797,29 @@ function getNewEditor(n, m,href,name,rcommentid,reid) {
                                         title: '提示'
                                     }, function (index) {
                                         layer.close(index);
-                                        var Len = $('.TwoList .insertComment').length;
-                                        if (Len > 0) {
-                                            $('.TwoMiddle span').html('' + Len + '条评论');
+                                        var Len = parseInt($('.TwoMiddle span').text());
+                                        if (Len-1 > 0) {
+                                            $('.TwoMiddle span').html((Len-1) + '个评论');
                                         } else {
-                                            $('.TwoMiddle span').html('添加评论');
+                                            $('.TwoMiddle a').html('<span>添加评论</span>');
                                         }
-                                        // $.ajax({
-                                        //     url:"../deleteR?type=forum&docid="+FORUMDATA.forum.id+"&commentid="+There.parent().parent().parent().find(".ProID").text()+"&rcommentid="+There.parent().parent().children(".ReID").text(),
-                                        //     type:"delete",
-                                        //     success:function (data) {
-                                        //         There.parent().parent().remove();
-                                        //         var list = $(".ReID");
-                                        //         for (var i = 0;i < data.length;i ++){
-                                        //             console.log(i);
-                                        //             for(var j = 0;j < list.length;j ++){
-                                        //                 if (list[j].innerText == data[i]){
-                                        //                     list.eq(j).parent().remove();
-                                        //                     break;
-                                        //                 }
-                                        //             }
-                                        //         }
-                                        //     },error:function () {                                            }
-                                        // })
+                                        $.ajax({
+                                            url:"../forum/delCom?forumid="+FORUMDATA.forum.id+"&commentid="+There.parent().parent().children(".ReID").text(),
+                                            type:"delete",
+                                            success:function (data) {
+                                                There.parent().parent().remove();
+                                                var list = $(".ReID");
+                                                for (var i = 0;i < data.length;i ++){
+                                                    console.log(i);
+                                                    for(var j = 0;j < list.length;j ++){
+                                                        if (list[j].innerText == data[i]){
+                                                            list.eq(j).parent().remove();
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                            },error:function () {}
+                                        })
                                     });
                                 });
                             }
@@ -817,22 +951,6 @@ $(document).on('click', '.commentsAndjoin,.cancel_A,.publish_A,.middleTopic a,.F
     $('body').getNiceScroll().resize();
 });
 
-//检测OneList内容的改变从而去判断问题的个数
-$('.OneList').on('DOMNodeInserted', function () {
-    var Len = $('.OneList .countLiNum').length;
-    if (Len > 0) {
-        $('.OneMiddle span').html('' + Len + '个问题');
-    }
-});
-
-//检测TwoList内容的改变从而去判断评论的条数
-$('.TwoList').on('DOMNodeInserted', function () {
-    var Len = $('.TwoList .insertComment').length;
-    if (Len > 0) {
-        $('.TwoMiddle span').html('' + Len + '条评论');
-    }
-});
-
 // 最佳评论
 for (var i = 0; i < 5; i++) {
     var BestDiscuss = $('<div class="MainMessageImg ChangeImgMessage"><a href="javascript:;"><img src="../img/11.jpg"></a><div class="owner"><p>邹小强</p>' +
@@ -874,3 +992,16 @@ function improveAreduceZIndex() {
         }, 0);
     });
 }
+// 加载更多
+var JudgeAnimate = true;
+$('.loading-more a').on('click', function () {
+    if (JudgeAnimate) {
+        JudgeAnimate = false;
+        var animatedLoading = $('<div class="Load-animated" style="display:flex;padding:0 0 35px 0;"><div class="spinner spinnerTwo"><span></span></div></div>');
+        $(this).parent().before(animatedLoading);
+        setTimeout(function () {
+            animatedLoading.remove();
+            JudgeAnimate = true;
+        }, 900);
+    }
+});

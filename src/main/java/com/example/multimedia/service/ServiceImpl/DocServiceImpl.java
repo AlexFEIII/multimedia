@@ -9,6 +9,7 @@ import com.example.multimedia.domain.returnMessage.DocUserView;
 import com.example.multimedia.domain.returnMessage.GetDoc;
 import com.example.multimedia.repository.*;
 import com.example.multimedia.service.DocService;
+import com.example.multimedia.service.HistoryService;
 import com.example.multimedia.service.UserService;
 import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,9 @@ public class DocServiceImpl implements DocService {
     private CollectDocRepository collectDocRepository;
     @Autowired
     private CollectUserRepository collectUserRepository;
+
+    @Autowired
+    private HistoryService historyService;
 
     @Autowired
     private CollectDKindRepository collectDKindRepository;
@@ -101,6 +105,10 @@ public class DocServiceImpl implements DocService {
     public GetDoc getOneDoc(long id){
         Document document = documentRepository.findOne(id);
         MulUser userinfor = userRepository.findOne(document.getUserid());
+        try{
+            System.out.println("调用增加历史方法！");
+            historyService.dhistory(id);
+        }catch (Exception e){}
         return new GetDoc(document,userinfor);
     }
 

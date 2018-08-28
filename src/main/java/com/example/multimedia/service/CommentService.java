@@ -31,4 +31,6 @@ public interface CommentService {
     List<ForumRUser> getForumCRelay(long proid);
     //返回议题评论及其回复
     List<ForumComView> getForumComment(long forumid,int pagenum);
+    //返回某个议题问题的具体内容
+
 }

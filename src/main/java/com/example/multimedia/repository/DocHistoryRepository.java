@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface DocHistoryRepository extends JpaRepository<DocHistory,Long> {
     List<DocHistory> findByUseridAndDateBefore(long id, Date date);
-    List<DocHistory> findByUserid(long id);
+    List<DocHistory> findByUseridOrderByIdDesc(long id);
+    List<DocHistory> findByUseridAndDocid(long uid,long did);
 }

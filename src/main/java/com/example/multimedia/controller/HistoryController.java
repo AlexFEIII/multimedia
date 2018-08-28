@@ -20,15 +20,6 @@ public class HistoryController {
     private HistoryService historyService;
 
     /**
-     * 增加浏览文章历史
-     * @param docid
-     */
-    @PutMapping("/doc/{docid}")
-    public void dHistory(@PathVariable long docid){
-        historyService.dhistory(docid);
-    }
-
-    /**
      * 得到文章浏览历史
      * @return
      */
@@ -43,15 +34,6 @@ public class HistoryController {
     @DeleteMapping("/ddoc")
     public void ddoc(){
         historyService.ddoc();
-    }
-
-    /**
-     * 增加浏览问答历史
-     * @param forumid
-     */
-    @PutMapping("/forum/{forumid}")
-    public void fHistory(@PathVariable long forumid){
-        historyService.fhistory(forumid);
     }
 
     /**
