@@ -81,33 +81,34 @@ $('#sureCut').on('click', function () {
   if ($('#tailoringImg').attr('src') == null) {
     return false;
   } else {
+      var animatedLoading = $('<div class="Load-animated"><div class="spinner spinnerTwo"><span></span></div></div>');
+      $('.change_img').append(animatedLoading);
     $.ajaxFileUpload({
         url:"../user/changeImage",
         type:"post",
         secureuri:false,
         fileElementId:["chooseImg"],
         success:function (data) {
-          if (data == "IMAGE_N"){
-            alert("图片涉及不良内容，请重新选择图片！");
-          } else if(data == "BIG"){
-            alert("图片过大，请上传小于2M的图片。")
-          }else if(data == "WRONG_TYPE"){
-            alert("图片格式错误！目前仅支持jpg/jpeg/bmp/png/gif格式。")
-          }else{
-              var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
-              var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
-              $('#finalImg,.photo_cicle img').prop('src', base64url); //显示为图片的形式
-              //关闭裁剪框
-              closeTailor();
-              var animatedLoading = $('<div class="Load-animated"><div class="spinner spinnerTwo"><span></span></div></div>');
-              $('.change_img').append(animatedLoading);
-              setTimeout(function () {
-                  animatedLoading.remove();
-              }, 2000);
-          }
+            console.log(data);
+            if (data == 'IMAGE_N'){
+                layer.msg("图片涉及不良内容，请重新选择图片！");
+            } else if(data == 'BIG'){
+                layer.msg("图片过大，请上传小于2M的图片。")
+            }else if(data == 'WRONG_TYPE'){
+                layer.msg("图片格式错误！目前仅支持jpg/jpeg/bmp/png/gif格式。")
+            }else if (data == 'NO'){
+                layer.msg("权限错误！")
+            } else{
+                var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
+                var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
+                $('#finalImg').prop('src', base64url); //显示为图片的形式
+                //关闭裁剪框
+                closeTailor();
+            }
 
-         }, error:function () {
-           console.log("上传头像出错！")
+        }, error:function () {
+            console.log("上传头像出错！");
+            layer.msg("图片过大，请上传小于2M的图片。")
         }
     })
 

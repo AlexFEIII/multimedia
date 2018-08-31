@@ -13,4 +13,5 @@ public interface DocumentRepository extends JpaRepository<Document,Long> {
     List<Document> findByUseridOrderByDateAsc(long id);
     int countAllByKindEquals(String kind);
     Page<Document> findAllByKindEquals(String kind, Pageable pageable);
+    Page<Document> findAllByKindEqualsAndForumCid(String kind,long forumCid,Pageable pageable);
 }

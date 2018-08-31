@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String changeUser(String password,MultipartFile headimage){
         try{
-            MulUser user = userRepository.findByUsername(getUsername());
+            MulUser user = getUsername();
             if (password != null){
                 user.setPassword(passwordEncoder.encode(password));
             }
@@ -133,7 +133,7 @@ public class UserServiceImpl implements UserService {
     //修改用户基础信息
     @Override
     public String changeUserInfor(int sex, String personality, String address, String qq, String job, String weburl) {
-        MulUser mulUser = userRepository.findByUsername(getUsername());
+        MulUser mulUser = getUsername();
         mulUser.setSex(sex);
         mulUser.setPersonality(personality);
         mulUser.setAddress(address);
@@ -160,7 +160,8 @@ public class UserServiceImpl implements UserService {
     public Page<MulUser> getAllUser(int pageNum, int size, Sort.Direction direction, String key){
         if (!(key.equals("id") || key.equals("username") || key.equals("role")))
             key = "id";
-        if (userRepository.findByUsername(getUsername()).getRole().equals("ROLE_MANAGE")){
+
+        if (getUsername().getRole().equals("ROLE_MANAGE")){
             Pageable pageable = new PageRequest(pageNum,size,direction,key);
             Page<MulUser> page = userRepository.findAll(pageable);
             return page;
@@ -179,7 +180,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public MulUser isLogin(){
         try{
-            return userRepository.findByUsername(getUsername());
+            return getUsername();
         }catch (ClassCastException e){
             //ignore
             return null;
@@ -187,9 +188,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String getUsername(){
+    public MulUser getUsername(){
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return user.getUsername();
+        if (user.getUsername().contains("@")){
+            return userRepository.findByEmail(user.getUsername());
+        }
+        return userRepository.findByUsername(user.getUsername());
     }
 
     //取得一个用户

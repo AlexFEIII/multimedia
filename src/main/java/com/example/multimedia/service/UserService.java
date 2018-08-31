@@ -42,7 +42,7 @@ public interface UserService {
     MulUser isLogin();
 
     //获取用户名
-    String getUsername();
+    MulUser getUsername();
 
     //取得一个用户
     MulUser getOne(long id);

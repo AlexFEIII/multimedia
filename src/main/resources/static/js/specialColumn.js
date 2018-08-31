@@ -75,6 +75,40 @@ $(document).ready(function () {
             }
             CutWordColumns('.wordP', 60);
             CutWordColumns('.draw_text', 72);
+            if (data.totalPage > 1){
+                $(".Select_Much").after('<div class="pagingTool"></div>');
+                $(".pagingTool").Paging({
+                    pagesize: 1,
+                    count:data.totalPage,
+                    prevTpl: '<i class="iconfont">&#xe78c;</i>',
+                    nextTpl: '<i class="iconfont">&#xe77c;</i>',
+                    firstTpl: '<i class="iconfont">&#xe609;</i>',
+                    lastTpl: '<i class="iconfont">&#xe6de;</i>',
+                    callback:function (page,size,count) {
+                        console.log("num: "+page);
+                        $('.commentsList').empty();
+                        $.ajax({
+                            url:"../doc"+window.location.search+"&pagenum="+page,
+                            type:"get",
+                            success:function (data) {
+                                $(".Select_Much").empty();
+                                var username;
+                                for (var i = 0;i < data.docUserViews.length;i ++){
+                                    username = data.docUserViews[i].mulUser.nickname;
+                                    var image = "";
+                                    if (username == null) username = data.docUserViews[i].mulUser.username;
+                                    if (data.docUserViews[i].document.image != null) image = '<img src="'+data.docUserViews[i].document.image+'"/>';
+                                    var AddDiv = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data.docUserViews[i].document.id+'" target="_blank" class="under_line">'+data.docUserViews[i].document.title+'</a><p class="draw_text">'+data.docUserViews[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data.docUserViews[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data.docUserViews[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>');
+
+                                    SelectDiv.append(AddDiv);
+                                }
+                            },error:function() {
+                                console.log("请求文章失败！")
+                            }
+                        })
+                    }
+                });
+            }
         },error:function () {
             console.log("获取文章失败！")
         }
@@ -90,19 +124,29 @@ function loginSuccess(data) {
     $(".rightColumns").attr("src",image);
     $(".leftColumns a").off("click");
     $('.leftColumns a').on('click', function () {
-        if ($(this)[0].style.background == "") {
+        if ($(this)[0].style.background == "rgb(193, 25, 78)") {
+            $(this).html('关注问题');
+            $(this).css({
+                'background': '',
+            });
+            if (parseInt($(".leftColumns").children("p").eq(1).children("span").text()) > 1){
+                $(".leftColumns").children("p").eq(1).children("span").text(parseInt($(".leftColumns").children("p").eq(1).children("span").text())-1)
+            } else{
+                $(".leftColumns").children("p").eq(1).children("span").text("无")
+            }
+        } else {
             $(this).html('已关注');
             $(this).css({
-                'background': '#C1194E'
+                'background': '#C1194E',
             });
-        } else {
-            $(this).html('关注教程');
-            $(this).css({
-                'background': ''
-            });
+            if ($(".leftColumns").children("p").eq(1).children("span").text() == "无"){
+                $(".leftColumns").children("p").eq(1).children("span").text(1)
+            } else{
+                $(".leftColumns").children("p").eq(1).children("span").text(parseInt($(".leftColumns").children("p").eq(1).children("span").text())+1)
+            }
         }
         $.ajax({
-            url:"../col/docK?"+window.location.search,
+            url:"../col/docK"+window.location.search,
             type:"put",
             success:function () {
             },error:function () {

@@ -27,12 +27,12 @@ public class CollectServiceImpl implements CollectService {
     @Autowired
     private CollectDKindRepository collectDKindRepository;
     @Autowired
-    private CollectFCRepository collectFCRepository;
+    private CollectFProRepository collectFProRepository;
 
     //改变文章收藏
     @Override
     public void changeDocC(long docid) {
-        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        MulUser mulUser = userService.getUsername();
         CollectDoc collectDoc = collectDocRepository.findByUseridAndDocid(mulUser.getId(),docid);
         if (collectDoc != null){
             collectDocRepository.delete(collectDoc);
@@ -44,7 +44,7 @@ public class CollectServiceImpl implements CollectService {
     //改变文章专题收藏
     @Override
     public void changeDocK(String kind) {
-        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        MulUser mulUser = userService.getUsername();
         CollectDKind collectDKind = collectDKindRepository.findByUseridAndKindEquals(mulUser.getId(),kind);
         if (collectDKind != null){
             collectDKindRepository.delete(collectDKind);
@@ -56,7 +56,7 @@ public class CollectServiceImpl implements CollectService {
     //改变问答收藏
     @Override
     public void changeForumC(long forumid) {
-        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        MulUser mulUser = userService.getUsername();
         CollectForum collectForum = collectForumRepository.findByUseridAndForumid(mulUser.getId(),forumid);
         if (collectForum != null){
             collectForumRepository.delete(collectForum);
@@ -67,20 +67,20 @@ public class CollectServiceImpl implements CollectService {
 
     //改变议题问题（评论）收藏
     @Override
-    public void changeForumCC(long forumid,long cid) {
-        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
-        CollectFComment collectFComment = collectFCRepository.findByCommentidAndUserid(cid,mulUser.getId());
-        if (collectFComment != null){
-            collectFCRepository.delete(collectFComment);
+    public void changeForumCC(long cid) {
+        MulUser mulUser = userService.getUsername();
+        CollectFPro collectFPro = collectFProRepository.findByCommentidAndUserid(cid,mulUser.getId());
+        if (collectFPro != null){
+            collectFProRepository.delete(collectFPro);
         }else{
-            collectFCRepository.save(new CollectFComment(forumid,cid,mulUser.getId()));
+            collectFProRepository.save(new CollectFPro(collectFPro.getForumid(),cid,mulUser.getId()));
         }
     }
 
     //改变视频收藏
     @Override
     public void changeVideoC(long videoid) {
-        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        MulUser mulUser = userService.getUsername();
         CollectVideo collectVideo = collectVideoRepository.findByUseridAndVideoid(mulUser.getId(),videoid);
         if (collectVideo != null){
             collectVideoRepository.delete(collectVideo);
@@ -92,7 +92,7 @@ public class CollectServiceImpl implements CollectService {
     //改变用户收藏
     @Override
     public void changeUserC(long cuserid) {
-        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        MulUser mulUser = userService.getUsername();
         CollectUser collectUser = collectUserRepository.findByUseridAndCuserid(mulUser.getId(),cuserid);
         if (collectUser != null){
             collectUserRepository.delete(collectUser);

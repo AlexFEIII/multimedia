@@ -165,42 +165,51 @@ jQuery.extend({
         } catch (e) {
             jQuery.handleError(s, xml, null, e);
         }
-
-        jQuery('#' + frameId).load(uploadCallback);
-        return {
-            abort: function () {
-                try {
-                    jQuery('#' + frameId).remove();
-                    jQuery(form).remove();
+        try{
+            jQuery('#' + frameId).load(uploadCallback);
+            return {
+                abort: function () {
+                    try {
+                        jQuery('#' + frameId).remove();
+                        jQuery(form).remove();
+                    }
+                    catch (e) { }
                 }
-                catch (e) { }
-            }
-        };
+            };
+        }catch (e) {
+            //ignore
+        }
     },
 
     uploadHttpData: function (r, type) {
-        var data = !type;
-        data = type == "xml" || data ? r.responseXML : r.responseText;
+        // var data = !type;
+        // data = type == "xml" || data ? r.responseXML : r.responseText;
+        //
+        // // If the type is "script", eval it in global context
+        // if (type == "script")
+        //     jQuery.globalEval(data);
+        // // Get the JavaScript object, if JSON is used.
+        // if (type == "json") {
+        //     data = r.responseText;
+        //     var start = data.indexOf(">");
+        //     if (start != -1) {
+        //         var end = data.indexOf("<", start + 1);
+        //         if (end != -1) {
+        //             data = data.substring(start + 1, end);
+        //         }
+        //     }
+        //     eval("data = " + data);
+        // }
+        // // evaluate scripts within html
+        // if (type == "html")
+        //     jQuery("<div>").html(data).evalScripts();
+        // return data;
 
-        // If the type is "script", eval it in global context
-        if (type == "script")
-            jQuery.globalEval(data);
-        // Get the JavaScript object, if JSON is used.
-        if (type == "json") {
-            data = r.responseText;
-            var start = data.indexOf(">");
-            if (start != -1) {
-                var end = data.indexOf("<", start + 1);
-                if (end != -1) {
-                    data = data.substring(start + 1, end);
-                }
-            }
-            eval("data = " + data);
+        var data = r.responseText;
+        var end = data.indexOf("<");
+        if (end != -1) {
+            data = data.substring(0, end);
         }
-        // evaluate scripts within html
-        if (type == "html")
-            jQuery("<div>").html(data).evalScripts();
-
         return data;
     },
 

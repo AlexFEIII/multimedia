@@ -56,6 +56,8 @@ public class DocServiceImpl implements DocService {
 
     @Autowired
     private CollectDKindRepository collectDKindRepository;
+    @Autowired
+    private CollectFProRepository collectFProRepository;
 
 
     @Autowired
@@ -83,7 +85,7 @@ public class DocServiceImpl implements DocService {
     public List<Boolean> getBoolean(long docid) {
         boolean isfollow = false,isupvote = false,iscollect = false;
         try{
-            MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+            MulUser mulUser = userService.getUsername();
             if (docUpvoteRepository.findByDocidAndAndUserid(docid,mulUser.getId()) != null){
                 isupvote = true;
             }
@@ -116,7 +118,7 @@ public class DocServiceImpl implements DocService {
     @Override
     public List<DocUserView> getMineDoc(String type) {
         List<DocUserView> docUserViews = new ArrayList<>();
-        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        MulUser mulUser = userService.getUsername();
         List<Document> documents = documentRepository.findByUseridAndKindOrderByDateAsc(mulUser.getId(),type);
         for (Document document : documents){
             docUserViews.add(new DocUserView(document,mulUser));
@@ -145,7 +147,7 @@ public class DocServiceImpl implements DocService {
         if (!title.equals(sensitivewordFilter.turnWord(title))){
             return "T_SENSITIVE";
         }
-        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        MulUser mulUser = userService.getUsername();
         try{
             if (summary == null)
                 summary = content.substring(0,30);
@@ -236,14 +238,14 @@ public class DocServiceImpl implements DocService {
     @Override
     public DocType getDocType(String type,int pagenum) {
         List<DocUserView> docUserViews = new ArrayList<>();
-        Pageable pageable = new PageRequest(pagenum-1,20,new Sort(Sort.Direction.DESC,"id"));
+        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.DESC,"id"));
         Page<Document> list = documentRepository.findAllByKindEquals(type,pageable);
         for (Document document:list){
             docUserViews.add(new DocUserView(document,userRepository.findOne(document.getUserid())));
         }
         boolean isCol = false;
         try{
-            MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+            MulUser mulUser = userService.getUsername();
             if (collectDKindRepository.findByUseridAndKindEquals(mulUser.getId(),type) != null){
                 isCol = true;
             }
@@ -251,5 +253,16 @@ public class DocServiceImpl implements DocService {
             //ignore
         }
         return new DocType(collectDKindRepository.countAllByKindEquals(type),list.getTotalElements(),list.getTotalPages(),isCol,docUserViews);
+    }
+
+    //获取议题问题的内容
+    public DocType getForumDoc(long proid,int pagenum) {
+        List<DocUserView> docUserViews = new ArrayList<>();
+        Pageable pageable = new PageRequest(pagenum-1,12,new Sort(Sort.Direction.DESC,"id"));
+        Page<Document> list = documentRepository.findAllByKindEqualsAndForumCid("forum",proid,pageable);
+        for (Document document:list){
+            docUserViews.add(new DocUserView(document,userRepository.findOne(document.getUserid())));
+        }
+        return new DocType(collectFProRepository.countAllById(proid),list.getTotalElements(),list.getTotalPages(),false,docUserViews);
     }
 }

@@ -46,4 +46,7 @@ public interface DocService {
 
     //获取某一类型 文章
     DocType getDocType(String type,int pagenum);
+
+    //获取议题问题的具体内容
+    DocType getForumDoc(long proid,int pagenum);
 }

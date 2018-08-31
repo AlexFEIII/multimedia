@@ -8,7 +8,7 @@ public interface CollectService {
     //改变问答收藏
     void changeForumC(long forumid);
     //改变议题问题（评论）收藏
-    void changeForumCC(long forumid,long cid);
+    void changeForumCC(long cid);
     //改变视频收藏
     void changeVideoC(long videoid);
     //改变用户关注

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" href="http://p9ba3amn1.bkt.clouddn.com/title_logo.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="http://p9ba3amn1.bkt.clouddn.com/title_logo.ico" type="image/x-icon">
+    <title>问道</title>
+    <link rel="stylesheet" href="../font/iconfont.css">
+    <link rel="stylesheet" href="../css/same.css">
+    <link rel="stylesheet" href="../css/video-main.css">
+</head>
+
+<body>
+    <div id="main">
+        <div class="title">
+            <div class="logo">
+            </div>
+            <!-- logo -->
+            <div class="list">
+                <ul class="left_list">
+                    <li>
+                        <a href="index.html" target="_blank">首页</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">名师讲堂</a>
+                    </li>
+                    <li>
+                        <a href="javascript:;">视频教学</a>
+                    </li>
+                    <li>
+                        <a href="articlePage.html" target="_blank">经典教文</a>
+                    </li>
+                    <li>
+                        <a href="topic.html" target="_blank">议题大会</a>
+                    </li>
+                    <li class="same_li">
+                        <a href="map.html" title="定位" target="_blank">
+                            <i class="iconfont location">&#xe613;</i>
+                        </a>
+                    </li>
+                    <li class="same_li searchLi">
+                        <form>
+                            <input type="text" placeholder="搜索" class="InputTextBtn">
+                            <a href="javascript:;" title="搜索" class="search_special">
+                                <i class="iconfont search">&#xe63c;</i>
+                            </a>
+                        </form>
+                    </li>
+                    <li class="same_li last_li">
+                        <!-- <a href="javascript:;" id="login_a">登录</a>
+                            <a href="javascript:;" id="register_a">注册</a> -->
+                        <!-- 登录前 -->
+                        <div class="location_div_a">
+                            <a href="personalCenter.html" class="photo_cicle" target="_blank">
+                                <img src="../img/10.jpg">
+                            </a>
+                            <div class="msg_index_dance">
+                                进入个人中心
+                            </div>
+                        </div>
+                        <div class="editor_article">
+                            <a href="preset.html" target="_blank">
+                                <span>
+                                    <i class="iconfont">&#xe645;</i>
+                                </span>
+                                写文章
+                            </a>
+                        </div>
+                        <!-- 登陆后 -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-video-page">
+            <div class="main-content">
+                <p>名师讲堂</p>
+            </div>
+        </div>
+        <!-- 分页 -->
+        <div class="pagingTool"></div>
+        <div class="copyright">
+            <p>© Copyright 2018. Powered by DXstudio. All rights reserved.</p>
+        </div>
+        <div class="toTop">
+            <a href="javascript:;" class="GoTop" title="回到顶部">
+                <img src="../img/3.png">
+            </a>
+        </div>
+    </div>
+    <script src="../js/jquery.min.js"></script>
+    <script src="../layui/layer.js"></script>
+    <script src="../js/jquery.nicescroll.min.js"></script>
+    <script src="../js/paging.js"></script>
+    <script src="../js/same.js"></script>
+    <script>
+        var mainContent = $('.main-content');
+        for (var i = 0; i < 12; i++) {
+            var Content_one = $('<div class="same_module"><a href="javascript:;"></a><span>梨视频</span></div>');
+            mainContent.append(Content_one);
+        }
+
+        // 设置图片的高度
+        function SetImgHeight() {
+            var cutHalf = (parseFloat($('.same_module a').css('width'))) / 2;
+            $('.same_module a').css('height', cutHalf);
+        }
+
+        $('.same_module a').hover(function () {
+            $(this).addClass("a_hover a_hover_a");
+        }, function () {
+            $(this).removeClass("a_hover a_hover_a");
+        });
+
+        // 设置图片的高度
+        $(function () {
+            SetImgHeight();
+        });
+
+        // 设置图片的高度
+        $(window).resize(function () {
+            SetImgHeight();
+        });
+
+        // 分页
+        $('.pagingTool').Paging({
+            pagesize: 10,
+            count: 100,
+            prevTpl: '<i class="iconfont">&#xe78c;</i>',
+            nextTpl: '<i class="iconfont">&#xe77c;</i>',
+            firstTpl: '<i class="iconfont">&#xe609;</i>',
+            lastTpl: '<i class="iconfont">&#xe6de;</i>',
+        });
+
+        $('.pagingTool li').on('click', function () {
+            $('.pagingTool').css({
+                '-webkit-user-select': 'none',
+                '-moz-user-select': 'none',
+                '-ms-user-select': 'none',
+                'user-select': 'none',
+            });
+        });
+
+        //NO MORE
+        // $('.pagingTool').append('<div class="NOMore"><i class="iconfont">&#xe670;</i><p>没有更多了</p></div>');
+    </script>
+</body>
+
+</html>

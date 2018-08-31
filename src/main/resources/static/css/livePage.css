@@ -426,3 +426,8 @@
     -webkit-animation-name: fadeIn;
     animation-name: fadeIn;
 }
+
+#VideoInterface {
+    width: 1200px;
+    height: 675px;
+}

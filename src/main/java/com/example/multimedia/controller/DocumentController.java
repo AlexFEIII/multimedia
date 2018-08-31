@@ -118,6 +118,11 @@ public class DocumentController {
         return docService.changeDoc(documentid,title,summary,content,image,type);
     }
 
+    @PutMapping(value = "/changeTitle",params = {"docid","title"})
+    public String changeTitle(long docid,String title){
+        return null;
+    }
+
     /*
     * 删除文章
     * */

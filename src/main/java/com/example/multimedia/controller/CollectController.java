@@ -44,9 +44,10 @@ public class CollectController {
         collectService.changeForumC(forumid);
     }
 
-    @PutMapping(value = "/forumC",params = {"forumid","cid"})
-    public void changeForumCC(long forumid,long cid){
-        collectService.changeForumCC(forumid,cid);
+    //改变问答问题收藏
+    @PutMapping(value = "/forumC",params = {"cid"})
+    public void changeForumCC(long cid){
+        collectService.changeForumCC(cid);
     }
 
     /**

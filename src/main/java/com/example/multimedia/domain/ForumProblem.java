@@ -27,6 +27,8 @@ public class ForumProblem {
     private long upvotenum;
     //时间
     private Date date;
+    //封面
+    private String image;
 
     public ForumProblem(){}
     public ForumProblem(String title,long forumid,long userid,long replyid){
@@ -56,6 +58,7 @@ public class ForumProblem {
                 ", replyid=" + replyid +
                 ", upvotenum=" + upvotenum +
                 ", date=" + date +
+                ", image='" + image + '\'' +
                 '}';
     }
 
@@ -121,5 +124,13 @@ public class ForumProblem {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

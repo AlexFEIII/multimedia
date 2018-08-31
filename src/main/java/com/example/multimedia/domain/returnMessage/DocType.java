@@ -6,7 +6,7 @@ import java.util.List;
 
 public class DocType {
     //关注该类型文章的人数
-    private int colnum;
+    private long colnum;
     //该类型文章的数目
     private long docnum;
     //总页数
@@ -17,7 +17,7 @@ public class DocType {
     private List<DocUserView> docUserViews;
 
     public DocType(){}
-    public DocType(int colnum,long docnum,int totalPage,boolean isCol,List<DocUserView> docUserViews){
+    public DocType(long colnum,long docnum,int totalPage,boolean isCol,List<DocUserView> docUserViews){
         this.colnum = colnum;
         this.docnum = docnum;
         this.totalPage = totalPage;
@@ -36,11 +36,11 @@ public class DocType {
                 '}';
     }
 
-    public int getColnum() {
+    public long getColnum() {
         return colnum;
     }
 
-    public void setColnum(int colnum) {
+    public void setColnum(long colnum) {
         this.colnum = colnum;
     }
 

@@ -2,6 +2,7 @@ package com.example.multimedia.service;
 
 import com.example.multimedia.domain.*;
 import com.example.multimedia.domain.returnMessage.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.print.Pageable;
 import java.util.List;
@@ -29,8 +30,12 @@ public interface CommentService {
 
     //返回议题问题的回复
     List<ForumRUser> getForumCRelay(long proid);
+    //修改、增加议题的简介
+    Integer proContent(long proid,String content);
+    //修改、增加议题的图片
+    String proImage(long proid, MultipartFile file);
     //返回议题评论及其回复
     List<ForumComView> getForumComment(long forumid,int pagenum);
     //返回某个议题问题的具体内容
-
+    ForumProblemView getOnePro(long id);
 }

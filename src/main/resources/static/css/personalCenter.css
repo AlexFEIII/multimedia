@@ -164,6 +164,9 @@
     overflow: hidden;
     display: block;
     position: relative;
+    background: url(../img/Soda.jpg) no-repeat;
+    background-size: cover;
+    background-position: -50%;
 }
 
 .same_module img {
@@ -416,7 +419,7 @@
 .MiddleTitle .FocusInputText {
     border: 1px solid #DDD;
     transition: all .3s ease;
-    padding: 5px 35px 5px 10px;
+    padding: 5px 45px 5px 10px;
     border-radius: 3px;
     overflow: hidden;
     width: 200px;

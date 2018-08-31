@@ -5,6 +5,7 @@ import com.example.multimedia.domain.returnMessage.*;
 import com.example.multimedia.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -88,13 +89,29 @@ public class CommentController {
     }
 
     /**
-     * 返回一个议题问题的具体内容
+     * 返回一个议题问题的具体内容 以及 收录的第一页文章
      * @param id
      * @return
      */
     @GetMapping(value = "getOnePro",params = "id")
-    public ForumProblem getOnePro(long id){
-        return null;
+    public ForumProblemView getOnePro(long id){
+        return commentService.getOnePro(id);
+    }
+
+    /**
+     * 修改议题问题的简介
+     * @param id 问题的id
+     * @param content
+     * @return 401说明权限错误 200说明返回成功 403表示有违规信息
+     */
+    @PutMapping(value = "proContent",params = {"id","content"})
+    public Integer proContent(long id,String content){
+        return commentService.proContent(id,content);
+    }
+
+    @PostMapping(value = "proimage",params = "id")
+    public String proImage(long id,MultipartFile file){
+        return  commentService.proImage(id,file);
     }
 
     /**

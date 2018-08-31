@@ -1,8 +1,12 @@
+$(document).ready(function () {
+   $("input").eq().focus();
+});
+
 $("#main_content").keyup(function (event) {
     if (event.keyCode == 13){
         $(".signIn_btn").click();
     }
-})
+});
 
 $(".signIn_btn").click(function () {
     var username = $("input:first").val();
@@ -14,19 +18,13 @@ $(".signIn_btn").click(function () {
         success:function (data) {
             if (data.msg != null){
                 if (data.msg == "NoUser"){
-                    alert("用户名不存在！");
+                    layer.msg("用户名不存在！");
                 }else if (data.msg == "NoEmail") {
-                    alert("邮箱不存在")
+                    layer.msg("邮箱不存在")
                 }else {
                     console.log("登录发生未知错误");
                 }
             } else{
-                // parent.$(".layui-layer-close").click();
-                // parent.$(".last_li").empty();
-                // var image = "../img/14.png";
-                // if (data.headimage != null) image = data.headimage;
-                // parent.$(".last_li").append('<div class="location_div_a"><a href="../html/personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="RichEditor.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
-                // parent.loginSuccess(data);
                 parent.location.reload();
             }
         },error:function (data) {

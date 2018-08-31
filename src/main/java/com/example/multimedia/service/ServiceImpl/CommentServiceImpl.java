@@ -4,6 +4,7 @@ import com.example.multimedia.domain.*;
 import com.example.multimedia.domain.returnMessage.*;
 import com.example.multimedia.repository.*;
 import com.example.multimedia.service.CommentService;
+import com.example.multimedia.service.DocService;
 import com.example.multimedia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -49,9 +51,11 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private VideoCUpvoteRepository videoCUpvoteRepository;
     @Autowired
-    private CollectFCRepository collectFCRepository;
+    private CollectFProRepository collectFProRepository;
     @Autowired
     private ForumCommentRepository forumCommentRepository;
+    @Autowired
+    private DocService docService;
 
     SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
 
@@ -61,7 +65,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Map<Long,String> comment(String type, long objid, String content) {
         if (content.equals("")) return null;
-        long userid = userRepository.findByUsername(userService.getUsername()).getId();
+        long userid = userService.getUsername().getId();
         long ruserid = docCommentRepository.findOne(objid).getUserid();
         content = sensitivewordFilter.turnWord(content);
         long id = 0;
@@ -95,7 +99,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Map<Long,String> replyR(String type,String content,long objid,long rcommentid){
         if (content.equals("")) return null;
-        long userid = userRepository.findByUsername(userService.getUsername()).getId();
+        long userid = userService.getUsername().getId();
         content = sensitivewordFilter.turnWord(content);
         long id = 0;
         if (type.equals("docRR")){
@@ -237,7 +241,7 @@ public class CommentServiceImpl implements CommentService {
         boolean isLogin = true;
         MulUser mulUser = null;
         try{
-            mulUser = userRepository.findByUsername(userService.getUsername());
+            mulUser = userService.getUsername();
         }catch (Exception e){
             isLogin = false;
         }
@@ -295,7 +299,7 @@ public class CommentServiceImpl implements CommentService {
         boolean isLogin = true;
         MulUser mulUser = null;
         try{
-            mulUser = userRepository.findByUsername(userService.getUsername());
+            mulUser = userService.getUsername();
         }catch (Exception e){
             isLogin = false;
         }
@@ -311,9 +315,8 @@ public class CommentServiceImpl implements CommentService {
                 forumRelays.add(new ForumRUser(forumRelay.get(i),user.getNickname(),user.getId(),ruser.getNickname(),ruser.getId()));
             }
             if (isLogin){
-
                 if (forumCUpvoteRepository.findByCommentidAndUserid(forumProblem.getId(),mulUser.getId()) != null) isUp = true;
-                if (collectFCRepository.findByCommentidAndUserid(forumProblem.getId(),mulUser.getId()) != null) isFollow = true;
+                if (collectFProRepository.findByCommentidAndUserid(forumProblem.getId(),mulUser.getId()) != null) isFollow = true;
             }
             if (forumRelays.size() == 0){
                 fcViews.add(new FCView(list.getTotalPages(),list.getTotalElements(),new ForumCUser(forumProblem,userRepository.findOne(forumProblem.getUserid())),null,isUp,isFollow));
@@ -346,7 +349,7 @@ public class CommentServiceImpl implements CommentService {
     //返回议题 问题的回复
     @Override
     public List<ForumRUser> getForumCRelay(long proid) {
-        MulUser user = userRepository.findByUsername(userService.getUsername());
+        MulUser user = userService.getUsername();
         MulUser ruser = userRepository.findOne(forumProblemRepository.findOne(proid).getUserid());
         List<ForumRUser> forumRUsers = new ArrayList<>();
         List<ForumRelay> forumRelays = forumRelayRepository.findByCommentidOrderByIdDesc(proid);
@@ -354,6 +357,55 @@ public class CommentServiceImpl implements CommentService {
             forumRUsers.add(new ForumRUser(forumRelay,user.getNickname(),user.getId(),ruser.getNickname(),ruser.getId()));
         }
         return forumRUsers;
+    }
+
+    //增加、修改议题问题的简介
+    @Override
+    public Integer proContent(long proid,String content){
+        try{
+            ForumProblem forumProblem = forumProblemRepository.findOne(proid);
+            if (userService.getUsername().getId() == forumProblem.getUserid()){
+                if (sensitivewordFilter.checkSensitiveWord(content,0) > 0){
+                    return 403;
+                }else {
+                    forumProblem.setContent(content);
+                    forumProblemRepository.save(forumProblem);
+                    return 200;
+                }
+            }
+        }catch (Exception e){
+        }
+        return 401;
+    }
+
+    //增加、修改议题问题的图片
+    @Override
+    public String proImage(long proid, MultipartFile file) {
+        String flag = userService.uploadImage(file);
+        if (flag.equals("N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
+            return flag;
+        }
+        ForumProblem forumProblem = forumProblemRepository.findOne(proid);
+        try{
+            if (forumProblem.getUserid() == userService.getUsername().getId()){
+                forumProblem.setImage(flag);
+                forumProblemRepository.save(forumProblem);
+                return "YES";
+            }
+            return "NO";
+        }catch (Exception e){
+            return "Auth";
+        }
+    }
+
+    //返回某个问题的具体内容
+    @Override
+    public ForumProblemView getOnePro(long id) {
+        boolean flag = false;
+        if (collectFProRepository.findByCommentidAndUserid(id,userService.getUsername().getId()) != null){
+            flag = true;
+        }
+        return new ForumProblemView(collectFProRepository.countAllById(id),documentRepository.countAllByKindEquals("forum"),forumProblemRepository.findOne(id),docService.getForumDoc(id,1),flag);
     }
 
     //返回议题 评论及其回复

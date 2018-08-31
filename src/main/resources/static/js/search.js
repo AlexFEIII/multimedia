@@ -7,18 +7,18 @@ var OldParts = $('.Parts').eq(0);
 $('.leftParts .topA').on('click', function () {
     var index = $('.leftParts a').index(this); //判断元素在当前的位置是第几个元素
     OldParts.css({
-        'display': 'none',
+        'display': 'none'
     });
     OldParts = $('.Parts').eq(index);
     $('.Parts').eq(index).css({
-        'display': 'flex',
+        'display': 'flex'
     });
     Old.css({
-        'background': '',
+        'background': ''
     });
     Old = $(this);
     $(this).css({
-        'background': '#dbdada',
+        'background': '#dbdada'
     });
 });
 
@@ -108,6 +108,19 @@ $('.HiddenSpan').on('click', function () {
     }
 });
 
+// 设置图片的高度
+function SetImgHeight() {
+    var cutHalf = (parseFloat($('.same_module a').css('width'))) / 2;
+    $('.same_module a').css('height', cutHalf);
+}
+// 设置图片的高度
+$(function () {
+    SetImgHeight();
+});
+// 设置图片的高度
+$(window).resize(function () {
+    SetImgHeight();
+});
 
 var content = window.location.search;
 var lf = false,vf = false,df = false,ff = false;
@@ -119,7 +132,7 @@ $(document).ready(function () {
    //      success:function (data) {
    //          console.log(data);
    //          for (var i = 0;i < data.length;i ++){
-   //              var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"></a><span>'+data[i].title+'</span></div>');
+   //              var select_one = $('<div class="same_module"><a href="javascript:;"></a><span>'+data[i].title+'</span></div>');
     //              firstPart.append(select_one);
    //          }
    //      }
@@ -134,7 +147,7 @@ clickUl.children("li").eq(1).click(function () {
             success:function (data) {
                 vf = true;
                 for (var i in data){
-                    var select_one = $('<div class="same_module"><a href="javascript:;"><img src="'+data[i].image+'"></a><span>'+data[i].title+'</span></div>');
+                    var select_one = $('<div class="same_module"><a href="javascript:;"></a><span>'+data[i].title+'</span></div>');
                     secondPart.append(select_one);
                 }
             }

@@ -76,7 +76,7 @@ public class ForumServiceImpl implements ForumService {
         MulUser mulUser = userRepository.findOne(forum.getUserid());
         boolean isfollow = false;
         try{
-            MulUser user = userRepository.findByUsername(userService.getUsername());
+            MulUser user = userService.getUsername();
             if (collectForumRepository.findByUseridAndForumid(user.getId(),id) != null){
                 isfollow = true;
             }
@@ -91,7 +91,7 @@ public class ForumServiceImpl implements ForumService {
     @Override
     public List<Forum> getMineForum() {
         List<ForumUser> forumUsers = new ArrayList<>();
-        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        MulUser mulUser = userService.getUsername();
         List<Forum> forums = forumRepository.findByUseridOrderByDateAsc(mulUser.getId());
         return forums;
     }
@@ -117,7 +117,7 @@ public class ForumServiceImpl implements ForumService {
         if (forumKind == null){
             return null;
         }
-        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        MulUser mulUser = userService.getUsername();
         try{
             if (summary == null)
                 summary = content.substring(0,30);
@@ -179,7 +179,7 @@ public class ForumServiceImpl implements ForumService {
         if (sensitivewordFilter.checkSensitiveWord(title,0) > 0){
             return "ILLEGAL";
         }
-        MulUser user = userRepository.findByUsername(userService.getUsername());
+        MulUser user = userService.getUsername();
         MulUser ruser = userRepository.findOne(forumRepository.findOne(forumid).getUserid());
         ForumProblem forumProblem = new ForumProblem(title,forumid,user.getId(),ruser.getId());
         forumProblemRepository.save(forumProblem);
@@ -192,7 +192,7 @@ public class ForumServiceImpl implements ForumService {
         System.out.println("forumid: "+forumid+"  Content: "+content+"  rcommentid: "+rcommentid);
         if (content.equals("")) return null;
         try{
-            MulUser user = userRepository.findByUsername(userService.getUsername());
+            MulUser user = userService.getUsername();
             MulUser ruser;
             if (rcommentid == 0){
                 ruser = userRepository.findOne(forumRepository.findOne(forumid).getUserid());
@@ -282,7 +282,7 @@ public class ForumServiceImpl implements ForumService {
     @Override
     public void addKind(String kind,MultipartFile file){
         try{
-            String role = userRepository.findByUsername(userService.getUsername()).getRole();
+            String role = userService.getUsername().getRole();
             if (role.equals("ROLE_MANAGER") || role.equals("ROLE_SMANAGER"))
 
                 forumKindRepository.save(new ForumKind(kind,userService.uploadImage(file)));
@@ -312,9 +312,8 @@ public class ForumServiceImpl implements ForumService {
     }
 
     public boolean power(long id,Forum forum){
-        String username = userService.getUsername();
-        MulUser mulUser = userRepository.findByUsername(username);
-        if (userRepository.findOne(forumRepository.findOne(id).getUserid()).getUsername().equals(username) ||
+        MulUser mulUser = userService.getUsername();
+        if (userRepository.findOne(forumRepository.findOne(id).getUserid()).getUsername().equals(mulUser.getUsername()) ||
                 (mulUser.getRole().equals("ROLE_MANAGER") && mulUser.getPower().contains("d")) ||
                 mulUser.getRole().equals("ROLE_SMANAGER"))
             return true;

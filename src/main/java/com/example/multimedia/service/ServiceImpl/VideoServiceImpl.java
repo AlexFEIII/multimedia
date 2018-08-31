@@ -68,7 +68,7 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public List<VideoUser> getMineVideo(){
         List<VideoUser> videoUsers = new ArrayList<>();
-        MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+        MulUser mulUser = userService.getUsername();
         List<Video> videos = videoRepository.findByUseridOrderByDateAsc(mulUser.getId());
         for (Video video : videos){
             videoUsers.add(new VideoUser(video,userRepository.findOne(video.getUserid())));
@@ -98,7 +98,7 @@ public class VideoServiceImpl implements VideoService {
                 return "T_SENSITIVE";
             }
             if (!summary.equals(sensitivewordFilter.turnWord(summary))) return "S_SENSITIVE";
-            MulUser mulUser = userRepository.findByUsername(userService.getUsername());
+            MulUser mulUser = userService.getUsername();
             Pinyin pinyin = new Pinyin();
             String flag = userService.uploadImage(image);
             if (flag.equals("IMAGE_N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
@@ -155,9 +155,8 @@ public class VideoServiceImpl implements VideoService {
     }
 
     private boolean power(long videoid,Video video){
-        String username = userService.getUsername();
-        MulUser mulUser = userRepository.findByUsername(username);
-        if (userRepository.findOne(video.getUserid()).getUsername().equals(username) ||
+        MulUser mulUser = userService.getUsername();
+        if (userRepository.findOne(video.getUserid()).getUsername().equals(mulUser.getUsername()) ||
                 (mulUser.getRole().equals("ROLE_MANAGER") && mulUser.getPower().contains("v")) ||
                 mulUser.getRole().equals("ROLE_SMANAGER"))
             return true;

@@ -1,8 +1,10 @@
 var USERDATA = "";
+var PRODATA = "";
 $(document).ready(function () {
     $.ajax({
         url:"../user/isLogin",
         type:"get",
+        async:false,
         success:function (data) {
             console.log(data);
             if (data != ""){
@@ -15,8 +17,69 @@ $(document).ready(function () {
     $.ajax({
         url:"../getOnePro"+window.location.search,
         type:"get",
+        async:false,
         success:function (data) {
-            console.log(data)
+            console.log(data);
+            PRODATA = data.forumProblem;
+            if (data.colnum != 0){
+                $(".OneFirstFocus span").text(i)
+            }
+            if (data.col){
+                $(".FocusQuestion").html('已关注');
+                $(".FocusQuestion").css({
+                    'background': '#C1194E'
+                });
+            }
+            //写问答添加链接
+            $(".leftColumns a").eq(1).attr("href","preset.html?type=forum&proid"+PRODATA.id);
+            $(".leftColumnsH1").text(data.forumProblem.title);
+            if (data.forumProblem.content != null){
+                $(".wordP").text(data.forumProblem.content);
+            }
+            $(".TwoCollectionArticle").text("收集了"+data.docnum+"篇文章");
+            if (data.forumProblem.image != null){
+                $("#finalImg").attr("src",data.forumProblem.image)
+            }
+            if (data.forumProblem.userid != USERDATA.id){
+                $("#replaceImg").remove();
+                $("#editor-word").remove();
+                $(".tailoring-container").remove();
+                $(".editor-question-word").remove();
+            }
+            if (data.docType.totalPage > 1){
+                $(".Select_Much").after('<div class="pagingTool"></div>');
+                $(".pagingTool").Paging({
+                    pagesize: 1,
+                    count:data.docType.totalPage,
+                    prevTpl: '<i class="iconfont">&#xe78c;</i>',
+                    nextTpl: '<i class="iconfont">&#xe77c;</i>',
+                    firstTpl: '<i class="iconfont">&#xe609;</i>',
+                    lastTpl: '<i class="iconfont">&#xe6de;</i>',
+                    callback:function (page,size,count) {
+                        console.log("num: "+page);
+                        $('.commentsList').empty();
+                        $.ajax({
+                            url:"../doc?type=forum&pagenum="+page,
+                            type:"get",
+                            success:function (data) {
+                                $(".Select_Much").empty();
+                                var username;
+                                for (var i = 0;i < data.docUserViews.length;i ++){
+                                    username = data.docUserViews[i].mulUser.nickname;
+                                    var image = "";
+                                    if (username == null) username = data.docUserViews[i].mulUser.username;
+                                    if (data.docUserViews[i].document.image != null) image = '<img src="'+data.docUserViews[i].document.image+'"/>';
+                                    var AddDiv = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data.docUserViews[i].document.id+'" target="_blank" class="under_line">'+data.docUserViews[i].document.title+'</a><p class="draw_text">'+data.docUserViews[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data.docUserViews[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data.docUserViews[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>');
+
+                                    SelectDiv.append(AddDiv);
+                                }
+                            },error:function() {
+                                console.log("请求文章失败！")
+                            }
+                        })
+                    }
+                });
+            }
         },error:function () {
             console.log("获取问题具体信息失败！")
         }
@@ -30,60 +93,60 @@ function loginSuccess(data) {
     if (data.headimage != null) image = data.headimage;
     $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
     $(".MuchSameSpan img").attr("src",image);
-}
 
-var onOff = true;
-$('.leftColumns .FocusQuestion').on('click', function () {
-    if (onOff) {
-        onOff = false;
-        $(this).html('已关注');
-        $(this).css({
-            'background': '#C1194E',
-        });
-        Focus('无人关注', '1人关注', 1);
-    } else {
-        onOff = true;
-        $(this).html('关注问题');
-        $(this).css({
-            'background': '',
-        });
-        Focus('1人关注', '无人关注', 0);
-    }
-});
-
-function Focus(n, m, l) {
-    if ($('.OneFirstFocus').html() == n) {
-        $('.OneFirstFocus').html(m);
-    } else {
-        var Num = parseInt($('.OneFirstFocus').html());
-        if (l) {
-            Num++;
-            $('.OneFirstFocus').html('' + Num + '人关注');
+    $('.leftColumns a').off('click');
+    //关注问题
+    $('.leftColumns .FocusQuestion').on('click', function () {
+        if ($(this)[0].style.background == "rgb(193, 25, 78)") {
+            $(this).html('关注问题');
+            $(this).css({
+                'background': ''
+            });
+            if (parseInt($(".OneFirstFocus span").text()) > 1){
+                $(".OneFirstFocus span").text(parseInt($(".OneFirstFocus span").text())-1)
+            } else{
+                $(".OneFirstFocus span").text("无")
+            }
         } else {
-            Num--;
-            $('.OneFirstFocus').html('' + Num + '人关注');
+            $(this).html('已关注');
+            $(this).css({
+                'background': '#C1194E'
+            });
+            if ($(".OneFirstFocus span").text() == "无"){
+                $(".OneFirstFocus span").text(1)
+            } else{
+                $(".OneFirstFocus span").text(parseInt($(".OneFirstFocus span").text())+1)
+            }
         }
-    }
+        $.ajax({
+            url:"../col/forumC?c"+window.location.search.substring(1),
+            type:"put",
+            success:function () {
+            },error:function () {
+                console.log("收藏问题出错！")
+            }
+        })
+    });
+
+    $('#editor-word').on('click', function () {
+        $('.editor-question-word').css('display', 'flex');
+        $('#editor-question-word-textarea').focus();
+        $('#editor-question-word-textarea').val($(".wordP").text());
+    });
+
+    //编辑封面
+    $('#replaceImg').on('click', function () {
+        $('.tailoring-container').toggle();
+    });
 }
+
+$('.leftColumns a').on('click', function () {
+    layer.msg("请先登录！")
+});
 
 $('.articleContainer').append('<div class="Select_Much"></div>');
 
 var SelectDiv = $('.Select_Much');
-for (var i = 0; i < 9; i++) {
-    var AddDiv = $('<div class="other_module"><div class="left_part"><a href="javascript:;" class="under_line"></a><p class="draw_text"></p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a"></a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img"><img src=""/></aa></div>')
-    SelectDiv.append(AddDiv);
-};
-
-var ImgArray = new Array(1);
-ImgArray[0] = "https://upload-images.jianshu.io/upload_images/10560804-8aa981c5b24fc5ac.jpg?imageMogr2/auto-orient/strip|imageView2/1/w/300/h/240";
-
-SelectDiv.find("img").attr("src", ImgArray[0]);
-SelectDiv.find(".under_line").html("五一，差点只剩半条命！");
-SelectDiv.find(".bottom_first_a").html("5312Ana");
-SelectDiv.find(".bottom_two_a").append("<b>20</b>");
-SelectDiv.find(".bottom_first_span").append("<b>19</b>");
-SelectDiv.find(".bottom_two_span").append("<b>1</b>");
-SelectDiv.find("p").html("原本打算五一跟朋友跑完半程马拉松后就去北海拍海景，然而不幸的是，她准备跑到终点时突然晕倒了，虽然我没体验过这种晕倒的感觉，但可以想象出这种从鬼门关出来人的有多不易。");
 
 CutWordColumns('.draw_text', 72);
 CutWordColumns('.wordP', 60);
@@ -98,16 +161,29 @@ function CutWordColumns(n, num) {
     });
 }
 
-$('#editor-word').on('click', function () {
-    $('.editor-question-word').css('display', 'flex');
-    $('#editor-question-word-textarea').focus();
-});
-
 $('.confirm-btn').on('click', function () {
     var Del_space_newline = $('#editor-question-word-textarea').val().replace(/\ +/g, "").replace(/[\r\n]/g, "");
     $('.editor-question-word').css('display', '');
-    $('.topImgColumns .wordP').html(Del_space_newline);
-    CutWordColumns('.wordP', 60);
+    if (Del_space_newline != "" && Del_space_newline != $(".wordP").text()) {
+        $.ajax({
+            url:"../proContent"+window.location.search+"&content="+Del_space_newline,
+            type:"put",
+            success:function (data) {
+                console.log(data);
+                if (data == 401){
+                    layer.msg("权限错误！")
+                } else if (data == 403){
+                    layer.msg("简介中含有违法，暴力等信息，请进行修改！")
+                } else{
+                    $('.topImgColumns .wordP').html(Del_space_newline);
+                }
+            },error:function () {
+                console.log("修改问题简介发生错误！")
+            }
+        });
+
+    }
+    CutWordColumns('.wordP', 100);
     $('#editor-question-word-textarea').val('');
 });
 
@@ -128,11 +204,6 @@ var NumLength = $('.other_module').length;
 if (NumLength > 0) {
     $('.TwoCollectionArticle').html('收集了' + NumLength + '篇文章');
 }
-
-//编辑封面
-$('#replaceImg').on('click', function () {
-    $('.tailoring-container').toggle();
-});
 
 //图像上传
 function selectImg(file) {
@@ -196,16 +267,35 @@ $('#sureCut').on('click', function () {
     if ($('#tailoringImg').attr('src') == null) {
         return false;
     } else {
-        var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
-        var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
-        $('#finalImg').prop('src', base64url); //显示为图片的形式
-        //关闭裁剪框
-        closeTailor();
-        var animatedLoading = $('<div class="Load-animated"><div class="spinner spinnerTwo"><span></span></div></div>');
-        $('.rightColumns a').append(animatedLoading);
-        setTimeout(function () {
-            animatedLoading.remove();
-        }, 2000);
+        $.ajaxFileUpload({
+            url:"../proimage"+window.location.search,
+            type:"post",
+            secureuri:false,
+            dataType:"text",
+            fileElementId:["chooseImg"],
+            success:function (data) {
+                console.log(data);
+                if (data == 'IMAGE_N'){
+                    layer.msg("图片涉及不良内容，请重新选择图片！");
+                } else if(data == 'BIG'){
+                    layer.msg("图片过大，请上传小于2M的图片。")
+                }else if(data == 'WRONG_TYPE'){
+                    layer.msg("图片格式错误！目前仅支持jpg/jpeg/bmp/png/gif格式。")
+                }else if (data == 'NO'){
+                    layer.msg("权限错误！")
+                } else{
+                    var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
+                    var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
+                    $('#finalImg').prop('src', base64url); //显示为图片的形式
+                    //关闭裁剪框
+                    closeTailor();
+                }
+
+            }, error:function () {
+                console.log("上传头像出错！");
+                layer.msg("图片过大，请上传小于2M的图片。")
+            }
+        })
     }
 });
 

@@ -6,7 +6,7 @@ import javax.persistence.Id;
 
 //用户收藏问答 问题表
 @Entity
-public class CollectFComment {
+public class CollectFPro {
     @Id
     @GeneratedValue
     private Long id;
@@ -14,8 +14,8 @@ public class CollectFComment {
     private long commentid;
     private long userid;
 
-    public CollectFComment(){}
-    public CollectFComment(long forumid,long commentid,long userid){
+    public CollectFPro(){}
+    public CollectFPro(long forumid, long commentid, long userid){
         this.forumid = forumid;
         this.commentid = commentid;
         this.userid = userid;
@@ -23,7 +23,7 @@ public class CollectFComment {
 
     @Override
     public String toString() {
-        return "CollectFComment{" +
+        return "CollectFPro{" +
                 "id=" + id +
                 ", forumid=" + forumid +
                 ", commentid=" + commentid +

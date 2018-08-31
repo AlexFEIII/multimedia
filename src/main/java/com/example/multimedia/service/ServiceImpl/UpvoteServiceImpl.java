@@ -39,7 +39,7 @@ public class UpvoteServiceImpl implements UpvoteService {
     @Override
     public void upvote(String type,long objid) {
         System.out.println("type: "+type+"  objid: "+objid);
-        long userid = userRepository.findByUsername(userService.getUsername()).getId();
+        long userid = userService.getUsername().getId();
         if (type.equals("doc")){
             Document document = documentRepository.findOne(objid);
             Docupvote docUpvote = docUpvoteRepository.findByDocidAndAndUserid(objid,userid);
