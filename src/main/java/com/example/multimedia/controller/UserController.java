@@ -38,8 +38,7 @@ public class UserController {
     * 修改头像
     * */
     @PostMapping("/changeImage")
-    public String change(@RequestParam MultipartFile headimage){
-        System.out.println(headimage.getName());
+    public String changeImage(@RequestParam String headimage){
         return userService.changeUser(null,headimage);
     }
 

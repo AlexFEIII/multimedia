@@ -88,7 +88,7 @@ img {
     position: absolute;
     left: 0;
     /* top: -25px; */
-    top: 50%;
+    top: calc(50% - 10px);
     transform: translateY(-50%);
     transition: all .2s ease;
     padding: 0 25px;

@@ -106,7 +106,7 @@ public class ForumServiceImpl implements ForumService {
     }
 
     /*
-    * 增加文章
+    * 增加议题
     * */
     @Override
     public String addForum(String title, String summary, String content, MultipartFile image, String type) {

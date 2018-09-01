@@ -233,5 +233,21 @@ function loginSuccess(data) {
     $(".last_li").empty();
     var image = "../img/14.png";
     if (data.headimage != null) image = data.headimage;
-    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"></a><div class="msg_index_dance">进入个人中心</div></div><div class="editor_article"><a href="preset.html" target="_blank"><span><i class="iconfont">&#xe645;</i></span>写文章</a><a href="javascript:;" target="_blank" class="editor-first-a">发布</a><div class="three-part-for-article-video-issue"><a href="javascript:;" data-href="preset.html">发布文章</a><a href="javascript:;" data-href="UploadVideo.html">发布视频</a><a href="javascript:;" data-href="createIssue.html">发布议题</a></div></div>');
+    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"></a><div class="msg_index_dance">进入个人中心</div></div><div class="editor_article"><a href="javascript:;" target="_blank" class="editor-first-a">发布</a><div class="three-part-for-article-video-issue"><a href="javascript:;" data-href="preset.html">发布文章</a><a href="javascript:;" data-href="UploadVideo.html">发布视频</a><a href="javascript:;" data-href="createIssue.html">发布议题</a></div></div>');
+    // 发布
+    $('.editor_article').hover(function () {
+        $('.three-part-for-article-video-issue').css('transform', 'scaleY(1)');
+    }, function () {
+        $('.three-part-for-article-video-issue').css('transform', '');
+    });
+
+    $('.three-part-for-article-video-issue a').on('click', function () {
+        var This = $(this);
+        $('.three-part-for-article-video-issue').css('transform', '');
+        setTimeout(function () {
+            if (This.attr('data-href') != '1') { //为了实现本页面不跳转
+                window.open(This.attr('data-href'));
+            }
+        }, 300);
+    });
 }

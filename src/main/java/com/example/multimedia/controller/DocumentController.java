@@ -1,9 +1,5 @@
 package com.example.multimedia.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.example.multimedia.domain.Document;
-import com.example.multimedia.domain.MulUser;
 import com.example.multimedia.domain.returnMessage.DocType;
 import com.example.multimedia.domain.returnMessage.DocUserView;
 import com.example.multimedia.domain.returnMessage.GetDoc;
@@ -11,20 +7,14 @@ import com.example.multimedia.repository.CollectDKindRepository;
 import com.example.multimedia.repository.DocumentRepository;
 import com.example.multimedia.repository.UserRepository;
 import com.example.multimedia.service.DocService;
-import org.apache.coyote.Response;
 import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.print.Doc;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -93,16 +83,16 @@ public class DocumentController {
     }
 
     /*
-    * 增加文章
-    * 需要参数：文章标题，文章概要（可空），文章内容，文章图片（可空），类别
+    * 页面加载时增加文章
     * */
-    @PostMapping("/add")
-    public String addDoc(@RequestParam String title,
-                         @RequestParam(value = "summary",required = false) String summary,
-                         @RequestParam String content,
-                         @RequestParam(value = "image",required = false) MultipartFile image,
-                         @RequestParam String type){
-        return docService.addDoc(title,summary,content,image,type);
+    @PostMapping("/addDoc")
+    public String addDoc(HttpServletResponse response){
+        return docService.addDoc();
+    }
+
+    @PostMapping(value = "addProDoc",params = {"type","proid"})
+    public String addProDoc(String type,long proid,HttpServletResponse response){
+        return docService.addProDoc(type,proid);
     }
 
     /*
@@ -110,25 +100,40 @@ public class DocumentController {
     * */
     @PostMapping("/change")
     public String changeDoc(@RequestParam long documentid,
-                            @RequestParam(value = "title",required = false) String title,
                             @RequestParam(value = "summary",required = false) String summary,
                             @RequestParam(value = "content",required = false) String content,
-                            @RequestParam(value = "image",required = false) MultipartFile image,
-                            @RequestParam(value = "type",required = false) String type){
-        return docService.changeDoc(documentid,title,summary,content,image,type);
+                            @RequestParam(value = "image",required = false) String image){
+        return docService.changeDoc(documentid,summary,content,image);
     }
 
+    /**
+     * 修改标题
+     * @param docid
+     * @param title
+     * @return
+     */
     @PutMapping(value = "/changeTitle",params = {"docid","title"})
     public String changeTitle(long docid,String title){
-        return null;
+        return docService.changeTitle(docid,title);
+    }
+
+    /**
+     * 修改文章类型
+     * @param docid
+     * @param type
+     * @return
+     */
+    @PutMapping(value = "changeType",params = {"docid","type"})
+    public String changeType(long docid,String type){
+        return docService.changeType(docid,type);
     }
 
     /*
     * 删除文章
     * */
 //    @PreAuthorize(value = "hasrole={ROLE_MANAGER,ROLE_SMANAGER} ")
-    @DeleteMapping("/delete/{id}")
-    public String deleteDoc(@PathVariable long id){
+    @DeleteMapping(value = "/delete",params = "id")
+    public String deleteDoc(long id){
         return docService.deleteDoc(id);
     }
 

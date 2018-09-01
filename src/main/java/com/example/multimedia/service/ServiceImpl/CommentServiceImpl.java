@@ -402,8 +402,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public ForumProblemView getOnePro(long id) {
         boolean flag = false;
-        if (collectFProRepository.findByCommentidAndUserid(id,userService.getUsername().getId()) != null){
-            flag = true;
+        try{
+            if (collectFProRepository.findByCommentidAndUserid(id,userService.getUsername().getId()) != null){
+                flag = true;
+            }
+        }catch (Exception e){
+            //ignore
         }
         return new ForumProblemView(collectFProRepository.countAllById(id),documentRepository.countAllByKindEquals("forum"),forumProblemRepository.findOne(id),docService.getForumDoc(id,1),flag);
     }

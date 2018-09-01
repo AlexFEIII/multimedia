@@ -1,201 +1,71 @@
+var DOCDATA = "";
 $(document).ready(function () {
     console.log(window.location.search);
     if (window.location.search == "") {
-        console.log("增加文章");
-        //裁剪后的处理
-        $('#sureCut').on('click', function () {
-            if ($('#tailoringImg').attr('src') == null) {
-                return false;
-            } else {
-                $.ajaxFileUpload({
-                    url: "",
-                    type: "post",
-                    secureuri: false,
-                    fileElementId: ["chooseImg"],
-                    success: function (data) {
-                        console.log(data);
-                        if (data == 'IMAGE_N') {
-                            layer.msg("图片涉及不良内容，请重新选择图片！");
-                        } else if (data == 'BIG') {
-                            layer.msg("图片过大，请上传小于2M的图片。")
-                        } else if (data == 'WRONG_TYPE') {
-                            layer.msg("图片格式错误！目前仅支持jpg/jpeg/bmp/png/gif格式。")
-                        } else if (data == 'NO') {
-                            layer.msg("权限错误！")
-                        } else {
-                            //去掉边框
-                            $('.cutImg').css({
-                                'border': '1px solid transparent'
-                            });
-                            //添加img属性
-                            $('#finalImg').addClass('cutInsertImg');
-                            var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
-                            var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
-                            $('#finalImg').prop('src', base64url); //显示为图片的形式
-                            //关闭裁剪框
-                            closeTailor();
-                        }
-                    }
-                })
-            }
-        });
-
-        $('.Titlelabel,.BtnInput').on('click', function () {
-            $('.Titlelabel').css({
-                'top': -25,
-                'transform': 'none',
-                'color': '#376956'
-            });
-            $('.BtnInput').css({
-                'background': '#fff',
-                'border': '2px solid #376956'
-            });
-            $('.BtnInput').focus();
-            stopBubble();
-        });
-        // 点击显示下载按钮
-        $('.FirstEditorArticle').on('click', function () {
-            $('.MoveTop').css('transform', 'scaleY(1)');
-            $(this).css('color', '#376956');
-        });
-    }else if (window.location.search.indexOf("type=forum") != -1) {
-        console.log("增加议题问题收录文章");
-        //裁剪后的处理
-        $('#sureCut').on('click', function () {
-            if ($('#tailoringImg').attr('src') == null) {
-                return false;
-            } else {
-                $.ajaxFileUpload({
-                    url: "",
-                    type: "post",
-                    secureuri: false,
-                    fileElementId: ["chooseImg"],
-                    success: function (data) {
-                        console.log(data);
-                        if (data == 'IMAGE_N') {
-                            layer.msg("图片涉及不良内容，请重新选择图片！");
-                        } else if (data == 'BIG') {
-                            layer.msg("图片过大，请上传小于2M的图片。")
-                        } else if (data == 'WRONG_TYPE') {
-                            layer.msg("图片格式错误！目前仅支持jpg/jpeg/bmp/png/gif格式。")
-                        } else if (data == 'NO') {
-                            layer.msg("权限错误！")
-                        } else {
-                            //去掉边框
-                            $('.cutImg').css({
-                                'border': '1px solid transparent'
-                            });
-                            //添加img属性
-                            $('#finalImg').addClass('cutInsertImg');
-                            var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
-                            var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
-                            $('#finalImg').prop('src', base64url); //显示为图片的形式
-                            //关闭裁剪框
-                            closeTailor();
-                        }
-                    }
-                })
-            }
-        });
-
-    }else if (window.location.search.indexOf("id=") != -1) {
-        //裁剪后的处理
-        $('#sureCut').on('click', function () {
-            if ($('#tailoringImg').attr('src') == null) {
-                return false;
-            } else {
-                $.ajaxFileUpload({
-                    url: "",
-                    type: "post",
-                    secureuri: false,
-                    fileElementId: ["chooseImg"],
-                    success: function (data) {
-                        console.log(data);
-                        if (data == 'IMAGE_N') {
-                            layer.msg("图片涉及不良内容，请重新选择图片！");
-                        } else if (data == 'BIG') {
-                            layer.msg("图片过大，请上传小于2M的图片。")
-                        } else if (data == 'WRONG_TYPE') {
-                            layer.msg("图片格式错误！目前仅支持jpg/jpeg/bmp/png/gif格式。")
-                        } else if (data == 'NO') {
-                            layer.msg("权限错误！")
-                        } else {
-                            //去掉边框
-                            $('.cutImg').css({
-                                'border': '1px solid transparent'
-                            });
-                            //添加img属性
-                            $('#finalImg').addClass('cutInsertImg');
-                            var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
-                            var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
-                            $('#finalImg').prop('src', base64url); //显示为图片的形式
-                            //关闭裁剪框
-                            closeTailor();
-                        }
-                    }
-                })
-            }
-        });
-
-        console.log("修改文章")
-
-        $(".BtnInput").keyup(function () {
-            count = 0;
-        });
-        var cutTime = 5;
-        var count = 6;
-        window.setInterval(function () {
-            count ++;
-            if (count == cutTime){
-                $("#Saved").animate({"opacity":"1"},250);
-                $("#Saved").animate({"opacity":1},800);
-                $("#Saved").animate({"opacity":0},250);
-                $.ajax({
-                    url:"../doc/change",
-                    type:"put",
-                    success:function () {
-
-                    }
-                })
-            }
-        },300);
-
-        $('.MoveTop a').on('click', function () {
-            $('.FirstEditorArticle').html($(this).html());
-            $('.MoveTop').css('transform', '');
-            console.log("TYPEChange")
-            var valueText = $(this).text();
-            console.log(valueText.substring(valueText.length-2,valueText.length));
-            $.ajax({
-                url:"",
-                type:"put",
-                success:function () {
-
-                },error:function () {
-
+        $.ajax({
+            url:"../doc/addDoc",
+            type:"post",
+            success:function (data) {
+                if (data!=null){
+                    window.location.replace("preset.html?id="+data)
                 }
-            })
-        });
-
+            },error:function () {
+                console.log("增加新的文章失败！")
+            }
+        })
+    }else if (window.location.search.indexOf("type=forum") != -1) {
+        $.ajax({
+            url:"../doc/addProDoc"+window.location.search,
+            type:"post",
+            success:function (data) {
+                if (data!=null){
+                    window.location.replace("preset.html?id="+data)
+                }
+            },error:function () {
+                console.log("增加新的文章失败！")
+            }
+        })
+    }else if (window.location.search.indexOf("id=") != -1) {
+        //获取需要修改的文章信息
         $.ajax({
             url:"/doc"+window.location.search,
             type:"get",
+            async:false,
             success:function (data) {
                 console.log(data);
-                $('.Titlelabel').css({
-                    'top': -25,
-                    'transform': 'none',
-                    'color': '#376956'
-                });
-                $('.BtnInput').css({
-                    'background': '#fff',
-                    'border': '2px solid #376956'
-                });
-                $('.BtnInput').focus();
-                stopBubble();
-                $("input").eq(0).val(data.document.title);
+                DOCDATA = data;
+
+                if (data.document.title != null){
+                    $("input").eq(0).val(data.document.title);
+                    $('.Titlelabel').css({
+                        'top': -25,
+                        'transform': 'none',
+                        'color': '#376956'
+                    });
+                    $('.BtnInput').css({
+                        'background': '#fff',
+                        'border': '2px solid #376956'
+                    });
+                    $('.BtnInput').focus();
+                    stopBubble();
+                } else {
+                    $('.Titlelabel,.BtnInput').on('click', function () {
+                        $('.Titlelabel').css({
+                            'top': -25,
+                            'transform': 'none',
+                            'color': '#376956',
+                        });
+                        $('.BtnInput').css({
+                            'background': '#fff',
+                            'border': '2px solid #376956',
+                        });
+                        $('.BtnInput').focus();
+                        stopBubble();
+                    });
+                }
                 console.log($(".MoveTop li"))
                 if (data.document.kind == "internet"){
+                    console.log($(".MoveTop li").eq(0).children("a").html());
                     $('.FirstEditorArticle').html($(".MoveTop li").eq(0).children("a").html())
                 } else if(data.document.kind == "law"){
                     $('.FirstEditorArticle').html($(".MoveTop li").eq(1).children("a").html())
@@ -209,14 +79,144 @@ $(document).ready(function () {
                     $('.FirstEditorArticle').html($(".MoveTop li").eq(5).children("a").html())
                 } else if(data.document.kind == "art"){
                     $('.FirstEditorArticle').html($(".MoveTop li").eq(6).children("a").html())
+                } else if (data.document.kind == "forum"){
+                    $('.FirstEditorArticle').html('<i class="iconfont">&#xe60b;</i>问答');
+                    $('.MoveTop').remove();
                 }
                 if (data.document.image != null){
+                    $('#finalImg').addClass('cutInsertImg');
                     $("#finalImg").attr("src",data.document.image);
                 }
             },error:function () {
 
             }
-        })
+        });
+        window.onunload = function (ev) {
+            $.ajax({
+                url:"../doc/delete"+window.location.search,
+                type:"delete",
+                success:function (data) {
+                },error:function () {
+                    console.log("删除失败")
+                }
+            })
+        };
+        //裁剪后的处理
+        $('#sureCut').on('click', function () {
+            if ($('#tailoringImg').attr('src') == null) {
+                return false;
+            } else {
+                var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
+                var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
+                $.ajax({
+                    url:"../doc/change",
+                    type:"post",
+                    data:{"documentid":DOCDATA.document.id,"image":base64url},
+                    success:function (data) {
+                        if (data == 'IMAGE_N') {
+                            layer.msg("图片涉及不良内容，请重新选择图片！");
+                        } else if (data == 'BIG') {
+                            layer.msg("图片过大，请上传小于2M的图片。")
+                        } else if (data == 'WRONG_TYPE') {
+                            layer.msg("图片格式错误！目前仅支持jpg/jpeg/bmp/png/gif格式。")
+                        } else if (data == 'NO') {
+                            layer.msg("权限错误！")
+                        } else {
+                            console.log(data);
+                            //去掉边框
+                            $('.cutImg').css({
+                                'border': '1px solid transparent'
+                            });
+                            //添加img属性
+                            $('#finalImg').addClass('cutInsertImg');
+                            $('#finalImg').prop('src', base64url); //显示为图片的形式
+                            //关闭裁剪框
+                            closeTailor();
+                        }
+                    },error:function () {
+                        console.log("文章修改图片失败！")
+                    }
+                })
+            }
+        });
+        //修改标题
+        $(".BtnInput").keyup(function () {
+            count = 0;
+        });
+        var cutTime = 5;
+        var count = 6;
+        window.setInterval(function () {
+            count ++;
+            if (count == cutTime){
+                $("#Saved").animate({"opacity":"1"},250);
+                $("#Saved").animate({"opacity":1},800);
+                $("#Saved").animate({"opacity":0},250);
+                $.ajax({
+                    url:"../doc/changeTitle?docid="+DOCDATA.document.id+"&title="+$(".BtnInput").val(),
+                    type:"put",
+                    success:function (data) {
+                        if (data == "ILLEGAL"){
+                            layer.msg("标题含有违法，暴力等内容，请进行修改！")
+                        } else if (data == "N"){
+                            layer.msg("发生未知错误！")
+                        }
+                    },error:function () {
+                        console.log("修改文章标题出错！")
+                    }
+                })
+                if ($(".BtnInput").val() == ""){
+                    $('.Titlelabel,.BtnInput').off("click");
+                    $('.Titlelabel,.BtnInput').on('click', function () {
+                        $('.Titlelabel').css({
+                            'top': -25,
+                            'transform': 'none',
+                            'color': '#376956',
+                        });
+                        $('.BtnInput').css({
+                            'background': '#fff',
+                            'border': '2px solid #376956',
+                        });
+                        $('.BtnInput').focus();
+                        stopBubble();
+                    });
+                } else{
+                    $('.Titlelabel,.BtnInput').off("click");
+                    $('.Titlelabel').css({
+                        'top': -25,
+                        'transform': 'none',
+                        'color': '#376956'
+                    });
+                    $('.BtnInput').css({
+                        'background': '#fff',
+                        'border': '2px solid #376956'
+                    });
+                    $('.BtnInput').focus();
+                    stopBubble();
+                }
+            }
+        },300);
+        //修改类别
+        if (DOCDATA.document.kind != "forum"){
+            $('.MoveTop a').on('click', function () {
+                $('.FirstEditorArticle').html($(this).html());
+                $('.MoveTop').css('transform', '');
+                var valueText = $(this).text();
+                console.log(valueText.substring(valueText.length-2,valueText.length));
+                $.ajax({
+                    url:"../doc/changeType?docid="+DOCDATA.document.id+"&type="+valueText.substring(valueText.length-2,valueText.length),
+                    type:"put",
+                    success:function (data) {
+                        if (data == "N"){
+                            layer.msg("发生未知错误！")
+                        }
+                    },error:function () {
+                        console.log("修改文章类型失败！")
+                    }
+                })
+            });
+        }
+
+        //选择类别
         $('.FirstEditorArticle').on('click', function () {
             $('.MoveTop').css('transform', 'scaleY(1)');
             $(this).css('color', '#376956');
@@ -241,6 +241,10 @@ $(document).ready(function () {
     })();
 
 });
+
+function closeTailor(){
+    $('.tailoring-container').toggle();
+}
 //关闭裁剪框
 $(".close-tailoring").on('click',function () {
     $('.tailoring-container').toggle();
@@ -252,11 +256,9 @@ $('.editArticle').on('click', function () {
         alert('请您填写文章标题');
     } else if ($('.FirstEditorArticle').html() == '编辑文章类型') {
         alert('请您选择文章类型')
-    } else if ($('#finalImg').attr('src') == '') {
-        alert('请您选择文章的封面');
     } else {
         $(this).attr({
-            'href': 'RichEditor.html',
+            'href': 'RichEditor.html'+window.location.search,
             'target': '_blank'
         });
     }

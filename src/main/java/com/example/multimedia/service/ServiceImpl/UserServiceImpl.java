@@ -1,6 +1,7 @@
 package com.example.multimedia.service.ServiceImpl;
 
 import com.example.multimedia.domain.MulUser;
+import com.example.multimedia.domain.returnMessage.BASE64DecodedMultipartFile;
 import com.example.multimedia.repository.UserRepository;
 import com.example.multimedia.service.SearchService;
 import com.example.multimedia.service.UserService;
@@ -26,8 +27,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import sun.misc.BASE64Decoder;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +45,29 @@ public class UserServiceImpl implements UserService {
     private PasswordEncoder passwordEncoder;
 
     BaiduService baiduService = new BaiduService();
+
+    //Base64转MultipartFile
+    @Override
+    public MultipartFile base64ToMultipart(String base64) {
+        try {
+            String[] baseStrs = base64.split(",");
+
+            BASE64Decoder decoder = new BASE64Decoder();
+            byte[] b = new byte[0];
+            b = decoder.decodeBuffer(baseStrs[1]);
+
+            for(int i = 0; i < b.length; ++i) {
+                if (b[i] < 0) {
+                    b[i] += 256;
+                }
+            }
+
+            return new BASE64DecodedMultipartFile(b, baseStrs[0]);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     /*
     * 上传头像
     * */
@@ -109,14 +135,14 @@ public class UserServiceImpl implements UserService {
     * 修改密码、头像
     * */
     @Override
-    public String changeUser(String password,MultipartFile headimage){
+    public String changeUser(String password,String headimage){
         try{
             MulUser user = getUsername();
             if (password != null){
                 user.setPassword(passwordEncoder.encode(password));
             }
             if (headimage != null){
-                String flag = uploadImage(headimage);
+                String flag = uploadImage(base64ToMultipart(headimage));
                 if (flag.equals("N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
                     return flag;
                 }

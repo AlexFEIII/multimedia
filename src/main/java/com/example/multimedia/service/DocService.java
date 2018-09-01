@@ -32,12 +32,20 @@ public interface DocService {
     /*
     * 增加文章
     * */
-    String addDoc(String title, String summary, String content, MultipartFile image, String type);
+    String addDoc();
+    //增加议题问题收录文章
+    String addProDoc(String kind,long proid);
 
     /*
     * 修改文章
     * */
-    String changeDoc(long documentid,String title, String summary, String content, MultipartFile image, String type);
+    String changeDoc(long documentid, String summary, String content, String image);
+
+    //修改文章标题
+    String changeTitle(long docid,String title);
+
+    //修改文章类型
+    String changeType(long docid,String kind);
 
     /*
     * 删除文章
