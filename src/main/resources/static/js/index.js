@@ -200,6 +200,36 @@ $(function () {
     SetImgHeight();
 });
 
+// 播放器全屏事件
+$('#full-screen-btn').on('click', function () {
+    // 使之成为百分百显示
+    $('#VideoInterface').css({
+        width: '100%',
+        height: '100%',
+    });
+});
+
+// 监听退出全屏
+window.onresize = function () {
+    if (!checkFull()) {
+        // 恢复播放器的宽高
+        $('#VideoInterface').css({
+            width: '',
+            height: '',
+        });
+    }
+}
+
+// 监听退出全屏事件的函数
+function checkFull() {
+    var isFull = document.fullscreenEnabled || window.fullScreen || document.webkitIsFullScreen || document.msFullscreenEnabled;
+    //to fix : false || undefined == undefined
+    if (isFull === undefined) {
+        isFull = false;
+    }
+    return isFull;
+}
+
 //设置图片的高度
 $(window).resize(function () {
     SetImgHeight();
@@ -223,5 +253,5 @@ function loginSuccess(data) {
     $(".last_li").empty();
     var image = "../img/14.png";
     if (data.headimage != null) image = data.headimage;
-    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
+    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"></a><div class="msg_index_dance">进入个人中心</div></div><div class="editor_article"><a href="preset.html" target="_blank"><span><i class="iconfont">&#xe645;</i></span>写文章</a><a href="javascript:;" target="_blank" class="editor-first-a">发布</a><div class="three-part-for-article-video-issue"><a href="javascript:;" data-href="preset.html">发布文章</a><a href="javascript:;" data-href="UploadVideo.html">发布视频</a><a href="javascript:;" data-href="createIssue.html">发布议题</a></div></div>');
 }

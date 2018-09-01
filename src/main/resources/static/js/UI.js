@@ -300,7 +300,6 @@ function loginSuccess(data) {
     $(".last_li").empty();
     var image = "../img/14.png";
     if (data.headimage != null) image = data.headimage;
-    $(".last_li").append('<div class="location_div_a"><a href="personalCenter.html" class="photo_cicle" target="_blank"><img src="'+image+'"> </a> <div class="msg_index_dance">进入个人中心 </div> </div> <div class="editor_article"> <a href="preset.html" target="_blank"> <span> <i class="iconfont">&#xe645;</i></span>写文章</a></div>');
     $("#finalImg").attr("src",image);
     if (data.sex == 1) $("#inputRadio1").click();
     else if (data.sex == 2) $("#inputRadio2").click();
