@@ -53,7 +53,7 @@
                 <form>
                     <div>
                         <i class="iconfont">&#xe7e5;</i>
-                        <input type="text" placeholder="你的昵称" class="input_text">
+                        <input type="text" id="nickname" placeholder="你的昵称" class="input_text">
                     </div>
                     <div style="border-radius: 0px;">
                         <i class="iconfont">&#xe61f;</i>
@@ -62,11 +62,11 @@
                     <div style="border-top: none;position: relative;background: transparent;padding: 0 8px;">
                         <i class="iconfont">&#xe607;</i>
                         <input type="text" id="textPhone" placeholder="手机验证码" class="input_text" style="width: calc(100% - 28px);padding: 18px 0;background: transparent;z-index: 1;">
-                        <a href="javascript:;" class="confirmRight">发送验证码</a>
+                        <a href="javascript:;" class="confirmRight" stop="1">发送验证码</a>
                     </div>
                     <div style="border-top: none;border-radius: 0 0 4px 4px;">
                         <i class="iconfont">&#xe657;</i>
-                        <input type="text" placeholder="设置密码" class="input_text">
+                        <input type="password" id="password" placeholder="设置密码" class="input_text">
                     </div>
                     <a href="javascript:;" class="signIn_btn" style="margin-top: 30px;">
                         <span>注册</span>
@@ -83,45 +83,10 @@
             </div>
         </div>
     </div>
+
     <script src="../js/jquery.min.js"></script>
-    <script>
-        $('#phoneNumber').bind('input propertychange', function () {
-            var Value = $('#phoneNumber').val();
-            if (Value.length == 11 && checkNumber(Value)) {
-                $('#textPhone').css({
-                    'z-index': '',
-                });
-                $('.confirmRight').css({
-                    'background': '#528870',
-                });
-            } else {
-                $('#textPhone').css({
-                    'z-index': '1',
-                });
-                $('.confirmRight').css({
-                    'background': '#b0ecd1',
-                });
-            }
-        }); //实时监听input里面内容的改变
-
-        $('.confirmRight').hover(function () {
-            $(this).css({
-                'background': '#73b497',
-            })
-        }, function () {
-            $(this).css({
-                'background': '#528870',
-            });
-        });
-
-        function checkNumber(theObj) {
-            var reg = /^[0-9]+$/; //判断一定需要全是数字
-            if (reg.test(theObj)) {
-                return true;
-            }
-            return false;
-        }
-    </script>
+    <script src="../layui/layer.js"></script>
+    <script src="../js/signUp.js"></script>
 </body>
 
 </html>

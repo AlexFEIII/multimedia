@@ -10,16 +10,13 @@ import com.example.multimedia.domain.returnMessage.GetDoc;
 import com.example.multimedia.repository.*;
 import com.example.multimedia.service.DocService;
 import com.example.multimedia.service.HistoryService;
+import com.example.multimedia.service.SensitiveFilterService;
 import com.example.multimedia.service.UserService;
-import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,11 +56,8 @@ public class DocServiceImpl implements DocService {
     @Autowired
     private CollectFProRepository collectFProRepository;
 
-
     @Autowired
-    private BaiduService baiduService;
-
-    SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
+    SensitiveFilterService sensitiveFilterService;
 
     /*
     * 返回所有文章
@@ -85,7 +79,7 @@ public class DocServiceImpl implements DocService {
     public List<Boolean> getBoolean(long docid) {
         boolean isfollow = false,isupvote = false,iscollect = false;
         try{
-            MulUser mulUser = userService.getUsername();
+            MulUser mulUser = userService.getUser();
             if (docUpvoteRepository.findByDocidAndAndUserid(docid,mulUser.getId()) != null){
                 isupvote = true;
             }
@@ -118,7 +112,7 @@ public class DocServiceImpl implements DocService {
     @Override
     public List<DocUserView> getMineDoc(String type) {
         List<DocUserView> docUserViews = new ArrayList<>();
-        MulUser mulUser = userService.getUsername();
+        MulUser mulUser = userService.getUser();
         List<Document> documents = documentRepository.findByUseridAndKindOrderByDateAsc(mulUser.getId(),type);
         for (Document document : documents){
             docUserViews.add(new DocUserView(document,mulUser));
@@ -142,7 +136,7 @@ public class DocServiceImpl implements DocService {
     @Override
     public String addDoc() {
         try{
-            MulUser mulUser = userService.getUsername();
+            MulUser mulUser = userService.getUser();
             Document document = new Document();
             document.setUserid(mulUser.getId());
             documentRepository.save(document);
@@ -159,7 +153,7 @@ public class DocServiceImpl implements DocService {
             Document document = new Document();
             document.setKind("forum");
             document.setForumCid(proid);
-            document.setUserid(userService.getUsername().getId());
+            document.setUserid(userService.getUser().getId());
             documentRepository.save(document);
             return document.getId().toString();
         }catch (Exception e){
@@ -171,69 +165,95 @@ public class DocServiceImpl implements DocService {
     * 修改文章
     * */
     @Override
-    public String changeDoc(long documentid, String summary, String content, String image) {
+    public String changeDoc(long documentid, MultipartFile image) {
         //权限，如果是管理员或者文章是自己的
-        Document document = documentRepository.findOne(documentid);
-        if (power(document)) {
-            if (summary != null) {
-                if (!summary.equals(sensitivewordFilter.turnWord(summary))) return "S_SENSITIVE";
-                document.setSummary(commentService.deleteHTML(summary));
-            }
-            if (content != null) {
-                document.setContent(commentService.deleteHTML(content));
-            }
-            if (image != null) {
-                String flag = userService.uploadImage(userService.base64ToMultipart(image));
-                if (flag.equals("IMAGE_N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")) {
-                    return flag;
+        try{
+            Document document = documentRepository.findOne(documentid);
+            if (power(document)) {
+                if (image != null) {
+                    String flag = userService.uploadImage(image);
+                    if (flag.equals("IMAGE_N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")) {
+                        return flag;
+                    }
+                    document.setImage(flag);
                 }
-                document.setImage(flag);
+                documentRepository.save(document);
+                return "Y";
             }
-            documentRepository.save(document);
-            return "Y";
+            return "N";
+        }catch (Exception e){
+            return "NoUser";
         }
-        return "N";
+
+    }
+
+    //修改文章内容
+    @Override
+    public String changeContent(long id, String content) {
+        try{
+            Document document = documentRepository.findOne(id);
+            if (power(document)){
+                if (sensitiveFilterService.checkSensitiveWord(content,0) > 0){
+                    return "ILLEGAL";
+                }
+                document.setContent(content);
+                documentRepository.save(document);
+                return "Y";
+            }
+            return "N";
+        }catch (Exception e){
+            e.printStackTrace();
+            return "NoUser";
+        }
     }
 
     //修改文章标题
     @Override
     public String changeTitle(long docid, String title) {
-        Document document = documentRepository.findOne(docid);
-        if (power(document)){
-            if (sensitivewordFilter.checkSensitiveWord(title,0) > 0){
-                return "ILLEGAL";
+        try{
+            Document document = documentRepository.findOne(docid);
+            if (power(document)){
+                if (sensitiveFilterService.checkSensitiveWord(title,0) > 0){
+                    return "ILLEGAL";
+                }
+                document.setTitle(title);
+                documentRepository.save(document);
+                return "Y";
             }
-            document.setTitle(title);
-            documentRepository.save(document);
-            return "Y";
+            return "N";
+        }catch (Exception e){
+            return "NoUser";
         }
-        return "N";
     }
 
     //修改文章类型
     @Override
     public String changeType(long docid,String kind){
-        Document document = documentRepository.findOne(docid);
-        if (power(document)){
-            if (kind.equals("互联网")){
-                document.setKind("internet");
-            }else if (kind.equals("法律")){
-                document.setKind("law");
-            }else if (kind.equals("医药")){
-                document.setKind("medicine");
-            }else if (kind.equals("经济")){
-                document.setKind("economy");
-            }else if (kind.equals("历史")){
-                document.setKind("history");
-            }else if (kind.equals("理工")){
-                document.setKind("science");
-            }else {
-                document.setKind("art");
+        try{
+            Document document = documentRepository.findOne(docid);
+            if (power(document)){
+                if (kind.equals("联网")){
+                    document.setKind("internet");
+                }else if (kind.equals("法律")){
+                    document.setKind("law");
+                }else if (kind.equals("医药")){
+                    document.setKind("medicine");
+                }else if (kind.equals("经济")){
+                    document.setKind("economy");
+                }else if (kind.equals("历史")){
+                    document.setKind("history");
+                }else if (kind.equals("理工")){
+                    document.setKind("science");
+                }else {
+                    document.setKind("art");
+                }
+                documentRepository.save(document);
+                return "Y";
             }
-            documentRepository.save(document);
-            return "Y";
+            return "N";
+        }catch (Exception e){
+            return "NoUser";
         }
-        return "N";
     }
 
     /*
@@ -244,7 +264,7 @@ public class DocServiceImpl implements DocService {
     @Override
     public String deleteDoc(long id) {
         Document document = documentRepository.findOne(id);
-        if (power(document) || (document.getTitle() == null || document.getKind() == null)){
+        if (power(document) && (document.getTitle() == null || document.getKind() == null)){
             documentRepository.delete(id);
             recyclerRepository.save(new Recycler("doc",id));
             DocRecycler docRecycler = new DocRecycler(document.getTitle(),document.getSummary(),document.getContent(),document.getTpinyin(),document.getUserid(),document.getUpvotenum(),document.getCommentnum(),document.getSawnum(),document.getKind(),document.getDate());
@@ -257,7 +277,7 @@ public class DocServiceImpl implements DocService {
 
     //检测权限
     public boolean power(Document document){
-        MulUser mulUser = userService.getUsername();
+        MulUser mulUser = userService.getUser();
         if (document.getUserid() == mulUser.getId() ||
                 (mulUser.getRole().equals("ROLE_MANAGER") && mulUser.getPower().contains("d"))    ||
                 mulUser.getRole().equals("ROLE_SMANAGER"))
@@ -276,7 +296,7 @@ public class DocServiceImpl implements DocService {
         }
         boolean isCol = false;
         try{
-            MulUser mulUser = userService.getUsername();
+            MulUser mulUser = userService.getUser();
             if (collectDKindRepository.findByUseridAndKindEquals(mulUser.getId(),type) != null){
                 isCol = true;
             }

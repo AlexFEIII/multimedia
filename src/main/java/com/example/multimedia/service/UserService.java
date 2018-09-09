@@ -8,8 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface UserService {
-    //转码
-    MultipartFile base64ToMultipart(String base64);
     /*
     * 上传头像
     * */
@@ -18,12 +16,16 @@ public interface UserService {
     /*
     * 注册
     * */
-    String register(String username,String password);
+    String register(String username,String password,String nickname,String code);
 
     /*
     * 修改密码、头像
     * */
-    String changeUser(String password,String headimage);
+    String changePassword(String pass);
+    String changeHeadimage(MultipartFile headimage);
+
+    //修改用户昵称和邮箱
+    String changeNick(String nickname,String email);
 
     //修改用户基础信息
     String changeUserInfor(int sex,String personality,String address,String qq,String job,String weburl);
@@ -44,8 +46,11 @@ public interface UserService {
     MulUser isLogin();
 
     //获取用户名
-    MulUser getUsername();
+    MulUser getUser();
 
     //取得一个用户
     MulUser getOne(long id);
+
+    //发送验证码
+    String getCode(String nickname,String phoneNum);
 }

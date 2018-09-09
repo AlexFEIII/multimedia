@@ -49,8 +49,6 @@ $('.circle').hover(function () {
   }
 );
 
-var UrlAddress = 'https://music.163.com';
-
 $('.circle').on('click', function () {
   if (Judge) {
     Judge = false;
@@ -161,7 +159,7 @@ $('.publish_A').html('<i class="iconfont">&#xe815;</i>发送');
 $('#QRCode').qrcode({
   width: 105,
   height: 105,
-  text: UrlAddress
+  text: window.location.href
 });
 
 
@@ -378,11 +376,15 @@ function improveAreduceZIndex() {
                 $('.title').css('z-index', 'initial');
                 $('.toTop').css('z-index', '-1');
                 $('.toolbar').css('z-index', '-1');
+                $('.NewGoodEditor').css('position', 'static');
+                $('.NewToolbar').css('z-index', '-1');
             } else {
                 $('.ContentShare').css('z-index', '');
                 $('.title').css('z-index', '');
                 $('.toTop').css('z-index', '');
                 $('.toolbar').css('z-index', '');
+                $('.NewGoodEditor').css('position', '');
+                $('.NewToolbar').css('z-index', '');
                 clearInterval(timer);
             }
         }, 0);
@@ -431,13 +433,14 @@ $(document).ready(function () {
             initNum = data.document.upvotenum;
             $('.TwoPart a').eq(0).children("span").text(data.document.upvotenum);
             $("#ContainEditor").append(data.document.content);
-            var titleImg = $('#ContainEditor img').eq(0).attr('src');
-            var getFirstContent = $('.w-e-text h1').eq(0).html();
+            var titleImg = $('#userInformation').find("img").eq(0).attr('src');
+            var getFirstContent = $('.w-e-text h1').eq(0).text();
             //配置share.js的参数
+            console.log(window.location.href);
             socialShare('.social-share', {
                 title: getFirstContent, //分享的标题
                 image: titleImg, //分享的图片  一般是正文的第一张图片
-                url: UrlAddress, //填写当前页面的地址     window.location.href      分享的地址
+                url: window.location.href, //填写当前页面的地址     window.location.href      分享的地址
                 description: getFirstContent //分享到额描述
             });
         },error:function () {
@@ -644,7 +647,7 @@ function loginSuccess(data) {
             $.ajax({
                 url:"../comment",
                 type:"post",
-                data:{"type":"doc","objid":DOCDATA.document.id,"content":Content,"ruserid":DOCDATA.mulUser.id},
+                data:{"type":"doc","objid":DOCDATA.document.id,"content":Content},
                 success:function (data) {
                     $('.commentsList').bind('DOMNodeInserted', function () {
                         var NumNumber = $('.commentsList li').length;
@@ -657,6 +660,8 @@ function loginSuccess(data) {
                     }
                     $('.commentsList li:first-child .timeMessage span').eq(0).html('' + Year + '/' + Month + '/' + Day + '');
                     $('.commentsList li:first-child .timeMessage span').eq(1).html('' + addZero(Hour) + ':' + addZero(Minute) + ':' + addZero(Second) + '');
+                    $('body').getNiceScroll().resize();
+
                     //点赞事件
                     $(".toolBar_Btn a").off("click");
                     $('.upComment').on('click', function () {
@@ -696,7 +701,10 @@ function loginSuccess(data) {
                             })
                         });
                     });
+                },error:function () {
+
                 }
+
             });
 
         }

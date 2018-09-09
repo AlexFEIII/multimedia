@@ -6,8 +6,6 @@ import com.example.multimedia.repository.*;
 import com.example.multimedia.service.HistoryService;
 import com.example.multimedia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -38,7 +36,7 @@ public class HistoryServiceImpl implements HistoryService {
     //增加文章历史
     @Override
     public void dhistory(long docid) {
-        MulUser mulUser = userService.getUsername();
+        MulUser mulUser = userService.getUser();
         System.out.println(docHistoryRepository.findByUseridAndDocid(mulUser.getId(),docid));
         docHistoryRepository.delete(docHistoryRepository.findByUseridAndDocid(mulUser.getId(),docid));
         docHistoryRepository.save(new DocHistory(mulUser.getId(),docid));
@@ -48,7 +46,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public List<DocUserView> getDHistory(){
         ddoc();
-        MulUser mulUser = userService.getUsername();
+        MulUser mulUser = userService.getUser();
         List<DocUserView> docUserViews = new ArrayList<>();
         List<DocHistory> docHistories = docHistoryRepository.findByUseridOrderByIdDesc(mulUser.getId());
         for (DocHistory docHistory : docHistories) docUserViews.add(new DocUserView(documentRepository.findOne(docHistory.getDocid()),userRepository.findOne(docHistory.getUserid())));
@@ -58,13 +56,13 @@ public class HistoryServiceImpl implements HistoryService {
     //删除文章历史
     @Override
     public void ddoc(){
-        docHistoryRepository.delete(docHistoryRepository.findByUseridAndDateBefore(userRepository.findByUsername(userService.getUsername().getUsername()).getId(),new Date()));
+        docHistoryRepository.delete(docHistoryRepository.findByUseridAndDateBefore(userRepository.findByUsername(userService.getUser().getUsername()).getId(),new Date()));
     }
 
     //增加问答历史
     @Override
     public void fhistory(long forumid) {
-        MulUser mulUser = userService.getUsername();
+        MulUser mulUser = userService.getUser();
         forumHistoryRepository.delete(forumHistoryRepository.findByUseridAndForumid(mulUser.getId(),forumid));
         forumHistoryRepository.save(new ForumHistory(mulUser.getId(),forumid));
     }
@@ -74,7 +72,7 @@ public class HistoryServiceImpl implements HistoryService {
     public List<Forum> getFHistory(){
         dforum();
         try{
-            MulUser mulUser = userService.getUsername();
+            MulUser mulUser = userService.getUser();
             List<ForumHistory> forumHistories = forumHistoryRepository.findByUseridOrderByIdDesc(mulUser.getId());
             List<Forum> forums = new ArrayList<>();
             for (ForumHistory forumHistory:forumHistories) forums.add(forumRepository.findOne(forumHistory.getForumid()));
@@ -88,14 +86,14 @@ public class HistoryServiceImpl implements HistoryService {
     //删除问答历史
     @Override
     public void dforum(){
-        forumHistoryRepository.delete(forumHistoryRepository.findByUseridAndDateBefore(userRepository.findByUsername(userService.getUsername().getUsername()).getId(),new Date()));
+        forumHistoryRepository.delete(forumHistoryRepository.findByUseridAndDateBefore(userRepository.findByUsername(userService.getUser().getUsername()).getId(),new Date()));
     }
 
     //增加视频历史
     @Override
     public void vhistory(long videoid) {
         try{
-            MulUser mulUser = userService.getUsername();
+            MulUser mulUser = userService.getUser();
             docHistoryRepository.save(new DocHistory(mulUser.getId(),videoid));
         }catch (Exception e){
             //ignore
@@ -106,7 +104,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public List<Video> getVHistory(){
         dvideo();
-        MulUser mulUser = userService.getUsername();
+        MulUser mulUser = userService.getUser();
         List<VideoHistory> videoHistories = videoHistoryRepository.findByUserid(mulUser.getId());
         List<Video> videos = new ArrayList<>();
         for (VideoHistory videoHistory:videoHistories) videos.add(videoRepository.findOne(videoHistory.getVideoid()));
@@ -116,14 +114,14 @@ public class HistoryServiceImpl implements HistoryService {
     //删除视频历史
     @Override
     public void dvideo(){
-        videoHistoryRepository.delete(videoHistoryRepository.findByUseridAndDateBefore(userRepository.findByUsername(userService.getUsername().getUsername()).getId(),new Date()));
+        videoHistoryRepository.delete(videoHistoryRepository.findByUseridAndDateBefore(userRepository.findByUsername(userService.getUser().getUsername()).getId(),new Date()));
     }
 
     //增加搜索历史
     @Override
     public void shistory(String key) {
         try{
-            MulUser mulUser = userService.getUsername();
+            MulUser mulUser = userService.getUser();
             try{
                 searchHistoryRepository.delete(searchHistoryRepository.findByUseridAndContentEquals(mulUser.getId(),key));
             }catch (Exception e){
@@ -139,7 +137,7 @@ public class HistoryServiceImpl implements HistoryService {
     @Override
     public List<SearchHistory> getSHistory(){
         try{
-            return searchHistoryRepository.findByUseridOrderByIdDesc(userRepository.findByUsername(userService.getUsername().getUsername()).getId());
+            return searchHistoryRepository.findByUseridOrderByIdDesc(userRepository.findByUsername(userService.getUser().getUsername()).getId());
         }catch (Exception e){
             return null;
         }
@@ -148,6 +146,6 @@ public class HistoryServiceImpl implements HistoryService {
     //删除搜索历史
     @Override
     public void dsearch(){
-        searchHistoryRepository.delete(searchHistoryRepository.findByUseridAndDateBefore(userRepository.findByUsername(userService.getUsername().getUsername()).getId(),new Date()));
+        searchHistoryRepository.delete(searchHistoryRepository.findByUseridAndDateBefore(userRepository.findByUsername(userService.getUser().getUsername()).getId(),new Date()));
     }
 }

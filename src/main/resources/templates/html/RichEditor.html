@@ -17,7 +17,7 @@
     </div>
     <script src="../wangEditor/wangEditor.min.js"></script>
     <script src="../js/jquery.min.js"></script>
-    <script src="../js/RichEditor.js"></script>
+    <script src="../layui/layer.js"></script>
     <script>
         var E = window.wangEditor;
         var editor = new E('#top_list', '#bottom_content');
@@ -78,10 +78,11 @@
             $('.prompt').remove();
         });
 
-        $('.publish_A').on('click', function () {
-            console.log($('.w-e-text').html());
+        $(".publish_A").on("click",function () {
+            layer.msg("请先进行内容修改后再点击");
         })
     </script>
+    <script src="../js/RichEditor.js"></script>
 </body>
 
 </html>

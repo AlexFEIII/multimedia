@@ -5,6 +5,7 @@ import com.example.multimedia.domain.returnMessage.*;
 import com.example.multimedia.repository.*;
 import com.example.multimedia.service.CommentService;
 import com.example.multimedia.service.DocService;
+import com.example.multimedia.service.SensitiveFilterService;
 import com.example.multimedia.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -57,7 +58,8 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private DocService docService;
 
-    SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
+    @Autowired
+    SensitiveFilterService sensitiveFilterService;
 
     /*
     * 评论功能
@@ -65,9 +67,9 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Map<Long,String> comment(String type, long objid, String content) {
         if (content.equals("")) return null;
-        long userid = userService.getUsername().getId();
+        long userid = userService.getUser().getId();
         long ruserid = docCommentRepository.findOne(objid).getUserid();
-        content = sensitivewordFilter.turnWord(content);
+        content = sensitiveFilterService.turnWord(content);
         long id = 0;
         if (type.equals("doc")){
             DocComment docComment = new DocComment(deleteHTML(content),objid,userid,ruserid);
@@ -99,8 +101,8 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Map<Long,String> replyR(String type,String content,long objid,long rcommentid){
         if (content.equals("")) return null;
-        long userid = userService.getUsername().getId();
-        content = sensitivewordFilter.turnWord(content);
+        long userid = userService.getUser().getId();
+        content = sensitiveFilterService.turnWord(content);
         long id = 0;
         if (type.equals("docRR")){
             long ruserid = docRelayRepository.findOne(rcommentid).getUserid();
@@ -241,7 +243,7 @@ public class CommentServiceImpl implements CommentService {
         boolean isLogin = true;
         MulUser mulUser = null;
         try{
-            mulUser = userService.getUsername();
+            mulUser = userService.getUser();
         }catch (Exception e){
             isLogin = false;
         }
@@ -299,7 +301,7 @@ public class CommentServiceImpl implements CommentService {
         boolean isLogin = true;
         MulUser mulUser = null;
         try{
-            mulUser = userService.getUsername();
+            mulUser = userService.getUser();
         }catch (Exception e){
             isLogin = false;
         }
@@ -349,7 +351,7 @@ public class CommentServiceImpl implements CommentService {
     //返回议题 问题的回复
     @Override
     public List<ForumRUser> getForumCRelay(long proid) {
-        MulUser user = userService.getUsername();
+        MulUser user = userService.getUser();
         MulUser ruser = userRepository.findOne(forumProblemRepository.findOne(proid).getUserid());
         List<ForumRUser> forumRUsers = new ArrayList<>();
         List<ForumRelay> forumRelays = forumRelayRepository.findByCommentidOrderByIdDesc(proid);
@@ -364,8 +366,8 @@ public class CommentServiceImpl implements CommentService {
     public Integer proContent(long proid,String content){
         try{
             ForumProblem forumProblem = forumProblemRepository.findOne(proid);
-            if (userService.getUsername().getId() == forumProblem.getUserid()){
-                if (sensitivewordFilter.checkSensitiveWord(content,0) > 0){
+            if (userService.getUser().getId() == forumProblem.getUserid()){
+                if (sensitiveFilterService.checkSensitiveWord(content,0) > 0){
                     return 403;
                 }else {
                     forumProblem.setContent(content);
@@ -387,7 +389,7 @@ public class CommentServiceImpl implements CommentService {
         }
         ForumProblem forumProblem = forumProblemRepository.findOne(proid);
         try{
-            if (forumProblem.getUserid() == userService.getUsername().getId()){
+            if (forumProblem.getUserid() == userService.getUser().getId()){
                 forumProblem.setImage(flag);
                 forumProblemRepository.save(forumProblem);
                 return "YES";
@@ -403,7 +405,7 @@ public class CommentServiceImpl implements CommentService {
     public ForumProblemView getOnePro(long id) {
         boolean flag = false;
         try{
-            if (collectFProRepository.findByCommentidAndUserid(id,userService.getUsername().getId()) != null){
+            if (collectFProRepository.findByCommentidAndUserid(id,userService.getUser().getId()) != null){
                 flag = true;
             }
         }catch (Exception e){

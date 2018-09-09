@@ -15,5 +15,9 @@ package com.example.multimedia.repository;
 public interface UserRepository extends JpaRepository<MulUser,Long> {
         MulUser findByUsername(String username);
         MulUser findByEmail(String email);
+        MulUser findByNickname(String nickname);
         Page<MulUser> findAll(Pageable pageable);
+
+        //性别
+        long countAllBySex(int sex);
 }

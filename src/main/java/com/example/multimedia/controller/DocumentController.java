@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -96,14 +97,23 @@ public class DocumentController {
     }
 
     /*
-    * 修改文章，可修改标题，概要，内容，图片，类别
+    * 修改图片
     * */
     @PostMapping("/change")
     public String changeDoc(@RequestParam long documentid,
-                            @RequestParam(value = "summary",required = false) String summary,
-                            @RequestParam(value = "content",required = false) String content,
-                            @RequestParam(value = "image",required = false) String image){
-        return docService.changeDoc(documentid,summary,content,image);
+                            @RequestParam MultipartFile image){
+        return docService.changeDoc(documentid,image);
+    }
+
+    /**
+     * 修改文章内容
+     * @param id
+     * @param content
+     * @return
+     */
+    @PostMapping(value = "/changeContent",params = "id")
+    public String changeContent(long id,@RequestParam String content){
+        return docService.changeContent(id,content);
     }
 
     /**
@@ -138,8 +148,8 @@ public class DocumentController {
     }
 
     @GetMapping("typemsg")
-    public int[] getTypeMsg(){
-        int[] ints = new int[]{documentRepository.countAllByKindEquals("internet"),
+    public long[] getTypeMsg(){
+        long[] ints = new long[]{documentRepository.countAllByKindEquals("internet"),
                                 collectDKindRepository.countAllByKindEquals("internet"),
                                 documentRepository.countAllByKindEquals("law"),
                                 collectDKindRepository.countAllByKindEquals("law"),

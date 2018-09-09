@@ -8,6 +8,7 @@ import com.example.multimedia.domain.returnMessage.VideoUser;
 import com.example.multimedia.repository.RecyclerRepository;
 import com.example.multimedia.repository.UserRepository;
 import com.example.multimedia.repository.VideoRepository;
+import com.example.multimedia.service.SensitiveFilterService;
 import com.example.multimedia.service.UserService;
 import com.example.multimedia.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,8 +37,8 @@ public class VideoServiceImpl implements VideoService {
     private VideoRepository videoRepository;
     @Autowired
     private RecyclerRepository recyclerRepository;
-
-    SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
+    @Autowired
+    private SensitiveFilterService sensitiveFilterService;
 
     //获得所有视频
     @Override
@@ -68,7 +66,7 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public List<VideoUser> getMineVideo(){
         List<VideoUser> videoUsers = new ArrayList<>();
-        MulUser mulUser = userService.getUsername();
+        MulUser mulUser = userService.getUser();
         List<Video> videos = videoRepository.findByUseridOrderByDateAsc(mulUser.getId());
         for (Video video : videos){
             videoUsers.add(new VideoUser(video,userRepository.findOne(video.getUserid())));
@@ -94,11 +92,11 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public String addVideo(String title, String summary, String url, MultipartFile image, String type) {
         try{
-            if (!title.equals(sensitivewordFilter.turnWord(title))){
+            if (!title.equals(sensitiveFilterService.turnWord(title))){
                 return "T_SENSITIVE";
             }
-            if (!summary.equals(sensitivewordFilter.turnWord(summary))) return "S_SENSITIVE";
-            MulUser mulUser = userService.getUsername();
+            if (!summary.equals(sensitiveFilterService.turnWord(summary))) return "S_SENSITIVE";
+            MulUser mulUser = userService.getUser();
             Pinyin pinyin = new Pinyin();
             String flag = userService.uploadImage(image);
             if (flag.equals("IMAGE_N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
@@ -136,14 +134,14 @@ public class VideoServiceImpl implements VideoService {
         Video video = videoRepository.findOne(videoid);
         if (power(videoid,video)) {
             if (title != null) {
-                if (!title.equals(sensitivewordFilter.turnWord(title))) return "T_SENSITIVE";
+                if (!title.equals(sensitiveFilterService.turnWord(title))) return "T_SENSITIVE";
                 title = commentService.deleteHTML(title);
                 video.setTitle(title);
                 video.setTpinyin(new Pinyin().getStringPinYin(title));
             }
             if (image != null) video.setImage(userService.uploadImage(image));
             if (summary != null) {
-                if (!summary.equals(sensitivewordFilter.turnWord(summary))) return "S_SENSITIVE";
+                if (!summary.equals(sensitiveFilterService.turnWord(summary))) return "S_SENSITIVE";
                 video.setSummary(commentService.deleteHTML(summary));
             }
             if (url != null) video.setUrl(url);
@@ -155,7 +153,7 @@ public class VideoServiceImpl implements VideoService {
     }
 
     private boolean power(long videoid,Video video){
-        MulUser mulUser = userService.getUsername();
+        MulUser mulUser = userService.getUser();
         if (userRepository.findOne(video.getUserid()).getUsername().equals(mulUser.getUsername()) ||
                 (mulUser.getRole().equals("ROLE_MANAGER") && mulUser.getPower().contains("v")) ||
                 mulUser.getRole().equals("ROLE_SMANAGER"))

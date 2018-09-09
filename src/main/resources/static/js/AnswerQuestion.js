@@ -48,6 +48,19 @@ $(document).ready(function () {
                 $(".tailoring-container").remove();
                 $(".editor-question-word").remove();
             }
+            var firstName;
+            for (var i = 0;i < data.docType.docUserViews.length;i ++){
+                firstName = data.docType.docUserViews[i].mulUser.nickname;
+                var image = "";
+                if (firstName == null) firstName = data.docType.docUserViews[i].mulUser.username;
+                var summary = "作者尚未增加内容";
+                if ( data.docType.docUserViews[i].document.summary != null){
+                    summary = data.docType.docUserViews[i].document.summary;
+                }
+                if (data.docType.docUserViews[i].document.image != null) image = '<img src="'+data.docType.docUserViews[i].document.image+'"/>';
+                var AddDiv = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data.docType.docUserViews[i].document.id+'" target="_blank" class="under_line">'+data.docType.docUserViews[i].document.title+'</a><p class="draw_text">'+summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+firstName+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data.docType.docUserViews[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data.docType.docUserViews[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>');
+                SelectDiv.append(AddDiv);
+            }
             if (data.docType.totalPage > 1){
                 $(".Select_Much").after('<div class="pagingTool"></div>');
                 $(".pagingTool").Paging({
@@ -65,14 +78,17 @@ $(document).ready(function () {
                             type:"get",
                             success:function (data) {
                                 $(".Select_Much").empty();
-                                var username;
-                                for (var i = 0;i < data.docUserViews.length;i ++){
-                                    username = data.docUserViews[i].mulUser.nickname;
+                                var firstName;
+                                for (var i = 0;i < data.docType.docUserViews.length;i ++){
+                                    firstName = data.docType.docUserViews[i].mulUser.nickname;
                                     var image = "";
-                                    if (username == null) username = data.docUserViews[i].mulUser.username;
-                                    if (data.docUserViews[i].document.image != null) image = '<img src="'+data.docUserViews[i].document.image+'"/>';
-                                    var AddDiv = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data.docUserViews[i].document.id+'" target="_blank" class="under_line">'+data.docUserViews[i].document.title+'</a><p class="draw_text">'+data.docUserViews[i].document.summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+username+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data.docUserViews[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data.docUserViews[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>');
-
+                                    if (firstName == null) firstName = data.docType.docUserViews[i].mulUser.username;
+                                    var summary = "作者尚未增加内容";
+                                    if ( data.docType.docUserViews[i].document.summary != null){
+                                        summary = data.docType.docUserViews[i].document.summary;
+                                    }
+                                    if (data.docType.docUserViews[i].document.image != null) image = '<img src="'+data.docType.docUserViews[i].document.image+'"/>';
+                                    var AddDiv = $('<div class="other_module"><div class="left_part"><a style="color: #333;" href="article.html?id='+data.docType.docUserViews[i].document.id+'" target="_blank" class="under_line">'+data.docType.docUserViews[i].document.title+'</a><p class="draw_text">'+summary+'</p><div class="bottom_meta"><a href="javascript:;" class="bottom_first_a">'+firstName+'</a><a href="javascript:;" class="bottom_two_a"><i class="iconfont">&#xe684;</i><b>'+data.docType.docUserViews[i].document.commentnum+'</b></a><span class="bottom_first_span"><i class="iconfont">&#xe602;</i><b>'+data.docType.docUserViews[i].document.upvotenum+'</b></span><span class="bottom_two_span"><i class="iconfont">&#xe672;</i></span></div></div><a href="javascript:;" class="replace_img">'+image+'</aa></div>');
                                     SelectDiv.append(AddDiv);
                                 }
                             },error:function() {

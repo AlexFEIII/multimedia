@@ -1,23 +1,32 @@
 package com.example.multimedia.service.ServiceImpl;
 
+import com.example.multimedia.service.SensitiveFilterService;
+import org.springframework.stereotype.Service;
+
 import java.io.*;
 import java.util.*;
 
-public class SensitivewordFilter {
+@Service
+public class SensitivewordFilter implements SensitiveFilterService {
     private boolean mainflag = false;
     private HashMap sensitiveWordMap;
-    private File file = new File("src/main/resources/static/SensitiveWord.txt");
+    private File file = new File("../../../../resources/static/SensitiveWord.txt");
+
+    public SensitivewordFilter(){
+        try{
+            getKeyWord();
+            System.out.println("\r\n"+"FILE: "+file.exists()+"\r\n");
+        }catch (Exception e){
+
+        }
+
+    }
 
     /**
      * @param sensitiveStr 需要转换的字符串
      * @return 转换结果
      */
     public String turnWord(String sensitiveStr){
-        try {
-            if (mainflag == false) getKeyWord();
-        }catch (Exception e){
-            //ignore
-        }
         return replaceSensitiveWord(sensitiveStr);
     }
 
@@ -86,9 +95,6 @@ public class SensitivewordFilter {
      * @version 1.0
      */
     public int checkSensitiveWord(String txt,int beginIndex){
-        try{
-            if (mainflag == false) getKeyWord();
-        }catch (Exception e){}
         boolean  flag = false;    //敏感词结束标识位：用于敏感词只有1位的情况
         int matchFlag = 0;     //匹配表示数默认为0
         char word = 0;
@@ -151,6 +157,5 @@ public class SensitivewordFilter {
                 if (i == key.length() -1) nowMap.put("isEnd","1");
             }
         }
-        mainflag = true;
     }
 }

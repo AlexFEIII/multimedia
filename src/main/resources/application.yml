@@ -10,7 +10,6 @@ spring:
   devtools:
     restart:
       enabled: true
-      additional-paths: src/main/java,src/main/resources/static,src/main/resources/templates
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/multimedia
@@ -22,8 +21,8 @@ spring:
     show-sql: true
   http:
     multipart:
-      max-file-size: 5MB
-      max-request-size: 20MB
+      max-file-size:  -1
+      max-request-size: -1
 server:
   port: 80
 jasypt:

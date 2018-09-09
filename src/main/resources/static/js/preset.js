@@ -32,9 +32,7 @@ $(document).ready(function () {
             type:"get",
             async:false,
             success:function (data) {
-                console.log(data);
                 DOCDATA = data;
-
                 if (data.document.title != null){
                     $("input").eq(0).val(data.document.title);
                     $('.Titlelabel').css({
@@ -107,11 +105,29 @@ $(document).ready(function () {
                 return false;
             } else {
                 var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
-                var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
+                var img = cas.toDataURL('image/png'); //转换为base64地址形式
+                var formData = new FormData();
+                // formData.append('image', convertBase64UrlToBlob(img));
+                function dataURLToBlob(dataurl){
+                    var arr = dataurl.split(',');
+                    var mime = arr[0].match(/:(.*?);/)[1];
+                    var bstr = atob(arr[1]);
+                    var n = bstr.length;
+                    var u8arr = new Uint8Array(n);
+                    while(n--){
+                        u8arr[n] = bstr.charCodeAt(n);
+                    }
+                    return new Blob([u8arr], {type:mime});
+                }
+                formData.append("image",dataURLToBlob(img));
+                formData.append("documentid",DOCDATA.document.id);
                 $.ajax({
                     url:"../doc/change",
                     type:"post",
-                    data:{"documentid":DOCDATA.document.id,"image":base64url},
+                    data:formData,
+                    contentType:false,
+                    cache: false,
+                    processData: false,
                     success:function (data) {
                         if (data == 'IMAGE_N') {
                             layer.msg("图片涉及不良内容，请重新选择图片！");
@@ -121,6 +137,8 @@ $(document).ready(function () {
                             layer.msg("图片格式错误！目前仅支持jpg/jpeg/bmp/png/gif格式。")
                         } else if (data == 'NO') {
                             layer.msg("权限错误！")
+                        } else if (data == "NoUser"){
+                            layer.msg("用户已注销！")
                         } else {
                             console.log(data);
                             //去掉边框
@@ -129,7 +147,7 @@ $(document).ready(function () {
                             });
                             //添加img属性
                             $('#finalImg').addClass('cutInsertImg');
-                            $('#finalImg').prop('src', base64url); //显示为图片的形式
+                            $('#finalImg').prop('src', img); //显示为图片的形式
                             //关闭裁剪框
                             closeTailor();
                         }
@@ -159,6 +177,8 @@ $(document).ready(function () {
                             layer.msg("标题含有违法，暴力等内容，请进行修改！")
                         } else if (data == "N"){
                             layer.msg("发生未知错误！")
+                        }else if (data == "NoUser"){
+                            layer.msg("用户已注销！")
                         }
                     },error:function () {
                         console.log("修改文章标题出错！")
@@ -208,6 +228,8 @@ $(document).ready(function () {
                     success:function (data) {
                         if (data == "N"){
                             layer.msg("发生未知错误！")
+                        }else if (data == "NoUser"){
+                            layer.msg("用户已注销！")
                         }
                     },error:function () {
                         console.log("修改文章类型失败！")

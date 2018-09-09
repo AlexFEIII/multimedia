@@ -39,7 +39,10 @@ public interface DocService {
     /*
     * 修改文章
     * */
-    String changeDoc(long documentid, String summary, String content, String image);
+    String changeDoc(long documentid,MultipartFile image);
+
+    //修改文章内容
+    String changeContent(long id,String content);
 
     //修改文章标题
     String changeTitle(long docid,String title);

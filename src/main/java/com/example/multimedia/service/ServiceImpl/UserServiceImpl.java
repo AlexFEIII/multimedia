@@ -1,9 +1,10 @@
 package com.example.multimedia.service.ServiceImpl;
 
+import com.example.multimedia.domain.Code;
 import com.example.multimedia.domain.MulUser;
 import com.example.multimedia.domain.returnMessage.BASE64DecodedMultipartFile;
+import com.example.multimedia.repository.CodeRepository;
 import com.example.multimedia.repository.UserRepository;
-import com.example.multimedia.service.SearchService;
 import com.example.multimedia.service.UserService;
 import com.google.gson.Gson;
 import com.qiniu.common.QiniuException;
@@ -13,17 +14,13 @@ import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.util.Auth;
-import org.elasticsearch.client.transport.TransportClient;
-import org.hibernate.validator.constraints.EAN;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,30 +41,11 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private CodeRepository codeRepository;
+
     BaiduService baiduService = new BaiduService();
 
-    //Base64转MultipartFile
-    @Override
-    public MultipartFile base64ToMultipart(String base64) {
-        try {
-            String[] baseStrs = base64.split(",");
-
-            BASE64Decoder decoder = new BASE64Decoder();
-            byte[] b = new byte[0];
-            b = decoder.decodeBuffer(baseStrs[1]);
-
-            for(int i = 0; i < b.length; ++i) {
-                if (b[i] < 0) {
-                    b[i] += 256;
-                }
-            }
-
-            return new BASE64DecodedMultipartFile(b, baseStrs[0]);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
     /*
     * 上传头像
     * */
@@ -120,29 +98,60 @@ public class UserServiceImpl implements UserService {
     * 注册
     * */
     @Override
-    public String register(String username,String password) {
-        if(username.length() < 6 || password.length() < 6)
-            return "LENGTH";
-        if (userRepository.findByUsername(username) != null){
-            return "REUSER";
-        }else{
-            userRepository.save(new MulUser(username,new Pinyin().getStringPinYin(username),passwordEncoder.encode(password),"ROLE_USER"));
+    public String register(String username,String password,String nickname,String code) {
+        //昵称长度要求
+        if(nickname.length() < 1 || nickname.length() > 16){
+            return "NICK-LENGTH";
         }
-        return "YES";
+        //密码长度要求
+        if (password.length() < 6 || password.length() > 16){
+            return "PASS-LENGTH";
+        }
+        //手机是否已经注册
+        if (userRepository.findByUsername(username) != null){
+            return "RePhone";
+        }
+        //判断昵称是否已存在
+        if (userRepository.findByNickname(nickname) != null){
+            return "ReNick";
+        }
+        List<Code> codes = codeRepository.findByPhoneNumEqualsAndDateAfter(username,new Date());
+        System.out.println("TheCode: "+codes + "   code: "+code + "  username: "+username);
+        if (codes != null){
+            for (Code TheCode : codes){
+                if (TheCode.getCode().equals(code)){
+                    userRepository.save(new MulUser(username,nickname,new Pinyin().getStringPinYin(nickname),passwordEncoder.encode(password),"ROLE_USER"));
+                    LoginServiceImpl loginService = new LoginServiceImpl();
+                    loginService.loadUserByUsername(username);
+                    codeRepository.delete(codes);
+                    return "SUCCESS";
+                }
+            }
+
+        }
+        return "NO";
     }
 
     /*
     * 修改密码、头像
     * */
     @Override
-    public String changeUser(String password,String headimage){
+    public String changePassword(String pass) {
         try{
-            MulUser user = getUsername();
-            if (password != null){
-                user.setPassword(passwordEncoder.encode(password));
-            }
+            MulUser mulUser = getUser();
+            mulUser.setPassword(passwordEncoder.encode(pass));
+            return "Y";
+        }catch (Exception e){
+            return "NoUser";
+        }
+    }
+
+    @Override
+    public String changeHeadimage(MultipartFile headimage){
+        try{
+            MulUser user = getUser();
             if (headimage != null){
-                String flag = uploadImage(base64ToMultipart(headimage));
+                String flag = uploadImage(headimage);
                 if (flag.equals("N") || flag.equals("BIG") || flag.equals("WRONG_TYPE")){
                     return flag;
                 }
@@ -156,17 +165,49 @@ public class UserServiceImpl implements UserService {
         return "Y";
     }
 
+    //修改用户昵称、邮箱
+    @Override
+    public String changeNick(String nickname, String email) {
+        System.out.println("nickname : "+nickname+"  email: "+email);
+        try{
+            MulUser mulUser = getUser();
+            if (nickname != null && !nickname.equals(mulUser.getNickname())){
+                if (nickname.contains(" ")){
+                    return "HasSpace";
+                }
+                if (userRepository.findByNickname(nickname) != null){
+                    return "ReNick";
+                }else {
+                    mulUser.setNickname(nickname);
+                }
+            }
+            if (email != "" && (mulUser.getEmail() == null || !mulUser.getEmail().equals(email))){
+                if (userRepository.findByEmail(email) != null){
+                    return "ReEmail";
+                }else{
+                    mulUser.setEmail(email);
+                }
+            }
+            userRepository.save(mulUser);
+            return "Y";
+        }catch (Exception e){
+            e.printStackTrace();
+            return "NoUser";
+        }
+    }
+
     //修改用户基础信息
     @Override
     public String changeUserInfor(int sex, String personality, String address, String qq, String job, String weburl) {
-        MulUser mulUser = getUsername();
+        MulUser mulUser = getUser();
         mulUser.setSex(sex);
         mulUser.setPersonality(personality);
         mulUser.setAddress(address);
         mulUser.setQq(qq);
         mulUser.setJob(job);
         mulUser.setWeburl(weburl);
-        return null;
+        userRepository.save(mulUser);
+        return "Y";
     }
 
     /*
@@ -187,7 +228,7 @@ public class UserServiceImpl implements UserService {
         if (!(key.equals("id") || key.equals("username") || key.equals("role")))
             key = "id";
 
-        if (getUsername().getRole().equals("ROLE_MANAGE")){
+        if (getUser().getRole().equals("ROLE_MANAGE")){
             Pageable pageable = new PageRequest(pageNum,size,direction,key);
             Page<MulUser> page = userRepository.findAll(pageable);
             return page;
@@ -206,7 +247,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public MulUser isLogin(){
         try{
-            return getUsername();
+            return getUser();
         }catch (ClassCastException e){
             //ignore
             return null;
@@ -214,7 +255,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public MulUser getUsername(){
+    public MulUser getUser(){
         User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (user.getUsername().contains("@")){
             return userRepository.findByEmail(user.getUsername());
@@ -226,5 +267,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public MulUser getOne(long id) {
         return userRepository.findOne(id);
+    }
+
+    //验证码
+    @Override
+    public String getCode(String nickname, String phoneNum) {
+        if (userRepository.findByUsername(phoneNum) != null){
+            return "RePhone";
+        }else if(userRepository.findByNickname(nickname) != null){
+            return "ReName";
+        }else if (nickname.contains(" ")){
+            return "HasSpace";
+        }else{
+            DuanXinService duanXinService = new DuanXinService();
+            codeRepository.delete(codeRepository.findByDateBefore(new Date()));
+            String codeMsg =duanXinService.duanXin();
+            if (!codeMsg.equals("ERROR")){
+                codeRepository.save(new Code(phoneNum,codeMsg));
+            }else {
+                return "ERROR";
+            }
+            return "Y";
+        }
     }
 }

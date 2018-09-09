@@ -7,6 +7,7 @@ import com.example.multimedia.domain.returnMessage.ForumUser;
 import com.example.multimedia.repository.*;
 import com.example.multimedia.service.ForumService;
 import com.example.multimedia.service.HistoryService;
+import com.example.multimedia.service.SensitiveFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,7 +52,8 @@ public class ForumServiceImpl implements ForumService {
     @Autowired
     private HistoryService historyService;
 
-    SensitivewordFilter sensitivewordFilter = new SensitivewordFilter();
+    @Autowired
+    SensitiveFilterService sensitiveFilterService;
     /*
     * 返回所有论坛文章
     * */
@@ -76,7 +77,7 @@ public class ForumServiceImpl implements ForumService {
         MulUser mulUser = userRepository.findOne(forum.getUserid());
         boolean isfollow = false;
         try{
-            MulUser user = userService.getUsername();
+            MulUser user = userService.getUser();
             if (collectForumRepository.findByUseridAndForumid(user.getId(),id) != null){
                 isfollow = true;
             }
@@ -91,7 +92,7 @@ public class ForumServiceImpl implements ForumService {
     @Override
     public List<Forum> getMineForum() {
         List<ForumUser> forumUsers = new ArrayList<>();
-        MulUser mulUser = userService.getUsername();
+        MulUser mulUser = userService.getUser();
         List<Forum> forums = forumRepository.findByUseridOrderByDateAsc(mulUser.getId());
         return forums;
     }
@@ -110,21 +111,21 @@ public class ForumServiceImpl implements ForumService {
     * */
     @Override
     public String addForum(String title, String summary, String content, MultipartFile image, String type) {
-        if (!title.equals(sensitivewordFilter.turnWord(title))){
+        if (!title.equals(sensitiveFilterService.turnWord(title))){
             return "T_SENSITIVE";
         }
         ForumKind forumKind = forumKindRepository.findByKindEquals(type);
         if (forumKind == null){
             return null;
         }
-        MulUser mulUser = userService.getUsername();
+        MulUser mulUser = userService.getUser();
         try{
             if (summary == null)
                 summary = content.substring(0,30);
         }catch (Exception e){
             summary = content;
         }
-        if (!summary.equals(sensitivewordFilter.turnWord(summary))) return "S_SENSITIVE";
+        if (!summary.equals(sensitiveFilterService.turnWord(summary))) return "S_SENSITIVE";
         Pinyin pinyin = new Pinyin();
         title = commentService.deleteHTML(title);
         Forum forum = new Forum(title,commentService.deleteHTML(summary),commentService.deleteHTML(content),pinyin.getStringPinYin(title),mulUser.getId(),forumKind);
@@ -144,7 +145,7 @@ public class ForumServiceImpl implements ForumService {
     public String changeForum(long forumid, String title, String summary, String content, MultipartFile image, String type) {
         Forum forum = forumRepository.findOne(forumid);
         if (power(forumid,forum)) {
-            if (!title.equals(sensitivewordFilter.turnWord(title))) {
+            if (!title.equals(sensitiveFilterService.turnWord(title))) {
                 return "T_SENSITIVE";
             }
             title = commentService.deleteHTML(title);
@@ -153,7 +154,7 @@ public class ForumServiceImpl implements ForumService {
                 forum.setTpinyin(new Pinyin().getStringPinYin(title));
             }
             if (summary != null) {
-                if (!summary.equals(sensitivewordFilter.turnWord(summary))) return "S_SENSITIVE";
+                if (!summary.equals(sensitiveFilterService.turnWord(summary))) return "S_SENSITIVE";
                 forum.setSummary(commentService.deleteHTML(summary));
             }
             if (content != null) forum.setContent(commentService.deleteHTML(content));
@@ -176,10 +177,10 @@ public class ForumServiceImpl implements ForumService {
     @Override
     public String addPro(long forumid, String title) {
         //检测是否含有非法字符
-        if (sensitivewordFilter.checkSensitiveWord(title,0) > 0){
+        if (sensitiveFilterService.checkSensitiveWord(title,0) > 0){
             return "ILLEGAL";
         }
-        MulUser user = userService.getUsername();
+        MulUser user = userService.getUser();
         MulUser ruser = userRepository.findOne(forumRepository.findOne(forumid).getUserid());
         ForumProblem forumProblem = new ForumProblem(title,forumid,user.getId(),ruser.getId());
         forumProblemRepository.save(forumProblem);
@@ -192,14 +193,14 @@ public class ForumServiceImpl implements ForumService {
         System.out.println("forumid: "+forumid+"  Content: "+content+"  rcommentid: "+rcommentid);
         if (content.equals("")) return null;
         try{
-            MulUser user = userService.getUsername();
+            MulUser user = userService.getUser();
             MulUser ruser;
             if (rcommentid == 0){
                 ruser = userRepository.findOne(forumRepository.findOne(forumid).getUserid());
             }else {
                 ruser = userRepository.findOne(forumCommentRepository.findOne(rcommentid).getUserid());
             }
-            String sContent = sensitivewordFilter.turnWord(content);
+            String sContent = sensitiveFilterService.turnWord(content);
             ForumComment forumComment = new ForumComment(commentService.deleteHTML(sContent),user.getId(),ruser.getId(),rcommentid,forumid);
             forumCommentRepository.save(forumComment);
             Map<Long,String> map = new HashMap<>();
@@ -254,7 +255,7 @@ public class ForumServiceImpl implements ForumService {
     @Override
     public String best(long forumid, long commentid) {
         Forum forum = forumRepository.findOne(forumid);
-        if (userRepository.findOne(forum.getUserid()).equals(userService.getUsername())){
+        if (userRepository.findOne(forum.getUserid()).equals(userService.getUser())){
             forum.setResultid(commentid);
         }
         return "Y";
@@ -282,7 +283,7 @@ public class ForumServiceImpl implements ForumService {
     @Override
     public void addKind(String kind,MultipartFile file){
         try{
-            String role = userService.getUsername().getRole();
+            String role = userService.getUser().getRole();
             if (role.equals("ROLE_MANAGER") || role.equals("ROLE_SMANAGER"))
 
                 forumKindRepository.save(new ForumKind(kind,userService.uploadImage(file)));
@@ -312,7 +313,7 @@ public class ForumServiceImpl implements ForumService {
     }
 
     public boolean power(long id,Forum forum){
-        MulUser mulUser = userService.getUsername();
+        MulUser mulUser = userService.getUser();
         if (userRepository.findOne(forumRepository.findOne(id).getUserid()).getUsername().equals(mulUser.getUsername()) ||
                 (mulUser.getRole().equals("ROLE_MANAGER") && mulUser.getPower().contains("d")) ||
                 mulUser.getRole().equals("ROLE_SMANAGER"))

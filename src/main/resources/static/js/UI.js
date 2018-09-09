@@ -78,17 +78,34 @@ $('.cropper-scaleX-btn').on('click', function () {
 
 //裁剪后的处理
 $('#sureCut').on('click', function () {
+    closeTailor();
   if ($('#tailoringImg').attr('src') == null) {
     return false;
   } else {
       var animatedLoading = $('<div class="Load-animated"><div class="spinner spinnerTwo"><span></span></div></div>');
       $('.change_img').append(animatedLoading);
       var cas = $('#tailoringImg').cropper('getCroppedCanvas'); //获取被裁剪后的canvas
-      var base64url = cas.toDataURL('image/png'); //转换为base64地址形式
+      var img = cas.toDataURL('image/png'); //转换为base64地址形式
+      var formdata = new FormData();
+      function dataURLToBlob(dataurl){
+          var arr = dataurl.split(',');
+          var mime = arr[0].match(/:(.*?);/)[1];
+          var bstr = atob(arr[1]);
+          var n = bstr.length;
+          var u8arr = new Uint8Array(n);
+          while(n--){
+              u8arr[n] = bstr.charCodeAt(n);
+          }
+          return new Blob([u8arr], {type:mime});
+      }
+      formdata.append("headimage",dataURLToBlob(img));
       $.ajax({
           url:"../user/changeImage",
           type:"post",
-          data:{"headimage":base64url},
+          data:formdata,
+          contentType:false,
+          cache: false,
+          processData: false,
           success:function (data) {
               console.log(data);
               if (data == 'IMAGE_N'){
@@ -100,9 +117,9 @@ $('#sureCut').on('click', function () {
               }else if (data == 'NO'){
                   layer.msg("权限错误！")
               } else{
-                  $('#finalImg').prop('src', base64url); //显示为图片的形式
+                  $('#finalImg').prop('src', img); //显示为图片的形式
                   //关闭裁剪框
-                  closeTailor();
+                  animatedLoading.remove();
               }
 
           }, error:function () {
@@ -150,22 +167,6 @@ function layerMsg(n, m) {
   });
 } //弹窗
 
-$('.save').on('click', function () {
-  var val_number = $('.inputText').eq(1).val(); //QQ号码
-  var val_num = $('.inputText').eq(2).val(); //电话号码
-  if (!checkNumber(val_number) && val_number != '') {
-    alert("请重新输入正确的QQ号");
-    $('.inputText').eq(1).val('');
-  }
-  if (!checkNumber(val_num) && val_num != '') {
-    alert("请重新输入正确的电话号码");
-    $('.inputText').eq(2).val('');
-  }
-  if (checkNumber(val_num) && checkNumber(val_number)) {
-    layerMsg('保存成功', 6);
-  }
-});
-
 function checkNumber(theObj) {
   var reg = /^[0-9]+$/; //判断一定需要全是数字
   if (reg.test(theObj)) {
@@ -173,38 +174,6 @@ function checkNumber(theObj) {
   }
   return false;
 }
-
-$('.saveN').on('click', function () {
-  if ($('#inputEmail').val() == '') {
-    alert('邮箱为空，请输入正确的邮箱地址');
-  } else if (!$('#inputEmail')
-    .val()
-    .match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/)
-  ) {
-    alert('您输入的邮箱格式不正确！请重新输入');
-    //判断邮箱的输入格式是否正确
-    $('.inputTextN').eq(1).val('');
-  }
-
-  if ($('.password1').val() == '') {
-    layerMsg('请确保您的密码正确，请重新输入您的密码', 7);
-  } else if ($('.password2').val() == '') {
-    layerMsg("请设置您的新密码",7);
-  }
-
-  if (
-    $('#inputEmail').val() != '' &&
-    $('#inputEmail')
-    .val()
-    .match(
-      /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/
-    ) &&
-    $('.password1').val() != '' &&
-    $(".password2").val() != ''
-  ) {
-    layerMsg('保存成功', 6);
-  }
-});
 
 var InputText = $('.user_information .inputText');
 var InputTextN = $('.user_information .inputTextN');
@@ -230,6 +199,7 @@ $(document).ready(function () {
     $.ajax({
         url:"../user/isLogin",
         type:"get",
+        async:false,
         success:function (data) {
             console.log(data);
             userdata = data;
@@ -240,54 +210,121 @@ $(document).ready(function () {
     })
 });
 
-
 //保存信息按钮点击事件
 $(".save").click(function () {
-  var message = layer.confirm('确定保存?', {
-                    btn: ['确定', '取消'], //按钮
-                    title: '提示'
-                });
-  if (message){
-    var checkvalue;
-    for(var i = 0;i < 3;i ++){
-      if ($("#inputRadio"+(i+1)).prop('checked')){
-        checkvalue = i+1;
-        break;
-      }
-      if (checkvalue == 3) checkvalue = 0;
-    }
-    $.ajax({
-        url:"../user/changeUser",
-        type:"post",
-        data:{"sex":checkvalue,"personality":$("textarea").val(),"address":userInformation.children("li").eq(3).children("div").children("input").val(),
-            "qq":userInformation.children("li").eq(4).children("div").children("input").val(),"job":userInformation.children("li").eq(6).children("div").children("input").val(),
-            "weburl":userInformation.children("li").eq(7).children("div").children("input").val()},
-        success:function (data) {
-            console.log("changeSuccess")
-        },error:function () {
+    layer.msg("确定保存？",{
+        time: 0,
+        btn:["确定","取消"],
+        yes:function (index) {
+            var checkvalue;
+            for (var i = 0; i < 3; i++) {
+                if ($("#inputRadio" + (i + 1)).prop('checked')) {
+                    checkvalue = i + 1;
+                    break;
+                }
+                if (checkvalue == 3) checkvalue = 0;
+            }
+            $.ajax({
+                url: "../user/changeUser",
+                type: "post",
+                data: {
+                    "sex": checkvalue,
+                    "personality": $("textarea").val(),
+                    "address": userInformation.children("li").eq(3).children("div").children("input").val(),
+                    "qq": userInformation.children("li").eq(4).children("div").children("input").val(),
+                    "job": userInformation.children("li").eq(6).children("div").children("input").val(),
+                    "weburl": userInformation.children("li").eq(7).children("div").children("input").val()
+                },
+                success: function (data) {
+                    console.log("changeSuccess")
+                }, error: function () {
 
+                }
+            });
+        }
+    })
+});
+
+$(".saveN").on("click",function () {
+    layer.msg("确定保存？",{
+        time: 0,
+        btn:["确定","取消"],
+        yes:function (index) {
+            layer.close(index);
+            if ($('#inputEmail').val() != "") {
+                if (!$('#inputEmail').val().match(/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/)) {
+                    alert('您输入的邮箱格式不正确！请重新输入');
+                    return;
+                }
+            }
+            var nickul = $(".user_information ul").eq(1);
+            if (nickul.children("li").eq(0).find("input").val() != ""){
+                if (nickul.children("li").eq(0).find("input").val().length < 1 || nickul.children("li").eq(0).find("input").val().length > 16){
+                    layer.msg("昵称长度请控制在16位以下！");
+                    return;
+                }
+            }
+            $.ajax({
+                url:"../user/changeNick",
+                type:"post",
+                data:{"nickname":nickul.children("li").eq(0).find("input").val(),"email":$('#inputEmail').val()},
+                success:function (data) {
+                    console.log("changeNick: "+data);
+                },error:function () {
+                    console.log("更改用户昵称、邮箱失败！")
+                }
+            });
+            if ($(".password1").val() != ""){
+                if ($(".password1").val().length < 6 || $(".password1").val().length > 16){
+                    layer.msg("密码长度请控制在6位至16位之间！");
+                    return;
+                }
+                if ($(".password2").val() == ""){
+                    layer.msg("请确定你要修改的密码");
+                    return;
+                }
+                if ($(".password2").val() != $(".password1").val()){
+                    layer.msg("两次输入的密码不一致！");
+                    return;
+                }
+                console.log("发送修改密码请求");
+                $.ajax({
+                    url:"../user/changePass",
+                    type:"post",
+                    data:{"password":$(".password1").val()},
+                    success:function (data) {
+                        console.log(data);
+                    },error:function () {
+                        console.log("修改密码出错！")
+                    }
+                })
+            }
         }
     });
-  }
 });
 
 $(".logOut").click(function () {
-    var msg = confirm("确认注销账号？");
-    if (msg){
-        $.ajax({
-            url:"../logout",
-            success:function () {
-                window.location.replace("/html/index.html");
-            },error:function () {
+    layer.msg("确定保存？",{
+        time: 0,
+        btn:["确定","取消"],
+        yes:function (index) {
+            $.ajax({
+                url: "../logout",
+                success: function () {
+                    window.location.replace("/html/index.html");
+                }, error: function () {
 
-            }
-        })
-    }
-
+                }
+            })
+        }
+    })
 });
 
 $(".user_list").find("li").eq(1).on("click",function () {
     console.log("点击~")
+    var nickul = $(".user_information ul").eq(1);
+    nickul.children("li").eq(0).find("input").val(userdata.nickname);
+    if (userdata.email != null) nickul.children("li").eq(1).find("input").val(userdata.email);
 });
 
 $(".user_list").find("li").eq(2).on("click",function () {
@@ -306,7 +343,7 @@ function loginSuccess(data) {
     if (data.address != "") userInformation.children("li").eq(3).children("div").children("input").val(data.address);
     if (data.qq != "")  userInformation.children("li").eq(4).children("div").children("input").val(data.qq);
     console.log("username: "+data.username);
-    userInformation.children("li").eq(5).children("div").children("span").eq(1).val(data.username);
+    userInformation.children("li").eq(5).children("div").children("span").eq(1).text(data.username);
     if (data.job != "") userInformation.children("li").eq(6).children("div").children("input").val(data.job);
     if (data.weburl != "") userInformation.children("li").eq(7).children("div").children("input").val(data.weburl);
 }

@@ -17,12 +17,14 @@ public class MulUser{
     @GeneratedValue
     private Long id;
     //用户名/手机号
+    @Column(length = 20)
     private String username;
     //用户名拼音
     @JsonIgnore
     private String upinyin;
     //密码
     @JsonIgnore
+    @Column(length = 20)
     private String password;
     private String headimage;
     //邮箱
@@ -34,8 +36,10 @@ public class MulUser{
     //地址
     private String address;
     //QQ
+    @Column(length = 20)
     private String qq;
     //昵称
+    @Column(length = 20)
     private String nickname;
     //职业
     private String job;
@@ -43,18 +47,21 @@ public class MulUser{
     private String weburl;
     //角色
     @JsonIgnore
+    @Column(length = 20)
     private String role;
     //权限
     @JsonIgnore
+    @Column(length = 20)
     private String power;
 
     public MulUser(){}
-    public MulUser(String username,String upinyin,String password,String role){
+    public MulUser(String username,String nickname,String upinyin,String password,String role){
         this.username = username;
+        this.nickname = nickname;
         this.upinyin = upinyin;
         this.password = password;
         this.role = role;
-        headimage = "../img/14.png";
+        headimage = "../img/10.jpg";
     }
 
     @Override
@@ -150,11 +157,19 @@ public class MulUser{
         this.address = address;
     }
 
+    public String getQq() {
+        return qq;
+    }
+
+    public void setQq(String qq) {
+        this.qq = qq;
+    }
+
     public String getNickname() {
         return nickname;
     }
 
-    public void setNickname(String phone) {
+    public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
@@ -188,13 +203,5 @@ public class MulUser{
 
     public void setPower(String power) {
         this.power = power;
-    }
-
-    public String getQq() {
-        return qq;
-    }
-
-    public void setQq(String qq) {
-        this.qq = qq;
     }
 }

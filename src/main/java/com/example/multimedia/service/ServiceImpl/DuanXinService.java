@@ -4,12 +4,8 @@ import com.github.qcloudsms.SmsSingleSender;
 import com.github.qcloudsms.SmsSingleSenderResult;
 import com.github.qcloudsms.httpclient.HTTPException;
 import org.json.JSONException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class DuanXinService {
@@ -17,12 +13,15 @@ public class DuanXinService {
     private final String appKey = "5e7510ecfd888798d220162d5b456d68";
     public String duanXin(){
         String smsSign = "alexfei";
-        String[] params = new String[]{getCode(),"2"};
+        String code = getCode();
+        String[] params = new String[]{code,"2"};
         try {
             SmsSingleSender sender = new SmsSingleSender(appid, appKey);
             SmsSingleSenderResult result = sender.sendWithParam("86", "15990313593",
                     166899,params,smsSign, "", "");
-            System.out.print(result);
+            if (!result.errMsg.equals("OK")){
+                return "ERROR";
+            }
         } catch (HTTPException e) {
             // HTTP响应码错误
             e.printStackTrace();
@@ -33,15 +32,16 @@ public class DuanXinService {
             // 网络IO错误
             e.printStackTrace();
         }
-        return "Y";
+        return code;
     }
 
     public String getCode(){
-        String code = String.valueOf(new Random(1000000));
+        String code = String.valueOf(new Random().nextInt(1000000));
         if (code.length() < 6){
             StringBuffer stringBuffer = new StringBuffer(code);
             for (int i = 0;i < 6-code.length();i ++)
                 stringBuffer.insert(0,0);
+            code = stringBuffer.toString();
         }
         return code;
     }
